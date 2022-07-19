@@ -7,8 +7,21 @@
 
 #endif //TSMS_TSMS_SPI_H
 
+//for stm32 series
+#ifdef STM32H743xx
+#define TSMS_STM32_SPI // for no external hardware please use TSMS_STM32_NO_SPI
+#endif
+
 
 struct TSMS_SPI_HANDLER {
+
+#ifdef TSMS_DRIVER
+
+#endif
+
+#ifdef TSMS_STM32_SPI
+
+#endif
 
 };
 
