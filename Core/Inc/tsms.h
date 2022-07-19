@@ -9,6 +9,9 @@
 #include "malloc.h"
 #include "stdbool.h"
 
+#ifdef TSMS_optimization
+#endif
+
 #ifndef TSMS_DRIVER
 // for internal use
 #define TSMS_DRIVER
@@ -28,4 +31,8 @@
 #endif
 
 #define TSMS_NULL 0
+
+typedef enum {
+	TSMS_SUCCESS, TSMS_ERROR, TSMS_TIMEOUT
+} TSMS_RESULT;
 
