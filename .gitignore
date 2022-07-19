@@ -10,9 +10,9 @@ CMakeLists_template.txt
 STM32H743IITX_FLASH.ld
 STM32H743IITX_RAM.ld
 TSMS.ioc
-/Core/Inc/
+/Core/Inc/*
 !/Core/Inc/tsms*
-/Core/Src/
+/Core/Src/*
 !/Core/Src/tsms*
 /Core/Startup/
 .idea
