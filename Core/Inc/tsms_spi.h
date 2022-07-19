@@ -7,24 +7,31 @@
 
 #endif //TSMS_SPI_H
 
-//for stm32 series
-#ifdef STM32H743xx
-#define TSMS_STM32_SPI // for no external hardware please use TSMS_STM32_NO_SPI
-#endif
-
+#include "tsms_gpio.h"
 
 struct TSMS_SPI_HANDLER {
 
-#ifdef TSMS_DRIVER
-
-#endif
+	TSMS_GHP cs;
+	TSMS_GHP sclk;
+	TSMS_GHP din;
+	TSMS_GHP dout;
+	bool isHardware;
 
 #ifdef TSMS_STM32_SPI
-
+	SPI_TypeDef * hardwareHandler;
 #endif
 
 };
 
-struct TSMS_SPI_HANDLER TSMS_SPI_createSoftwareHandler(xxx);
+typedef struct TSMS_SPI_HANDLER * TSMS_SPI_HANDLER_POINTER;
+typedef TSMS_SPI_HANDLER_POINTER TSMS_SHP;
 
-struct TSMS_SPI_HANDLER TSMS_SPI_createHardwareHandler(xxx);
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout);
+
+#ifdef TSMS_STM32_SPI
+TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
+										GPIO_TypeDef * sclkPort, uint16_t sclkPin,
+										GPIO_TypeDef * dinPort, uint16_t dinPin,
+										GPIO_TypeDef * doutPort, uint16_t doutPin);
+TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_TypeDef * spi);
+#endif
