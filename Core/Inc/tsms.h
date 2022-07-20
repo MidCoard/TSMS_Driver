@@ -3,6 +3,7 @@
 
 #include "malloc.h"
 #include "stdbool.h"
+#include "memory.h"
 
 #ifdef TSMS_OPTIMIZATION
 #define TSMS_INLINE inline
@@ -37,7 +38,7 @@ typedef enum {
 
 typedef void(*TSMS_DELAY_FUNCTION)();
 
-#define TSMS_DELETE(x) free(x)
+#define TSMS_MASK(x) ((1<<x)-1)
 
 
 

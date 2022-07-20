@@ -33,6 +33,10 @@ TSMS_INLINE static void TSMS_SPI_DIN_LOW(TSMS_SHP spi) {
 	TSMS_GPIO_write(spi->din, TSMS_GPIO_LOW);
 }
 
+TSMS_INLINE static TSMS_GPIO_STATUS TSMS_SPI_DOUT(TSMS_SHP spi) {
+	return TSMS_GPIO_read(spi->dout);
+}
+
 TSMS_INLINE static void TSMS_SPI_transmitByte(TSMS_SHP spi, uint8_t data) {
 	switch (spi->mode) {
 		case TSMS_SPI_MODE_0:
@@ -242,8 +246,44 @@ TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, u
 	}
 }
 
+TSMS_INLINE static void TSMS_SPI_receiveByte(TSMS_SHP spi, uint8_t * data) {
+	*data = 0;
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				*data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << TSMS_SPI_TRANSFER_BYTE[spi->type][i]);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				*data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << TSMS_SPI_TRANSFER_BYTE[spi->type][i]);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				*data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << TSMS_SPI_TRANSFER_BYTE[spi->type][i]);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				*data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << TSMS_SPI_TRANSFER_BYTE[spi->type][i]);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+	}
+}
+
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
 	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
+	if (spi == TSMS_NULL)
+		return TSMS_NULL;
 	spi->cs = cs;
 	spi->sclk = sclk;
 	spi->din = din;
@@ -407,4 +447,33 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 		else TSMS_SPI_CS_HIGH(spi);
 		return TSMS_SUCCESS;
 	}
+}
+
+TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) {
+	if (spi->isHardware) {
+#ifdef TSMS_STM32_SPI
+		if (HAL_SPI_Receive(spi,data,length,0xffffffff) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
+#else
+		return TSMS_TIMEOUT;
+#endif
+	} else {
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_receiveByte(spi, data + i);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
+	}
+}
+
+TSMS_RESULT TSMS_SPI_release(TSMS_SHP spi) {
+	free(spi);
+	return TSMS_SUCCESS;
 }

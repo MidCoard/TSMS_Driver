@@ -4,6 +4,8 @@
 
 TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
 	TSMS_GHP gpio = malloc(sizeof (struct TSMS_GPIO_HANDLER));
+	if (gpio == TSMS_NULL)
+		return TSMS_NULL;
 	gpio->port = port;
 	gpio->pin = pin;
 	return gpio;
@@ -30,4 +32,10 @@ TSMS_GPIO_STATUS TSMS_GPIO_read(TSMS_GHP gpio) {
 #else
 	return TSMS_GPIO_ERROR;
 #endif
+}
+
+
+TSMS_RESULT TSMS_GPIO_release(TSMS_GHP gpio) {
+	free(gpio);
+	return TSMS_SUCCESS;
 }

@@ -26,5 +26,8 @@ TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin);
 #endif
 
 TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS  status);
+TSMS_GPIO_STATUS TSMS_GPIO_read(TSMS_GHP gpio);
+
+TSMS_RESULT TSMS_GPIO_release(TSMS_GHP gpio);
 
 #endif //TSMS_GPIO_H
