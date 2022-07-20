@@ -1,15 +1,13 @@
-//
-// Created by 周蜀杰 on 2022/7/19.
-//
-
 #ifndef TSMS_H
 #define TSMS_H
 
-#endif //TSMS_H
 #include "malloc.h"
 #include "stdbool.h"
 
-#ifdef TSMS_optimization
+#ifdef TSMS_OPTIMIZATION
+#define TSMS_INLINE inline
+#else
+#define TSMS_INLINE
 #endif
 
 #ifndef TSMS_DRIVER
@@ -22,6 +20,7 @@
 #ifdef USE_HAL_DRIVER
 #define TSMS_STM32
 #define TSMS_STM32_SPI // for no external hardware please use TSMS_STM32_NO_SPI
+#define TSMS_STM32_IIC // for no external hardware please use TSMS_STM32_NO_IIC
 #define TSMS_STM32_GPIO
 #endif
 #endif
@@ -36,3 +35,10 @@ typedef enum {
 	TSMS_SUCCESS, TSMS_ERROR, TSMS_TIMEOUT
 } TSMS_RESULT;
 
+typedef void(*TSMS_DELAY_FUNCTION)();
+
+#define TSMS_DELETE(x) free(x)
+
+
+
+#endif //TSMS_H

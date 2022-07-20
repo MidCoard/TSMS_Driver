@@ -1,38 +1,280 @@
 #include "tsms_spi.h"
 
-TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode) {
+uint8_t TSMS_SPI_TRANSFER_BYTE[2][8] = {{7,6,5,4,3,2,1},{0,1,2,3,4,5,6,7}};
+uint8_t TSMS_SPI_TRANSFER_HALFWORD[2][16] = {{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}};
+uint8_t TSMS_SPI_TRANSFER_WORD[2][32] = {{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}};
+uint8_t TSMS_SPI_TRANSFER_24BIT[2][24] = {{23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}};
+TSMS_INLINE static void delay() {
+	volatile uint8_t c = 1;
+	while(c--);
+}
+
+TSMS_INLINE static void TSMS_SPI_SCLK_HIGH(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_HIGH);
+}
+
+TSMS_INLINE static void TSMS_SPI_SCLK_LOW(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_LOW);
+}
+
+TSMS_INLINE static void TSMS_SPI_CS_HIGH(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->cs, TSMS_GPIO_HIGH);
+}
+
+TSMS_INLINE static void TSMS_SPI_CS_LOW(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->cs, TSMS_GPIO_LOW);
+}
+
+TSMS_INLINE static void TSMS_SPI_DIN_HIGH(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->din, TSMS_GPIO_HIGH);
+}
+
+TSMS_INLINE static void TSMS_SPI_DIN_LOW(TSMS_SHP spi) {
+	TSMS_GPIO_write(spi->din, TSMS_GPIO_LOW);
+}
+
+TSMS_INLINE static void TSMS_SPI_transmitByte(TSMS_SHP spi, uint8_t data) {
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<8;i++) {
+				if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<8;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+			}
+			break;
+	}
+}
+
+TSMS_INLINE static void TSMS_SPI_transmitHalfWord(TSMS_SHP spi, uint16_t data) {
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<16;i++) {
+				if ((data >> TSMS_SPI_TRANSFER_HALFWORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<16;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_HALFWORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<16;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				if ((data >> TSMS_SPI_TRANSFER_HALFWORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<16;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_HALFWORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+			}
+			break;
+	}
+}
+
+TSMS_INLINE static void TSMS_SPI_transmitWord(TSMS_SHP spi, uint32_t data) {
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<32;i++) {
+				if ((data >> TSMS_SPI_TRANSFER_WORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<32;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_WORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<32;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				if ((data >> TSMS_SPI_TRANSFER_WORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<32;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_WORD[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+			}
+			break;
+	}
+}
+
+TSMS_INLINE static void TSMS_SPI_transmit24Bit(TSMS_SHP spi, uint32_t data) {
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<24;i++) {
+				if ((data >> TSMS_SPI_TRANSFER_24BIT[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<24;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_24BIT[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<24;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				if ((data >> TSMS_SPI_TRANSFER_24BIT[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<24;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				if ((data >> TSMS_SPI_TRANSFER_24BIT[spi->type][i])&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+			}
+			break;
+	}
+}
+
+TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, uint32_t data) {
+	switch (spi->mode) {
+		case TSMS_SPI_MODE_0:
+			for (uint8_t i = 0;i<bits;i++) {
+				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				if ((data >> pos)&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_1:
+			for (uint8_t i = 0;i<bits;i++) {
+				TSMS_SPI_SCLK_HIGH(spi);
+				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				if ((data >> pos)&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_LOW(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_2:
+			for (uint8_t i = 0;i<bits;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				if ((data >> pos)&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+			}
+			break;
+		case TSMS_SPI_MODE_3:
+			for (uint8_t i = 0;i<bits;i++) {
+				TSMS_SPI_SCLK_LOW(spi);
+				TSMS_SPI_SCLK_HIGH(spi);
+				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				if ((data >> pos)&1)
+					TSMS_SPI_DIN_HIGH(spi);
+				else TSMS_SPI_DIN_LOW(spi);
+			}
+			break;
+	}
+}
+
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
 	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
 	spi->cs = cs;
 	spi->sclk = sclk;
 	spi->din = din;
 	spi->dout = dout;
 	spi->mode = mode;
+	spi->csValid = csValid;
+	spi->delay = delay;
+	spi->type = type;
 	spi->isHardware = false;
+	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
+		TSMS_SPI_SCLK_LOW(spi);
+	else TSMS_SPI_SCLK_HIGH(spi);
 	return spi;
 }
 
-
-inline static void TSMS_SPI_() {
-// modify the spi value
-
-
-
-
-}
 
 #ifdef TSMS_STM32_SPI
 
 TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
                                         GPIO_TypeDef * sclkPort, uint16_t sclkPin,
                                         GPIO_TypeDef * dinPort, uint16_t dinPin,
-                                        GPIO_TypeDef * doutPort, uint16_t doutPin) {
+                                        GPIO_TypeDef * doutPort, uint16_t doutPin,
+										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
 	return TSMS_SPI_createSoftwareHandler(TSMS_GPIO_createHandler(csPort, csPin),
 	                                      TSMS_GPIO_createHandler(sclkPort, sclkPin),
 	                                      TSMS_GPIO_createHandler(dinPort, dinPin),
-	                                      TSMS_GPIO_createHandler(doutPort, doutPin));
+	                                      TSMS_GPIO_createHandler(doutPort, doutPin),
+										  mode, csValid, type);
 }
 
-TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_TypeDef * spi) {
+TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
 	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
 	handler->hardwareHandler = spi;
 	handler->isHardware = true;
@@ -41,15 +283,128 @@ TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_TypeDef * spi) {
 
 #endif
 
-TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, TSMS_SPI_DATA data, TSMS_SPI_DATA_LENGTH length) {
+TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, uint8_t * data, uint32_t length) {
 	if (spi->isHardware) {
 #ifdef TSMS_STM32_SPI
-		HAL_SPI_T
+		if (HAL_SPI_Transmit(spi->hardwareHandler, data, length, 0xffffffff) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
 #else
 		return TSMS_TIMEOUT;
 #endif
 	} else {
-		for (TSMS_SPI_DATA_LENGTH i = 0;i < length;i++)
-			TSMS_SPI_transmitByte(data[i]);
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_transmitByte(spi, data[i]);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
+	}
+}
+
+TSMS_RESULT TSMS_SPI_transmitHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t length) {
+	if (spi->isHardware) {
+#ifdef TSMS_STM32_SPI
+#warning transmitting 16 bits data is not tested!
+		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff ) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
+#else
+		return TSMS_TIMEOUT;
+#endif
+	} else {
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_transmitHalfWord(spi, data[i]);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
+	}
+}
+
+TSMS_RESULT TSMS_SPI_transmitWords(TSMS_SHP spi, uint32_t *data, uint32_t length) {
+	if (spi->isHardware) {
+#ifdef TSMS_STM32_SPI
+#warning transmitting 32 bits data is not tested!
+		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
+#else
+		return TSMS_TIMEOUT:
+#endif
+	} else {
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_transmitWord(spi, data[i]);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
+	}
+}
+
+
+TSMS_RESULT TSMS_SPI_transmit24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length) {
+	if (spi->isHardware) {
+#ifdef TSMS_STM32_SPI
+#warning transmitting 24 bits data is not tested!
+		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
+#else
+		return TSMS_TIMEOUT:
+#endif
+	} else {
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_transmit24Bit(spi, data[i]);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
+	}
+}
+
+
+TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length) {
+	if (spi->isHardware) {
+#ifdef TSMS_STM32_SPI
+#warning transmitting 24 bits data is not tested!
+		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
+			return TSMS_SUCCESS;
+		else return TSMS_ERROR;
+#else
+		return TSMS_TIMEOUT:
+#endif
+	} else {
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_HIGH(spi);
+		else TSMS_SPI_CS_LOW(spi);
+		spi->delay();
+		for (uint32_t i = 0;i < length;i++)
+			TSMS_SPI_transmitCustomBit(spi, bits, data[i]);
+		spi->delay();
+		if (spi->csValid == TSMS_GPIO_HIGH)
+			TSMS_SPI_CS_LOW(spi);
+		else TSMS_SPI_CS_HIGH(spi);
+		return TSMS_SUCCESS;
 	}
 }

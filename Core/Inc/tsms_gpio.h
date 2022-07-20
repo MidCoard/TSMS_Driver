@@ -1,11 +1,5 @@
-//
-// Created by 周蜀杰 on 2022/7/19.
-//
-
 #ifndef TSMS_GPIO_H
 #define TSMS_GPIO_H
-
-#endif //TSMS_GPIO_H
 
 #include "tsms.h"
 
@@ -32,3 +26,5 @@ TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin);
 #endif
 
 TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS  status);
+
+#endif //TSMS_GPIO_H
