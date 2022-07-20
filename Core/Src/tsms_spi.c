@@ -475,5 +475,6 @@ TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) 
 
 TSMS_RESULT TSMS_SPI_release(TSMS_SHP spi) {
 	free(spi);
+
 	return TSMS_SUCCESS;
 }
