@@ -452,7 +452,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) {
 	if (spi->isHardware) {
 #ifdef TSMS_STM32_SPI
-		if (HAL_SPI_Receive(spi,data,length,0xffffffff) == HAL_OK)
+		if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
 		else return TSMS_ERROR;
 #else
