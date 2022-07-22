@@ -4,6 +4,7 @@
 #include "malloc.h"
 #include "stdbool.h"
 #include "memory.h"
+#include "stdarg.h"
 
 #ifdef TSMS_OPTIMIZATION
 #define TSMS_INLINE inline

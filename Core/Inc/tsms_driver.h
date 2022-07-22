@@ -44,7 +44,8 @@ typedef struct TSMS_DRIVER_HANDLER * TSMS_DRIVER_HANDLER_POINTER;
 typedef TSMS_DRIVER_HANDLER_POINTER TSMS_DHP;
 
 struct TSMS_REGISTER_HANDLER_LIST {
-	TSMS_RHP regs;
+	TSMS_RHP* regs;
+	int size;
 };
 
 
@@ -53,7 +54,7 @@ struct TSMS_REGISTER_HANDLER_LIST {
 #define TSMS_REGISTER_24BIT TSMS_REGISTER_16BIT,uint8_t bit16,uint8_t bit17,uint8_t bit18,uint8_t bit19,uint8_t bit20,uint8_t bit21,uint8_t bit22,uint8_t bit23
 #define TSMS_REGISTER_32BIT TSMS_REGISTER_24BIT,uint8_t bit24,uint8_t bit25,uint8_t bit26,uint8_t bit27,uint8_t bit28,uint8_t bit29,uint8_t bit30,uint8_t bit31
 
-TSMS_DHP TSMS_DRIVER_createHandler(TSMS_SHP spi,TSMS_RHLP regs);
+TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs);
 
 TSMS_RHP TSMS_REG_Register(uint8_t bits);
 
@@ -71,9 +72,13 @@ TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t
 
 TSMS_RESULT TSMS_REG_read(TSMS_RHP reg, uint8_t pos, uint32_t * value);
 
+TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value);
+
 TSMS_RESULT TSMS_REG_configure(TSMS_RHP reg,uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type);
 
 TSMS_RESULT TSMS_REG_release(TSMS_RHP reg);
+
+TSMS_RHLP TSMS_REG_createList(int n,...);
 
 #include "tsms.h"
 

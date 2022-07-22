@@ -64,6 +64,51 @@ TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
 	return reg;
 }
 
+
+TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
+	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+	if (reg == TSMS_NULL)
+		return TSMS_NULL;
+	reg->bits = 16;
+
+	position[0] = bit0;
+	position[1] = bit1;
+	position[2] = bit2;
+	position[3] = bit3;
+	position[4] = bit4;
+	position[5] = bit5;
+	position[6] = bit6;
+	position[7] = bit7;
+	position[8] = bit8;
+	position[9] = bit9;
+	position[10] = bit10;
+	position[11] = bit11;
+	position[12] = bit12;
+	position[13] = bit13;
+	position[14] = bit14;
+	position[15] = bit15;
+
+	reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 16);
+	memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 16);
+
+	reg->sizes = malloc(sizeof (uint8_t) * 16);
+	memset(reg->sizes, 0, sizeof (uint8_t) * 16);
+
+	reg->starts = malloc(sizeof (uint8_t) * 16);
+	memset(reg->starts, 0, sizeof (uint8_t) * 16);
+
+	uint8_t previous = -1;
+	for (uint8_t i = 0;i<16;i++) {
+		uint8_t now = position[i];
+		reg->sizes[position[i]]++;
+		if (now != previous)
+			reg->starts[now] = i;
+		previous = now;
+	}
+
+	return reg;
+}
+
 TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 	if (reg->types[pos] == TSMS_REGISTER_MSB)
 		return TSMS_REG_writeAt(reg, reg->starts[pos], reg->sizes[pos] ,value);
@@ -77,11 +122,36 @@ TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 		return TSMS_REG_writeAt(reg, reg->starts[pos],reg->sizes[pos], temp);
 	}
 }
-
+// writeAt and readAt method are all written or read by MSB
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
 	uint32_t mask = TSMS_MASK(bits);
 	reg->value &= ~(mask<<start);
 	reg->value |= (value & mask)<<start;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_REG_read(TSMS_RHP reg, uint8_t pos, uint32_t * value) {
+	uint32_t val = 0;
+	TSMS_RESULT result = TSMS_REG_readAt(reg, reg->starts[pos], reg->sizes[pos], &val);
+	if (result != TSMS_SUCCESS)
+		return result;
+	if (reg->types[pos] == TSMS_REGISTER_MSB)
+		*value = val;
+	else {
+		uint8_t size = reg->sizes[pos];
+		uint32_t temp = 0;
+		for (uint8_t i = 0;i<size;i++) {
+			temp |= (val & (1<<i)) ? 1 : 0;
+			temp <<= 1;
+		}
+		*value = temp;
+	}
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value) {
+	uint32_t mask = TSMS_MASK(bits);
+	*value = (reg->value >> start) & mask;
 	return TSMS_SUCCESS;
 }
 
@@ -100,7 +170,7 @@ TSMS_RESULT TSMS_REG_configure(TSMS_RHP reg,uint8_t pos, uint8_t left, uint8_t r
 	return TSMS_SUCCESS;
 }
 
-TSMS_DHP TSMS_DRIVER_createHandler(TSMS_SHP spi,TSMS_RHLP regs) {
+TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
 	if (driver == TSMS_NULL)
 		return TSMS_NULL;
@@ -108,6 +178,26 @@ TSMS_DHP TSMS_DRIVER_createHandler(TSMS_SHP spi,TSMS_RHLP regs) {
 	driver->spi = spi;
 	driver->regs = regs;
 	driver->write = TSMS_SPI_transmitCustomBits;
-	driver->read = TSMS_SPI_receiveBytes; //todo
+	driver->read = TSMS_SPI_receiveCustomBits; //todo
 	return driver;
+}
+
+TSMS_RHLP TSMS_REG_createList(int n,...) {
+	TSMS_RHLP list = malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
+	if (list == TSMS_NULL)
+		return TSMS_NULL;
+	list->size = n;
+	list->regs = malloc(sizeof (TSMS_RHP) * n);
+	va_list l;
+	va_start(l,n);
+	for (int i = 0;i<n;i++)
+		list->regs[i] = va_arg(l,TSMS_RHP);
+	va_end(l);
+	return list;
+}
+
+TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
+	free(list->regs);
+	free(list);
+	return TSMS_SUCCESS;
 }
