@@ -109,6 +109,118 @@ TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
 	return reg;
 }
 
+TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
+    TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+    if (reg == TSMS_NULL)
+        return TSMS_NULL;
+    reg->bits = 24;
+
+    position[0] = bit0;
+    position[1] = bit1;
+    position[2] = bit2;
+    position[3] = bit3;
+    position[4] = bit4;
+    position[5] = bit5;
+    position[6] = bit6;
+    position[7] = bit7;
+    position[8] = bit8;
+    position[9] = bit9;
+    position[10] = bit10;
+    position[11] = bit11;
+    position[12] = bit12;
+    position[13] = bit13;
+    position[14] = bit14;
+    position[15] = bit15;
+    position[16] = bit16;
+    position[17] = bit17;
+    position[18] = bit18;
+    position[19] = bit19;
+    position[20] = bit20;
+    position[21] = bit21;
+    position[22] = bit22;
+    position[23] = bit23;
+
+    reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 24);
+    memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 24);
+
+    reg->sizes = malloc(sizeof (uint8_t) * 24);
+    memset(reg->sizes, 0, sizeof (uint8_t) * 24);
+
+    reg->starts = malloc(sizeof (uint8_t) * 24);
+    memset(reg->starts, 0, sizeof (uint8_t) * 24);
+
+    uint8_t previous = -1;
+    for (uint8_t i = 0;i<24;i++) {
+        uint8_t now = position[i];
+        reg->sizes[position[i]]++;
+        if (now != previous)
+            reg->starts[now] = i;
+        previous = now;
+    }
+
+    return reg;
+}
+
+TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
+    TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+    if (reg == TSMS_NULL)
+        return TSMS_NULL;
+    reg->bits = 32;
+
+    position[0] = bit0;
+    position[1] = bit1;
+    position[2] = bit2;
+    position[3] = bit3;
+    position[4] = bit4;
+    position[5] = bit5;
+    position[6] = bit6;
+    position[7] = bit7;
+    position[8] = bit8;
+    position[9] = bit9;
+    position[10] = bit10;
+    position[11] = bit11;
+    position[12] = bit12;
+    position[13] = bit13;
+    position[14] = bit14;
+    position[15] = bit15;
+    position[16] = bit16;
+    position[17] = bit17;
+    position[18] = bit18;
+    position[19] = bit19;
+    position[20] = bit20;
+    position[21] = bit21;
+    position[22] = bit22;
+    position[23] = bit23;
+    position[24] = bit24;
+    position[25] = bit25;
+    position[26] = bit26;
+    position[27] = bit27;
+    position[28] = bit28;
+    position[29] = bit29;
+    position[30] = bit30;
+    position[31] = bit31;
+
+    reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 32);
+    memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 32);
+
+    reg->sizes = malloc(sizeof (uint8_t) * 32);
+    memset(reg->sizes, 0, sizeof (uint8_t) * 32);
+
+    reg->starts = malloc(sizeof (uint8_t) * 32);
+    memset(reg->starts, 0, sizeof (uint8_t) * 32);
+
+    uint8_t previous = -1;
+    for (uint8_t i = 0;i<32;i++) {
+        uint8_t now = position[i];
+        reg->sizes[position[i]]++;
+        if (now != previous)
+            reg->starts[now] = i;
+        previous = now;
+    }
+
+    return reg;
+}
+
 TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 	if (reg->types[pos] == TSMS_REGISTER_MSB)
 		return TSMS_REG_writeAt(reg, reg->starts[pos], reg->sizes[pos] ,value);
