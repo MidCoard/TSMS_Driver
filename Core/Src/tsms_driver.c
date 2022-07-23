@@ -178,7 +178,7 @@ TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 	driver->spi = spi;
 	driver->regs = regs;
 	driver->write = TSMS_SPI_transmitCustomBits;
-	driver->read = TSMS_SPI_receiveCustomBits; //todo
+	driver->read = TSMS_SPI_receiveCustomBits;
 	return driver;
 }
 

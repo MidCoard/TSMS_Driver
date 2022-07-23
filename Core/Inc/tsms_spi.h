@@ -4,12 +4,19 @@
 #include "tsms_gpio.h"
 
 typedef enum {
-	TSMS_SPI_MODE_0,TSMS_SPI_MODE_1,TSMS_SPI_MODE_2,TSMS_SPI_MODE_3
+	TSMS_SPI_MODE_0 = 0,TSMS_SPI_MODE_1,TSMS_SPI_MODE_2,TSMS_SPI_MODE_3
 } TSMS_SPI_MODE;
 
 typedef enum {
 	TSMS_SPI_MSB = 0U, TSMS_SPI_LSB
 } TSMS_SPI_TRANSFER_TYPE;
+
+
+struct TSMS_SPI_HANDLER;
+typedef struct TSMS_SPI_HANDLER * TSMS_SPI_HANDLER_POINTER;
+typedef TSMS_SPI_HANDLER_POINTER TSMS_SHP;
+
+typedef void(*TSMS_SPI_RELEASE_FUNCTION)(TSMS_SHP);
 
 struct TSMS_SPI_HANDLER {
 
@@ -22,16 +29,19 @@ struct TSMS_SPI_HANDLER {
 	TSMS_GPIO_STATUS csValid;
 	TSMS_DELAY_FUNCTION delay;
 	TSMS_SPI_TRANSFER_TYPE type;
+	TSMS_SPI_RELEASE_FUNCTION release;
 
 #ifdef TSMS_STM32_SPI
 	SPI_HandleTypeDef * hardwareHandler;
 #endif
 };
-
-typedef struct TSMS_SPI_HANDLER * TSMS_SPI_HANDLER_POINTER;
-typedef TSMS_SPI_HANDLER_POINTER TSMS_SHP;
+typedef enum {TSMS_SPI_CPOL_LOW = 0,TSMS_SPI_CPOL_HIGH} TSMS_SPI_CPOL;
+typedef enum {TSMS_SPI_CPHA_LOW = 0,TSMS_SPI_CPHA_HIGH} TSMS_SPI_CPHA;
 
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type);
+
+#define TSMS_SPI_MODE_CPOL(x) (TSMS_SPI_CPOL)((x>>1)&1)
+#define TSMS_SPI_MODE_CPHA(x) (TSMS_SPI_CPHA)(x&1)
 
 #ifdef TSMS_STM32_SPI
 TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
@@ -63,5 +73,7 @@ TSMS_RESULT TSMS_SPI_receive24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length
 TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length);
 
 TSMS_RESULT TSMS_SPI_release(TSMS_SHP spi);
+
+TSMS_SPI_MODE TSMS_SPI_mode(TSMS_SPI_CPOL cpol, TSMS_SPI_CPHA cpha);
 
 #endif //TSMS_SPI_H
