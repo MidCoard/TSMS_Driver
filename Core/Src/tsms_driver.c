@@ -20,6 +20,7 @@ TSMS_RHP TSMS_REG_Register(uint8_t bits) {
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->bits = bits;
+	reg->value = 0;
 	reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
 	memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
 	reg->sizes = malloc(sizeof (uint8_t) * 8);
@@ -34,6 +35,7 @@ TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->bits = 8;
+	reg->value = 0;
 
 	position[0] = bit0;
 	position[1] = bit1;
@@ -70,6 +72,7 @@ TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->bits = 16;
+	reg->value = 0;
 
 	position[0] = bit0;
 	position[1] = bit1;
@@ -114,6 +117,7 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
     if (reg == TSMS_NULL)
         return TSMS_NULL;
     reg->bits = 24;
+	reg->value = 0;
 
     position[0] = bit0;
     position[1] = bit1;
@@ -166,6 +170,7 @@ TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
     if (reg == TSMS_NULL)
         return TSMS_NULL;
     reg->bits = 32;
+	reg->value = 0;
 
     position[0] = bit0;
     position[1] = bit1;
@@ -237,6 +242,8 @@ TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 // writeAt and readAt method are all written or read by MSB
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
 	uint32_t mask = TSMS_MASK(bits);
+	if (mask == 0)
+		return TSMS_FAIL;
 	reg->value &= ~(mask<<start);
 	reg->value |= (value & mask)<<start;
 	return TSMS_SUCCESS;
@@ -263,6 +270,8 @@ TSMS_RESULT TSMS_REG_read(TSMS_RHP reg, uint8_t pos, uint32_t * value) {
 
 TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value) {
 	uint32_t mask = TSMS_MASK(bits);
+	if (mask == 0)
+		return TSMS_FAIL;
 	*value = (reg->value >> start) & mask;
 	return TSMS_SUCCESS;
 }
@@ -312,4 +321,29 @@ TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
 	free(list->regs);
 	free(list);
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_REG_setRegister(TSMS_RHP reg, uint32_t value) {
+	reg->value = value;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
+	if (list->size < pos || pos < 0)
+		return TSMS_ERROR;
+	return TSMS_REG_setRegister(list->regs[pos], value);
+}
+
+TSMS_RESULT TSMS_REG_writeRegister(TSMS_RHP reg, uint8_t pos, uint32_t value) {
+	return TSMS_REG_write(reg, pos, value);
+}
+
+TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
+	TSMS_RESULT result = TSMS_FAIL;
+	for (int i = 0;i<list->size;i ++)
+		if (TSMS_REG_writeRegister(list->regs[i], pos, value) == TSMS_SUCCESS) {
+			result = TSMS_SUCCESS;
+			break;
+		}
+	return result;
 }
