@@ -84,11 +84,19 @@ TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list);
 
 TSMS_RESULT TSMS_REG_setRegister(TSMS_RHP reg, uint32_t value);
 
+uint32_t TSMS_REG_getRegister(TSMS_RHP reg);
+
+uint32_t TSMS_REG_getRegisterByList(TSMS_RHLP list, uint8_t pos);
+
 TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
 
 TSMS_RESULT TSMS_REG_writeRegister(TSMS_RHP reg, uint8_t pos, uint32_t value);
 
 TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
+
+TSMS_RESULT TSMS_REG_readRegister(TSMS_RHP reg, uint8_t pos, uint32_t* value);
+
+TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value);
 
 #include "tsms.h"
 

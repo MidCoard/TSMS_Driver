@@ -328,6 +328,14 @@ TSMS_RESULT TSMS_REG_setRegister(TSMS_RHP reg, uint32_t value) {
 	return TSMS_SUCCESS;
 }
 
+uint32_t TSMS_REG_getRegister(TSMS_RHP reg) {
+	return reg->value;
+}
+
+uint32_t TSMS_REG_getRegisterByList(TSMS_RHLP list, uint8_t pos) {
+	return list->regs[pos]->value;
+}
+
 TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
 	if (list->size < pos || pos < 0)
 		return TSMS_ERROR;
@@ -342,6 +350,21 @@ TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t v
 	TSMS_RESULT result = TSMS_FAIL;
 	for (int i = 0;i<list->size;i ++)
 		if (TSMS_REG_writeRegister(list->regs[i], pos, value) == TSMS_SUCCESS) {
+			result = TSMS_SUCCESS;
+			break;
+		}
+	return result;
+}
+
+TSMS_RESULT TSMS_REG_readRegister(TSMS_RHP reg, uint8_t pos, uint32_t* value) {
+	return TSMS_REG_read(reg, pos ,value);
+}
+
+
+TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value) {
+	TSMS_RESULT result = TSMS_FAIL;
+	for (int i = 0;i<list->size;i ++)
+		if (TSMS_REG_readRegister(list->regs[i], pos, value) == TSMS_SUCCESS) {
 			result = TSMS_SUCCESS;
 			break;
 		}

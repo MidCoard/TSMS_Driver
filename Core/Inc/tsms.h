@@ -41,6 +41,7 @@ typedef void(*TSMS_DELAY_FUNCTION)();
 
 #define TSMS_MASK(x) ((1<<x)-1)
 
+uint32_t * TSMS_UTIL_gen32BitPointer(uint32_t v);
 
 
 #endif //TSMS_H
