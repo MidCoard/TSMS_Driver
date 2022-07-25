@@ -67,8 +67,10 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT);
 TSMS_RHP TSMS_REG_32BitRegister(TSMS_REGISTER_32BIT);
 
 TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value);
+uint32_t TSMS_REG_tempWrite(TSMS_RHP reg, uint8_t pos, uint32_t value);
 
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value);
+uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value);
 
 TSMS_RESULT TSMS_REG_read(TSMS_RHP reg, uint8_t pos, uint32_t * value);
 
@@ -98,5 +100,8 @@ TSMS_RESULT TSMS_REG_readRegister(TSMS_RHP reg, uint8_t pos, uint32_t* value);
 
 TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value);
 
+uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
+
+uint32_t TSMS_REG_tempWriteRegister(TSMS_RHP reg, uint8_t pos, uint32_t value);
 #include "tsms.h"
 

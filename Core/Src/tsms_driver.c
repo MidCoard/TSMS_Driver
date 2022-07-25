@@ -370,3 +370,40 @@ TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* v
 		}
 	return result;
 }
+
+
+uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
+	uint32_t ret = 0;
+	for (int i = 0;i<list->size;i++)
+		if ((ret = TSMS_REG_tempWriteRegister(list->regs[i],pos, value)) != 0)
+			return ret;
+	return ret;
+}
+
+
+uint32_t TSMS_REG_tempWriteRegister(TSMS_RHP reg, uint8_t pos, uint32_t value) {
+	return TSMS_REG_tempWrite(reg, pos, value);
+}
+
+
+uint32_t TSMS_REG_tempWrite(TSMS_RHP reg, uint8_t pos, uint32_t value) {
+	if (reg->types[pos] == TSMS_REGISTER_MSB)
+		return TSMS_REG_tempWriteAt(reg, reg->starts[pos], reg->sizes[pos] ,value);
+	else {
+		uint8_t size = reg->sizes[pos];
+		uint32_t temp = 0;
+		for (uint8_t i = 0;i<size;i++) {
+			temp |= (value & (1<<i)) ? 1 : 0;
+			temp <<= 1;
+		}
+		return TSMS_REG_tempWriteAt(reg, reg->starts[pos],reg->sizes[pos], temp);
+	}
+}
+
+
+uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
+	uint32_t mask = TSMS_MASK(bits);
+	if (mask == 0)
+		return 0;
+	return reg->value | (value & mask)<<start;
+}
