@@ -4,6 +4,7 @@ uint8_t TSMS_SPI_TRANSFER_BYTE[2][8] = {{7,6,5,4,3,2,1},{0,1,2,3,4,5,6,7}};
 uint8_t TSMS_SPI_TRANSFER_HALFWORD[2][16] = {{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}};
 uint8_t TSMS_SPI_TRANSFER_WORD[2][32] = {{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}};
 uint8_t TSMS_SPI_TRANSFER_24BIT[2][24] = {{23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}};
+
 TSMS_INLINE static void delay() {
 	volatile uint8_t c = 1;
 	while(c--);
@@ -463,7 +464,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 }
 
 
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 
 TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
                                         GPIO_TypeDef * sclkPort, uint16_t sclkPin,
@@ -491,7 +492,7 @@ TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
 
 TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, uint8_t * data, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 		if (HAL_SPI_Transmit(spi->hardwareHandler, data, length, 0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
 		else return TSMS_ERROR;
@@ -515,7 +516,7 @@ TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, uint8_t * data, uint32_t length
 
 TSMS_RESULT TSMS_SPI_transmitHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 #warning transmitting 16 bits data is not tested!
 		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff ) == HAL_OK)
 			return TSMS_SUCCESS;
@@ -540,7 +541,7 @@ TSMS_RESULT TSMS_SPI_transmitHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t le
 
 TSMS_RESULT TSMS_SPI_transmitWords(TSMS_SHP spi, uint32_t *data, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 #warning transmitting 32 bits data is not tested!
 		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
@@ -565,7 +566,7 @@ TSMS_RESULT TSMS_SPI_transmitWords(TSMS_SHP spi, uint32_t *data, uint32_t length
 
 TSMS_RESULT TSMS_SPI_transmit24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 #warning transmitting 24 bits data is not tested!
 		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
@@ -590,7 +591,7 @@ TSMS_RESULT TSMS_SPI_transmit24Bits(TSMS_SHP spi, uint32_t *data, uint32_t lengt
 
 TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 #warning transmitting 24 bits data is not tested!
 		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
@@ -615,7 +616,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 
 TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) {
 	if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 		if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
 		else return TSMS_ERROR;
@@ -639,7 +640,7 @@ TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) 
 
 TSMS_RESULT TSMS_SPI_receiveHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t length) {
     if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
         if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
             return TSMS_SUCCESS;
         else return TSMS_ERROR;
@@ -663,7 +664,7 @@ TSMS_RESULT TSMS_SPI_receiveHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t len
 
 TSMS_RESULT TSMS_SPI_receiveWords(TSMS_SHP spi, uint32_t *data, uint32_t length) {
     if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
         if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
             return TSMS_SUCCESS;
         else return TSMS_ERROR;
@@ -687,7 +688,7 @@ TSMS_RESULT TSMS_SPI_receiveWords(TSMS_SHP spi, uint32_t *data, uint32_t length)
 
 TSMS_RESULT TSMS_SPI_receive24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length) {
     if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
         if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
             return TSMS_SUCCESS;
         else return TSMS_ERROR;
@@ -711,7 +712,7 @@ TSMS_RESULT TSMS_SPI_receive24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length
 
 TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length) {
     if (spi->isHardware) {
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
         if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
             return TSMS_SUCCESS;
         else return TSMS_ERROR;

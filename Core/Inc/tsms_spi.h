@@ -31,7 +31,7 @@ struct TSMS_SPI_HANDLER {
 	TSMS_SPI_TRANSFER_TYPE type;
 	TSMS_SPI_RELEASE_FUNCTION release;
 
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 	SPI_HandleTypeDef * hardwareHandler;
 #endif
 };
@@ -43,7 +43,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 #define TSMS_SPI_MODE_CPOL(x) (TSMS_SPI_CPOL)((x>>1)&1)
 #define TSMS_SPI_MODE_CPHA(x) (TSMS_SPI_CPHA)(x&1)
 
-#ifdef TSMS_STM32_SPI
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
                                         GPIO_TypeDef * sclkPort, uint16_t sclkPin,
                                         GPIO_TypeDef * dinPort, uint16_t dinPin,

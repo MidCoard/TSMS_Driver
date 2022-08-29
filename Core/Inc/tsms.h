@@ -5,6 +5,8 @@
 #include "stdbool.h"
 #include "memory.h"
 #include "stdarg.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 #ifdef TSMS_OPTIMIZATION
 #define TSMS_INLINE inline
@@ -41,7 +43,9 @@ typedef void(*TSMS_DELAY_FUNCTION)();
 
 #define TSMS_MASK(x) ((1<<x)-1)
 
-uint32_t * TSMS_UTIL_gen32BitPointer(uint32_t v);
+TSMS_RESULT TSMS_IT_init();
+
+TSMS_RESULT TSMS_init();
 
 
 #endif //TSMS_H

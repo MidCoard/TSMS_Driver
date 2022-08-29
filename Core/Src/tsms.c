@@ -1,6 +1,9 @@
 #include "tsms.h"
 
-uint32_t * TSMS_UTIL_gen32BitPointer(uint32_t v) {
-	uint32_t t = v;
-	return &t;
+TSMS_RESULT TSMS_init() {
+	TSMS_RESULT result = TSMS_SUCCESS;
+#ifdef TSMS_IT_H
+	result |= TSMS_IT_init();
+#endif
+	return result;
 }

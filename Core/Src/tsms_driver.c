@@ -371,7 +371,6 @@ TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* v
 	return result;
 }
 
-
 uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
 	uint32_t ret = 0;
 	for (int i = 0;i<list->size;i++)
@@ -399,7 +398,6 @@ uint32_t TSMS_REG_tempWrite(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 		return TSMS_REG_tempWriteAt(reg, reg->starts[pos],reg->sizes[pos], temp);
 	}
 }
-
 
 uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
 	uint32_t mask = TSMS_MASK(bits);
