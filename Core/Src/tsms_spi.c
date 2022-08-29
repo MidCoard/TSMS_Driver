@@ -5,7 +5,7 @@ uint8_t TSMS_SPI_TRANSFER_HALFWORD[2][16] = {{15,14,13,12,11,10,9,8,7,6,5,4,3,2,
 uint8_t TSMS_SPI_TRANSFER_WORD[2][32] = {{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}};
 uint8_t TSMS_SPI_TRANSFER_24BIT[2][24] = {{23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}};
 
-TSMS_INLINE static void delay() {
+TSMS_INLINE static void __tsms_internal_spi_delay() {
 	volatile uint8_t c = 1;
 	while(c--);
 }
@@ -51,7 +51,7 @@ TSMS_INLINE static void TSMS_SPI_transmitByte(TSMS_SHP spi, uint8_t data) {
 			break;
 		case TSMS_SPI_MODE_1:
 			for (uint8_t i = 0;i<8;i++) {
-                if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
+				if ((data >> TSMS_SPI_TRANSFER_BYTE[spi->type][i])&1)
 					TSMS_SPI_DIN_HIGH(spi);
 				else TSMS_SPI_DIN_LOW(spi);
 				TSMS_SPI_SCLK_LOW(spi);
@@ -431,14 +431,14 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
     }
 }
 
-static void __tsms_internal_spi_release0(TSMS_SHP spi) {
+TSMS_INLINE static void __tsms_internal_spi_release0(TSMS_SHP spi) {
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 	HAL_SPI_DeInit(spi->hardwareHandler);
 #endif
 	free(spi);
 }
 
-static void __tsms_internal_spi_release1(TSMS_SHP spi) {
+TSMS_INLINE static void __tsms_internal_spi_release1(TSMS_SHP spi) {
 	TSMS_GPIO_release(spi->cs);
 	TSMS_GPIO_release(spi->sclk);
 	TSMS_GPIO_release(spi->din);
@@ -456,7 +456,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 	spi->dout = dout;
 	spi->mode = mode;
 	spi->csValid = csValid;
-	spi->delay = delay;
+	spi->delay = __tsms_internal_spi_delay;
 	spi->type = type;
 	spi->isHardware = false;
 	spi->release = __tsms_internal_spi_release0;

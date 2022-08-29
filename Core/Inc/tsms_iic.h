@@ -26,5 +26,13 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl);
 TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler);
 #endif
 
+TSMS_RESULT TSMS_IIC_release(TSMS_IHP iic);
+
+uint8_t TSMS_IIC_read(TSMS_IHP handler, bool nack);
+TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler,uint8_t);
+bool TSMS_IIC_wait(TSMS_IHP handler);
+TSMS_RESULT TSMS_IIC_start(TSMS_IHP handler);
+TSMS_RESULT TSMS_IIC_stop(TSMS_IHP handler);
+
 
 #endif //TSMS_IIC_H
