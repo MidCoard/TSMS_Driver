@@ -2,6 +2,7 @@
 
 char stringBuffer[1024];
 char charBuffer[2] = {0, 0};
+TSMS_PHP defaultPrinter = TSMS_NULL;
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
 
@@ -64,4 +65,16 @@ TSMS_RESULT TSMS_PRINTER_printf(TSMS_PHP printer, const char *str, ...) {
 	vsprintf(stringBuffer, str, p);
 	va_end(p);
 	return TSMS_PRINTER_print(printer, stringBuffer);
+}
+
+TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
+	defaultPrinter = printer;
+	return TSMS_SUCCESS;
+}
+
+int __io_putchar(int ch) {
+	if (defaultPrinter == TSMS_NULL)
+		return -1;
+	TSMS_PRINTER_printChar(defaultPrinter, ch);
+	return 1;
 }

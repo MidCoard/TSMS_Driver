@@ -1,16 +1,16 @@
 #include "tsms_driver.h"
 
-static void addAndRemove(TSMS_RHP reg, uint32_t add,uint32_t remove) {
+static void __tsms_internal_addAndRemove(TSMS_RHP reg, uint32_t add,uint32_t remove) {
 	reg->value |= add;
 	reg->value &= remove;
 }
 
-static void add(TSMS_RHP reg, uint32_t offset) {
-	addAndRemove(reg,offset,0xFFFFFFFF);
+static void __tsms_internal_add(TSMS_RHP reg, uint32_t offset) {
+	__tsms_internal_addAndRemove(reg,offset,0xFFFFFFFF);
 }
 
-static void remove(TSMS_RHP reg, uint32_t mask) {
-	addAndRemove(reg, 0,mask);
+static void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
+	__tsms_internal_addAndRemove(reg, 0,mask);
 }
 
 uint8_t position[32]; // notice this is globally used. If use multithread to access the register configuration, there may be something woring.
