@@ -4,10 +4,7 @@
 
 #include "tsms_spi.h"
 #include "tsms_iic.h"
-
-typedef enum {
-	TSMS_REGISTER_MSB = 0, TSMS_REGISTER_LSB
-} TSMS_REGISTER_DATA_TYPE;
+#include "tsms_def.h"
 
 struct TSMS_REGISTER_HANDLER {
 	uint8_t bits;
@@ -23,18 +20,24 @@ typedef struct TSMS_REGISTER_HANDLER_LIST * TSMS_REGISTER_HANDLER_LIST_POINTER;
 typedef TSMS_REGISTER_HANDLER_LIST_POINTER TSMS_RHLP;
 
 typedef enum{
-	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC
+	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM
 } TSMS_DRIVER_TYPE;
 
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_READER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
 
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t , uint32_t, TSMS_BITS);
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t , uint32_t*, TSMS_BITS);
+
 struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_TYPE type;
 	TSMS_SHP spi;
+	TSMS_IHP iic;
 	TSMS_RHLP regs;
-	TSMS_DRIVER_SPI_WRITER write;
-	TSMS_DRIVER_SPI_READER read;
+	TSMS_DRIVER_SPI_WRITER spiWrite;
+	TSMS_DRIVER_SPI_READER spiRead;
+	TSMS_DRIVER_IIC_WRITER iicWrite;
+	TSMS_DRIVER_IIC_READER iicRead;
 };
 
 typedef struct TSMS_REGISTER_HANDLER * TSMS_REGISTER_HANDLER_POINTER;
@@ -47,7 +50,6 @@ struct TSMS_REGISTER_HANDLER_LIST {
 	TSMS_RHP* regs;
 	int size;
 };
-
 
 #define TSMS_REGISTER_8BIT uint8_t bit0,uint8_t bit1, uint8_t bit2,uint8_t bit3,uint8_t bit4,uint8_t bit5,uint8_t bit6,uint8_t bit7
 #define TSMS_REGISTER_16BIT TSMS_REGISTER_8BIT,uint8_t bit8,uint8_t bit9,uint8_t bit10,uint8_t bit11,uint8_t bit12,uint8_t bit13,uint8_t bit14,uint8_t bit15

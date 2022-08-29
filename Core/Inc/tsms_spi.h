@@ -2,15 +2,11 @@
 #define TSMS_SPI_H
 
 #include "tsms_gpio.h"
+#include "tsms_def.h"
 
 typedef enum {
 	TSMS_SPI_MODE_0 = 0,TSMS_SPI_MODE_1,TSMS_SPI_MODE_2,TSMS_SPI_MODE_3
 } TSMS_SPI_MODE;
-
-typedef enum {
-	TSMS_SPI_MSB = 0U, TSMS_SPI_LSB
-} TSMS_SPI_TRANSFER_TYPE;
-
 
 struct TSMS_SPI_HANDLER;
 typedef struct TSMS_SPI_HANDLER * TSMS_SPI_HANDLER_POINTER;
@@ -28,7 +24,7 @@ struct TSMS_SPI_HANDLER {
 	TSMS_SPI_MODE mode;
 	TSMS_GPIO_STATUS csValid;
 	TSMS_DELAY_FUNCTION delay;
-	TSMS_SPI_TRANSFER_TYPE type;
+	TSMS_TRANSFER_TYPE type;
 	TSMS_SPI_RELEASE_FUNCTION release;
 
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
@@ -38,18 +34,27 @@ struct TSMS_SPI_HANDLER {
 typedef enum {TSMS_SPI_CPOL_LOW = 0,TSMS_SPI_CPOL_HIGH} TSMS_SPI_CPOL;
 typedef enum {TSMS_SPI_CPHA_LOW = 0,TSMS_SPI_CPHA_HIGH} TSMS_SPI_CPHA;
 
-TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type);
 
 #define TSMS_SPI_MODE_CPOL(x) (TSMS_SPI_CPOL)((x>>1)&1)
 #define TSMS_SPI_MODE_CPHA(x) (TSMS_SPI_CPHA)(x&1)
 
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
+
+#if defined(TSMS_STM32_SPI_USE_HAL_GPIO)
+TSMS_SHP TSMS_SPI_createSoftwareHandlerInternal(GPIO_TypeDef * csPort, uint16_t csPin,
                                         GPIO_TypeDef * sclkPort, uint16_t sclkPin,
                                         GPIO_TypeDef * dinPort, uint16_t dinPin,
                                         GPIO_TypeDef * doutPort, uint16_t doutPin,
-										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type);
+										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
+#else
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
+#endif
+
 TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi);
+#else
+
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
+
 #endif
 
 TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, uint8_t *data, uint32_t length);

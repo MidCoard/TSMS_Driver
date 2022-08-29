@@ -239,7 +239,7 @@ TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
 		return TSMS_REG_writeAt(reg, reg->starts[pos],reg->sizes[pos], temp);
 	}
 }
-// writeAt and readAt method are all written or read by MSB
+// writeAt and readAt method are all written or spiRead by MSB
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
 	uint32_t mask = TSMS_MASK(bits);
 	if (mask == 0)
@@ -298,8 +298,20 @@ TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 	driver->type = TSMS_DRIVER_SPI;
 	driver->spi = spi;
 	driver->regs = regs;
-	driver->write = TSMS_SPI_transmitCustomBits;
-	driver->read = TSMS_SPI_receiveCustomBits;
+	driver->spiWrite = TSMS_SPI_transmitCustomBits;
+	driver->spiRead = TSMS_SPI_receiveCustomBits;
+	return driver;
+}
+
+TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
+	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (driver == TSMS_NULL)
+		return TSMS_NULL;
+	driver->type = TSMS_DRIVER_IIC;
+	driver->iic = iic;
+	driver->regs = regs;
+	driver->iicWrite = TSMS_IIC_writeCustomRegister;
+	driver->iicRead = TSMS_IIC_readCustomRegister;
 	return driver;
 }
 

@@ -24,4 +24,6 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index);
 
 TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element);
 
+uint8_t TSMS_UTIL_reverseByte(uint8_t v);
+
 #endif //TSMS_UTIL_H

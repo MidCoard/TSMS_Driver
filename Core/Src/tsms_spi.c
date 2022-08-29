@@ -1,4 +1,5 @@
 #include "tsms_spi.h"
+#include "tsms_driver.h"
 
 uint8_t TSMS_SPI_TRANSFER_BYTE[2][8] = {{7,6,5,4,3,2,1},{0,1,2,3,4,5,6,7}};
 uint8_t TSMS_SPI_TRANSFER_HALFWORD[2][16] = {{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}};
@@ -206,7 +207,7 @@ TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, u
 	switch (spi->mode) {
 		case TSMS_SPI_MODE_0:
 			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
 				if ((data >> pos)&1)
 					TSMS_SPI_DIN_HIGH(spi);
 				else TSMS_SPI_DIN_LOW(spi);
@@ -216,7 +217,7 @@ TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, u
 			break;
 		case TSMS_SPI_MODE_1:
 			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
 				if ((data >> pos)&1)
 					TSMS_SPI_DIN_HIGH(spi);
 				else TSMS_SPI_DIN_LOW(spi);
@@ -226,7 +227,7 @@ TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, u
 			break;
 		case TSMS_SPI_MODE_2:
 			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
 				if ((data >> pos)&1)
 					TSMS_SPI_DIN_HIGH(spi);
 				else TSMS_SPI_DIN_LOW(spi);
@@ -236,7 +237,7 @@ TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, u
 			break;
 		case TSMS_SPI_MODE_3:
 			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
 				if ((data >> pos)&1)
 					TSMS_SPI_DIN_HIGH(spi);
 				else TSMS_SPI_DIN_LOW(spi);
@@ -396,7 +397,7 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
     switch (spi->mode) {
         case TSMS_SPI_MODE_0:
             for (uint8_t i = 0;i<bits;i++)  {
-                uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
                 TSMS_SPI_SCLK_HIGH(spi);
                 *data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
                 TSMS_SPI_SCLK_LOW(spi);
@@ -405,7 +406,7 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
         case TSMS_SPI_MODE_1:
             TSMS_SPI_SCLK_HIGH(spi);
             for (uint8_t i = 0;i<bits;i++)  {
-                uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
                 TSMS_SPI_SCLK_LOW(spi);
                 *data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
                 TSMS_SPI_SCLK_HIGH(spi);
@@ -414,7 +415,7 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
         case TSMS_SPI_MODE_2:
             TSMS_SPI_SCLK_LOW(spi);
             for (uint8_t i = 0;i<bits;i++) {
-                uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
                 TSMS_SPI_SCLK_HIGH(spi);
                 *data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
                 TSMS_SPI_SCLK_LOW(spi);
@@ -422,7 +423,7 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
             break;
         case TSMS_SPI_MODE_3:
             for (uint8_t i = 0;i<bits;i++) {
-                uint8_t pos = spi->type == TSMS_SPI_MSB ? bits - i - 1 : i;
+                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
                 TSMS_SPI_SCLK_LOW(spi);
                 *data |= ((TSMS_SPI_DOUT(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
                 TSMS_SPI_SCLK_HIGH(spi);
@@ -446,7 +447,36 @@ TSMS_INLINE static void __tsms_internal_spi_release1(TSMS_SHP spi) {
 	__tsms_internal_spi_release0(spi);
 }
 
-TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+
+#if defined(TSMS_STM32_SPI_USE_HAL_GPIO)
+
+TSMS_SHP TSMS_SPI_createSoftwareHandler(GPIO_TypeDef * csPort, uint16_t csPin,
+                                        GPIO_TypeDef * sclkPort, uint16_t sclkPin,
+                                        GPIO_TypeDef * dinPort, uint16_t dinPin,
+                                        GPIO_TypeDef * doutPort, uint16_t doutPin,
+										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
+	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
+	if (spi == TSMS_NULL)
+		return TSMS_NULL;
+	spi->cs = TSMS_GPIO_createHandler(csPort, csPin);
+	spi->sclk = TSMS_GPIO_createHandler(sclkPort, sclkPin);
+	spi->din = TSMS_GPIO_createHandler(dinPort, dinPin);
+	spi->dout = TSMS_GPIO_createHandler(doutPort, doutPin);
+	spi->mode = mode;
+	spi->csValid = csValid;
+	spi->delay = __tsms_internal_spi_delay;
+	spi->type = type;
+	spi->isHardware = false;
+	spi->release = __tsms_internal_spi_release1;
+	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
+		TSMS_SPI_SCLK_LOW(spi);
+	else TSMS_SPI_SCLK_HIGH(spi);
+	return spi;
+}
+#else
+
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
 	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
 	if (spi == TSMS_NULL)
 		return TSMS_NULL;
@@ -466,22 +496,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 	return spi;
 }
 
-
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-
-TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
-                                        GPIO_TypeDef * sclkPort, uint16_t sclkPin,
-                                        GPIO_TypeDef * dinPort, uint16_t dinPin,
-                                        GPIO_TypeDef * doutPort, uint16_t doutPin,
-										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
-	TSMS_SHP spi = TSMS_SPI_createSoftwareHandler(TSMS_GPIO_createHandler(csPort, csPin),
-	                                      TSMS_GPIO_createHandler(sclkPort, sclkPin),
-	                                      TSMS_GPIO_createHandler(dinPort, dinPin),
-	                                      TSMS_GPIO_createHandler(doutPort, doutPin),
-										  mode, csValid, type);
-	spi->release = __tsms_internal_spi_release1;
-	return spi;
-}
+#endif
 
 TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
 	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
@@ -490,6 +505,29 @@ TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
 	handler->release = __tsms_internal_spi_release0;
 	return handler;
 }
+
+#else
+
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
+	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
+	if (spi == TSMS_NULL)
+		return TSMS_NULL;
+	spi->cs = cs;
+	spi->sclk = sclk;
+	spi->din = din;
+	spi->dout = dout;
+	spi->mode = mode;
+	spi->csValid = csValid;
+	spi->delay = __tsms_internal_spi_delay;
+	spi->type = type;
+	spi->isHardware = false;
+	spi->release = __tsms_internal_spi_release0;
+	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
+		TSMS_SPI_SCLK_LOW(spi);
+	else TSMS_SPI_SCLK_HIGH(spi);
+	return spi;
+}
+
 
 #endif
 

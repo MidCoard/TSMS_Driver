@@ -60,3 +60,13 @@ TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element) {
 	}
 	return TSMS_FAIL;
 }
+
+uint8_t TSMS_UTIL_reverseByte(uint8_t v) {
+	uint8_t t = 0;
+	for (uint8_t i = 0; i < 8; i++) {
+		t <<= 1;
+		t |= (v & 1);
+		v >>= 1;
+	}
+	return t;
+}
