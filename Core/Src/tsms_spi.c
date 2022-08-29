@@ -431,16 +431,19 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t  bits,uin
     }
 }
 
-static void TSMS_SPI_internalRelease0(TSMS_SHP spi) {
+static void __tsms_internal_spi_release0(TSMS_SHP spi) {
+#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+	HAL_SPI_DeInit(spi->hardwareHandler);
+#endif
 	free(spi);
 }
 
-static void TSMS_SPI_internalRelease1(TSMS_SHP spi) {
+static void __tsms_internal_spi_release1(TSMS_SHP spi) {
 	TSMS_GPIO_release(spi->cs);
 	TSMS_GPIO_release(spi->sclk);
 	TSMS_GPIO_release(spi->din);
 	TSMS_GPIO_release(spi->dout);
-	TSMS_SPI_internalRelease0(spi);
+	__tsms_internal_spi_release0(spi);
 }
 
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_SPI_TRANSFER_TYPE type) {
@@ -456,7 +459,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 	spi->delay = delay;
 	spi->type = type;
 	spi->isHardware = false;
-	spi->release = TSMS_SPI_internalRelease0;
+	spi->release = __tsms_internal_spi_release0;
 	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
 		TSMS_SPI_SCLK_LOW(spi);
 	else TSMS_SPI_SCLK_HIGH(spi);
@@ -476,7 +479,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHanlder(GPIO_TypeDef * csPort, uint16_t csPin,
 	                                      TSMS_GPIO_createHandler(dinPort, dinPin),
 	                                      TSMS_GPIO_createHandler(doutPort, doutPin),
 										  mode, csValid, type);
-	spi->release = TSMS_SPI_internalRelease1;
+	spi->release = __tsms_internal_spi_release1;
 	return spi;
 }
 
@@ -484,7 +487,7 @@ TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
 	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
 	handler->hardwareHandler = spi;
 	handler->isHardware = true;
-	handler->release = TSMS_SPI_internalRelease0;
+	handler->release = __tsms_internal_spi_release0;
 	return handler;
 }
 
@@ -735,6 +738,8 @@ TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bit
 }
 
 TSMS_RESULT TSMS_SPI_release(TSMS_SHP spi) {
+	if (spi == TSMS_NULL)
+		return TSMS_ERROR;
 	spi->release(spi);
 	return TSMS_SUCCESS;
 }

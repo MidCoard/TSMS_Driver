@@ -1,7 +1,7 @@
 #ifndef TSMS_DRIVER_H
 #define TSMS_DRIVER_H
 
-#endif //TSMS_DRIVER_H
+
 #include "tsms_spi.h"
 #include "tsms_iic.h"
 
@@ -103,5 +103,6 @@ TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* v
 uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
 
 uint32_t TSMS_REG_tempWriteRegister(TSMS_RHP reg, uint8_t pos, uint32_t value);
-#include "tsms.h"
+
+#endif //TSMS_DRIVER_H
 

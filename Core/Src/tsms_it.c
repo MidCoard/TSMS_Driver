@@ -20,7 +20,13 @@ TSMS_RESULT TSMS_IT_init() {
 
 #ifdef TSMS_STM32
 
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	for (int i = 0;i<list->length;i++) {
+		TSMS_IGP gpio = list->list[i];
+		if (gpio->gpio->pin == GPIO_Pin)
+			gpio->callback(gpio->handler, gpio->gpio);
+	}
+}
 
 #endif
 

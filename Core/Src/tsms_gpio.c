@@ -39,3 +39,32 @@ TSMS_RESULT TSMS_GPIO_release(TSMS_GHP gpio) {
 	free(gpio);
 	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT TSMS_GPIO_setMode(TSMS_GHP gpio, TSMS_GPIO_MODE mode, TSMS_GPIO_PULL pull) {
+	if (gpio == TSMS_NULL_GHP)
+		return TSMS_ERROR;
+#ifdef TSMS_STM32_GPIO
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = gpio->pin;
+	if (mode == TSMS_GPIO_OUTPUT_OD || mode == TSMS_GPIO_OUTPUT_OPEN_DRAIN)
+		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+	else if (mode == TSMS_GPIO_OUTPUT_PP || mode == TSMS_GPIO_OUTPUT_PULL_PUSH)
+		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	else if (mode == TSMS_GPIO_INPUT)
+		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	else
+		return TSMS_ERROR;
+	if (pull == TSMS_GPIO_NO_PULL)
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+	else if (pull == TSMS_GPIO_PULL_UP)
+		GPIO_InitStruct.Pull = GPIO_PULLUP;
+	else if (pull == TSMS_GPIO_PULL_DOWN)
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	else
+		return TSMS_ERROR;
+	HAL_GPIO_Init(gpio->port, &GPIO_InitStruct);
+	return TSMS_SUCCESS;
+#else
+	return TSMS_TIMEOUT;
+#endif
+}
