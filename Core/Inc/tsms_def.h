@@ -1,6 +1,8 @@
 #ifndef TSMS_DEF_H
 #define TSMS_DEF_H
 
+typedef uint32_t TSMS_CLOCK_FREQUENCY;
+
 typedef enum{
 	TSMS_TRANSFER_MSB = 0U, TSMS_TRANSFER_LSB
 } TSMS_TRANSFER_TYPE;

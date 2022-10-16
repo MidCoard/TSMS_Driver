@@ -2,7 +2,6 @@
 #define TSMS_IIC_H
 
 #include "tsms_gpio.h"
-#include "tsms_def.h"
 
 #define TSMS_IIC_TIMEOUT 250
 

@@ -4,7 +4,6 @@
 
 #include "tsms_spi.h"
 #include "tsms_iic.h"
-#include "tsms_def.h"
 
 struct TSMS_REGISTER_HANDLER {
 	uint8_t bits;

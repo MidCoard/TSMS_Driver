@@ -786,3 +786,8 @@ TSMS_SPI_MODE TSMS_SPI_mode(TSMS_SPI_CPOL cpol, TSMS_SPI_CPHA cpha) {
 	uint8_t value = cpol * 2 + cpha;
 	return (TSMS_SPI_MODE) value;
 }
+
+TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency) {
+
+	return TSMS_SUCCESS;
+}

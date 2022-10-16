@@ -1,9 +1,9 @@
 #include "tsms.h"
 
-TSMS_RESULT TSMS_init() {
+TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency) {
 	TSMS_RESULT result = TSMS_SUCCESS;
-#ifdef TSMS_IT_H
-	result |= TSMS_IT_init();
-#endif
+	result |= TSMS_IT_init(frequency);
+	result |= TSMS_SPI_init(frequency);
+	result |= TSMS_IIC_init(frequency);
 	return result;
 }

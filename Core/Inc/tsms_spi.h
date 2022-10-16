@@ -2,7 +2,6 @@
 #define TSMS_SPI_H
 
 #include "tsms_gpio.h"
-#include "tsms_def.h"
 
 typedef enum {
 	TSMS_SPI_MODE_0 = 0,TSMS_SPI_MODE_1,TSMS_SPI_MODE_2,TSMS_SPI_MODE_3
@@ -24,6 +23,7 @@ struct TSMS_SPI_HANDLER {
 	TSMS_SPI_MODE mode;
 	TSMS_GPIO_STATUS csValid;
 	TSMS_DELAY_FUNCTION delay;
+	TSMS_CUSTOM_DELAY_FUNCTION customDelay;
 	TSMS_TRANSFER_TYPE type;
 	TSMS_SPI_RELEASE_FUNCTION release;
 

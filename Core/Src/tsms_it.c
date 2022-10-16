@@ -13,7 +13,7 @@ typedef TSMS_IT_GPIO_POINTER TSMS_IGP;
 
 TSMS_ULP list = TSMS_NULL;
 
-TSMS_RESULT TSMS_IT_init() {
+TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
 	list = TSMS_UTIL_createList(10, sizeof(TSMS_IGP));
 	return TSMS_SUCCESS;
 }
