@@ -21,7 +21,7 @@ TSMS_ULP TSMS_UTIL_createList(int initSize) {
 }
 
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element) {
-	if(list->actualLength < list->length) {
+	if(list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(void*));
 		if (list->list == TSMS_NULL)
@@ -37,7 +37,7 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
 	for (uint32_t i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i+1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length <= list->actualLength / 2) {
+	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
 		list->actualLength /= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof (void*));
 		if (list->list == TSMS_NULL)
