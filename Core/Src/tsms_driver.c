@@ -315,6 +315,16 @@ TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
 	return driver;
 }
 
+TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs) {
+	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (driver == TSMS_NULL)
+		return TSMS_NULL;
+	driver->type = TSMS_DRIVER_CUSTOM;
+	driver->custom = custom;
+	driver->regs = regs;
+	return driver;
+}
+
 TSMS_RHLP TSMS_REG_createList(int n,...) {
 	TSMS_RHLP list = malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
 	if (list == TSMS_NULL)

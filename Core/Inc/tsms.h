@@ -31,6 +31,11 @@
 #define TSMS_STM32_GPIO
 #endif
 
+#if defined(USE_HAL_DRIVER) && defined(STM32L431xx)
+#define TSMS_STM32
+#define TSMS_STM32_GPIO
+#endif
+
 #ifdef TSMS_STM32
 
 #include "main.h" // for stm32 hal driver, this can directly access the whole stm32 hardware interface
@@ -63,6 +68,10 @@ TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency);
 TSMS_RESULT TSMS_IIC_init(TSMS_CLOCK_FREQUENCY frequency);
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
+
+#define TSMS_NO_DELAY_TIME 0
+
+void TSMS_NO_DELAY(TSMS_DELAY_TIME time);
 
 
 #endif //TSMS_H

@@ -4,6 +4,7 @@
 
 #include "tsms_spi.h"
 #include "tsms_iic.h"
+#include "tsms_custom.h"
 
 struct TSMS_REGISTER_HANDLER {
 	uint8_t bits;
@@ -32,6 +33,7 @@ struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_TYPE type;
 	TSMS_SHP spi;
 	TSMS_IHP iic;
+	TSMS_CHP custom;
 	TSMS_RHLP regs;
 	TSMS_DRIVER_SPI_WRITER spiWrite;
 	TSMS_DRIVER_SPI_READER spiRead;
@@ -56,6 +58,8 @@ struct TSMS_REGISTER_HANDLER_LIST {
 #define TSMS_REGISTER_32BIT TSMS_REGISTER_24BIT,uint8_t bit24,uint8_t bit25,uint8_t bit26,uint8_t bit27,uint8_t bit28,uint8_t bit29,uint8_t bit30,uint8_t bit31
 
 TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs);
+
+TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs);
 
 TSMS_RHP TSMS_REG_Register(uint8_t bits);
 
