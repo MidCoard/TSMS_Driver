@@ -13,7 +13,7 @@ static void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
 	__tsms_internal_addAndRemove(reg, 0,mask);
 }
 
-uint8_t position[32]; // notice this is globally used. If use multithread to access the register configuration, there may be something woring.
+uint8_t position[32]; // notice this is globally used. If use multithreading to access the register configuration, there may be something wrong.
 
 TSMS_RHP TSMS_REG_Register(uint8_t bits) {
 	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));

@@ -17,8 +17,8 @@ struct TSMS_SPI_HANDLER {
 
 	TSMS_GHP cs;
 	TSMS_GHP sclk;
-	TSMS_GHP din;
 	TSMS_GHP dout;
+	TSMS_GHP din;
 	bool isHardware;
 	TSMS_SPI_MODE mode;
 	TSMS_GPIO_STATUS csValid;
@@ -47,7 +47,7 @@ TSMS_SHP TSMS_SPI_createSoftwareHandlerInternal(GPIO_TypeDef * csPort, uint16_t 
                                         GPIO_TypeDef * doutPort, uint16_t doutPin,
 										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
 #else
-TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
+TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP dout, TSMS_GHP din, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
 #endif
 
 TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi);

@@ -273,3 +273,7 @@ TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t 
 			*data |= buffer[bits - i] << (i * 8);
 	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT TSMS_IIC_init(TSMS_CLOCK_FREQUENCY frequency) {
+	return TSMS_SUCCESS;
+}
