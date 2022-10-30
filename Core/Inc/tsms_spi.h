@@ -31,12 +31,22 @@ struct TSMS_SPI_HANDLER {
 	SPI_HandleTypeDef * hardwareHandler;
 #endif
 };
+
 typedef enum {TSMS_SPI_CPOL_LOW = 0,TSMS_SPI_CPOL_HIGH} TSMS_SPI_CPOL;
 typedef enum {TSMS_SPI_CPHA_LOW = 0,TSMS_SPI_CPHA_HIGH} TSMS_SPI_CPHA;
 
+typedef enum {TSMS_SPI_READ = 0,TSMS_SPI_WRITE} TSMS_SPI_OPERATION_TYPE;
 
-#define TSMS_SPI_MODE_CPOL(x) (TSMS_SPI_CPOL)((x>>1)&1)
-#define TSMS_SPI_MODE_CPHA(x) (TSMS_SPI_CPHA)(x&1)
+struct TSMS_SPI_OPERATION {
+	TSMS_SPI_OPERATION_TYPE type;
+	uint8_t bits;
+	uint32_t * data;
+	uint32_t length;
+} ;
+
+
+#define TSMS_SPI_MODE_CPOL(x) (TSMS_GPIO_STATUS)((x>>1)&1)
+#define TSMS_SPI_MODE_CPHA(x) (TSMS_GPIO_STATUS)(x&1)
 
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 
@@ -77,8 +87,14 @@ TSMS_RESULT TSMS_SPI_receive24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length
 
 TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length);
 
+TSMS_RESULT TSMS_SPI_transform(TSMS_SHP spi, uint32_t *data,uint8_t writeBits,uint8_t  readBits, uint32_t writeLength, uint32_t readLength);
+
+TSMS_RESULT TSMS_SPI_sequenceTransform(TSMS_SHP spi, uint32_t n, ...);
+
 TSMS_RESULT TSMS_SPI_release(TSMS_SHP spi);
 
 TSMS_SPI_MODE TSMS_SPI_mode(TSMS_SPI_CPOL cpol, TSMS_SPI_CPHA cpha);
+
+void TSMS_SPI_delay(TSMS_SHP spi, TSMS_DELAY_TIME time);
 
 #endif //TSMS_SPI_H

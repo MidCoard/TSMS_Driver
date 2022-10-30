@@ -56,7 +56,7 @@ typedef enum {
 
 typedef void(*TSMS_DELAY_FUNCTION)();
 
-typedef uint32_t TSMS_DELAY_TIME;
+typedef int32_t TSMS_DELAY_TIME;
 
 typedef void(*TSMS_DELAY_FUNCTION)();
 typedef void(*TSMS_CUSTOM_DELAY_FUNCTION)(TSMS_DELAY_TIME);
@@ -69,7 +69,7 @@ TSMS_RESULT TSMS_IIC_init(TSMS_CLOCK_FREQUENCY frequency);
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
 
-#define TSMS_NO_DELAY_TIME 0
+#define TSMS_NO_DELAY_TIME (-1)
 
 void TSMS_NO_DELAY(TSMS_DELAY_TIME time);
 

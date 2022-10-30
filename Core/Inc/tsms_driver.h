@@ -26,6 +26,10 @@ typedef enum{
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_READER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
 
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_TRANSFORM)(TSMS_SHP, uint32_t*, uint8_t, uint8_t , uint32_t ,uint32_t);
+
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM)(TSMS_SHP, uint32_t,...);
+
 typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t , uint32_t, TSMS_BITS);
 typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t , uint32_t*, TSMS_BITS);
 
@@ -37,6 +41,8 @@ struct TSMS_DRIVER_HANDLER {
 	TSMS_RHLP regs;
 	TSMS_DRIVER_SPI_WRITER spiWrite;
 	TSMS_DRIVER_SPI_READER spiRead;
+	TSMS_DRIVER_SPI_TRANSFORM spiTransform;
+	TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM spiSequenceTransform;
 	TSMS_DRIVER_IIC_WRITER iicWrite;
 	TSMS_DRIVER_IIC_READER iicRead;
 };
