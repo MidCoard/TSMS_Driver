@@ -3,9 +3,11 @@
 #ifdef TSMS_STM32_GPIO
 
 TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
+	if (port == NULL)
+		return TSMS_NULL_GHP;
 	TSMS_GHP gpio = malloc(sizeof (struct TSMS_GPIO_HANDLER));
 	if (gpio == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_NULL_GHP;
 	gpio->port = port;
 	gpio->pin = pin;
 	return gpio;
