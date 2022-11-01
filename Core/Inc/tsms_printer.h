@@ -36,8 +36,6 @@ TSMS_RESULT TSMS_PRINTER_printCharln(TSMS_PHP printer, char);
 
 TSMS_RESULT TSMS_PRINTER_printf(TSMS_PHP printer, const char *, ...);
 
-#ifdef TSMS_PRINTER_DEFAULT
 TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer);
-#endif
 
 #endif //TSMS_PRINTER_H

@@ -34,57 +34,6 @@ TSMS_INLINE static TSMS_GPIO_STATUS TSMS_SPI_DIN(TSMS_SHP spi) {
 	return TSMS_GPIO_read(spi->din);
 }
 
-TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, uint32_t data) {
-
-
-	switch (spi->mode) {
-		case TSMS_SPI_MODE_0:
-			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-				if ((data >> pos)&1)
-					TSMS_SPI_DOUT_HIGH(spi);
-				else TSMS_SPI_DOUT_LOW(spi);
-				TSMS_SPI_SCLK_HIGH(spi);
-				TSMS_SPI_SCLK_LOW(spi);
-			}
-			break;
-		case TSMS_SPI_MODE_1:
-			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-				if ((data >> pos)&1)
-					TSMS_SPI_DOUT_HIGH(spi);
-				else TSMS_SPI_DOUT_LOW(spi);
-				TSMS_SPI_SCLK_LOW(spi);
-                TSMS_SPI_SCLK_HIGH(spi);
-			}
-			break;
-		case TSMS_SPI_MODE_2:
-			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-				if ((data >> pos)&1)
-					TSMS_SPI_DOUT_HIGH(spi);
-				else TSMS_SPI_DOUT_LOW(spi);
-                TSMS_SPI_SCLK_HIGH(spi);
-                TSMS_SPI_SCLK_LOW(spi);
-			}
-			break;
-		case TSMS_SPI_MODE_3:
-			for (uint8_t i = 0;i<bits;i++) {
-				uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-                TSMS_SPI_SCLK_LOW(spi);
-				TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-				if ((data >> pos)&1)
-					TSMS_SPI_DOUT_HIGH(spi);
-				else TSMS_SPI_DOUT_LOW(spi);
-				TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-                TSMS_SPI_SCLK_HIGH(spi);
-				TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-				TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-			}
-			break;
-	}
-}
-
 TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t bits,uint32_t * data) {
     *data = 0;
 	for (uint8_t i = 0;i<bits;i++) {
@@ -99,50 +48,21 @@ TSMS_INLINE static void TSMS_SPI_receiveCustomBit(TSMS_SHP spi,uint8_t bits,uint
 			*data |= TSMS_SPI_DIN(spi) << (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 	}
+}
 
-//	if (TSMS_SPI_MODE_CPHA(spi->mode)) {
-//
-//	}
-//    switch (spi->mode) {
-//        case TSMS_SPI_MODE_0:
-//            for (uint8_t i = 0;i<bits;i++)  {
-//                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-//                TSMS_SPI_SCLK_HIGH(spi);
-//                *data |= ((TSMS_SPI_DIN(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
-//                TSMS_SPI_SCLK_LOW(spi);
-//            }
-//            break;
-//        case TSMS_SPI_MODE_1:
-//            TSMS_SPI_SCLK_HIGH(spi);
-//            for (uint8_t i = 0;i<bits;i++)  {
-//                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-//                TSMS_SPI_SCLK_LOW(spi);
-//                *data |= ((TSMS_SPI_DIN(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
-//                TSMS_SPI_SCLK_HIGH(spi);
-//            }
-//            break;
-//        case TSMS_SPI_MODE_2:
-//            TSMS_SPI_SCLK_LOW(spi);
-//            for (uint8_t i = 0;i<bits;i++) {
-//                uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-//                TSMS_SPI_SCLK_HIGH(spi);
-//                *data |= ((TSMS_SPI_DIN(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
-//                TSMS_SPI_SCLK_LOW(spi);
-//            }
-//            break;
-//        case TSMS_SPI_MODE_3:
-//            for (uint8_t i = 0;i<bits;i++) {
-//	            TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-//	            uint8_t pos = spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i;
-//	            TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-//                TSMS_SPI_SCLK_LOW(spi);
-//	            TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-//	            *data |= ((TSMS_SPI_DIN(spi) == TSMS_GPIO_HIGH ? 1 : 0) << pos);
-//	            TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-//				TSMS_SPI_SCLK_HIGH(spi);
-//            }
-//            break;
-//    }
+TSMS_INLINE static void TSMS_SPI_transmitCustomBit(TSMS_SHP spi, uint8_t bits, uint32_t data) {
+	for (uint8_t i = 0;i<bits;i++) {
+		TSMS_GPIO_write(spi->sclk, !TSMS_SPI_MODE_CPOL(spi->mode));
+		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
+		if (!TSMS_SPI_MODE_CPHA(spi->mode))
+			TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i)) & 0x01);
+		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
+		TSMS_GPIO_write(spi->sclk, TSMS_SPI_MODE_CPOL(spi->mode));
+		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
+		if (TSMS_SPI_MODE_CPHA(spi->mode))
+			TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i)) & 0x01);
+		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
+	}
 }
 
 TSMS_INLINE static void __tsms_internal_spi_release0(TSMS_SHP spi) {
