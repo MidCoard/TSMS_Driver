@@ -2,8 +2,8 @@
 // Created by 周蜀杰 on 2022/11/1.
 //
 
-#ifndef IRLOCATE_AD7606_H
-#define IRLOCATE_AD7606_H
+#ifndef TSMS_AD7606_H
+#define TSMS_AD7606_H
 
 #include "tsms_custom.h"
 #include "tsms_spi.h"
@@ -60,4 +60,5 @@ void AD7606_setRange(struct AD7606_Handler * handler, AD7606_RANGE range);
 void AD7606_setReferenceMode(struct AD7606_Handler * handler, AD7606_REFERENCE_MODE referenceMode);
 void AD7606_setMode(struct AD7606_Handler * handler, AD7606_MODE mode);
 float * AD7606_readData(struct AD7606_Handler* handler);
-#endif //IRLOCATE_AD7606_H
+
+#endif //TSMS_AD7606_H
