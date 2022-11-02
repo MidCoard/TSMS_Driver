@@ -12,8 +12,10 @@ STM32H743IITX_RAM.ld
 TSMS.ioc
 /Core/Inc/*
 !/Core/Inc/tsms*
+!/Core/Inc/example/
 /Core/Src/*
 !/Core/Src/tsms*
+!/Core/Src/example/
 /Core/Startup/
 .idea
 
