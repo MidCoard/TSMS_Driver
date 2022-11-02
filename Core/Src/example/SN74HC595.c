@@ -2,7 +2,7 @@
 // Created by SimilarTriangles on 2022/10/24.
 //
 
-#include "74HC595.h"
+#include "SN74HC595.h"
 
 void SN74HC595_clearStorageRegister(struct SN74HC595_Handler* handler){
     TSMS_GPIO_write(TSMS_CUSTOM_getGPIO(handler->handler->custom, SN74HC595_SRCLR), TSMS_GPIO_LOW);
@@ -35,7 +35,7 @@ void SN74HC595_writeByte(struct SN74HC595_Handler* handler, uint8_t data){
     SN74HC595_latchToStorageRegister(handler);
 }
 
-void __internal_delay(TSMS_DELAY_TIME time){
+static void __internal_delay(TSMS_DELAY_TIME time){
     volatile uint32_t i = 10;
     while (i--) {
     }

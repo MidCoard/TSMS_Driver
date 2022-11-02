@@ -2,10 +2,8 @@
 // Created by SimilarTriangles on 2022/10/24.
 //
 
-#ifndef R2R_TEST_74HC595_H
-#define R2R_TEST_74HC595_H
-
-#endif //R2R_TEST_74HC595_H
+#ifndef TSMS_SN74HC595_H
+#define TSMS_SN74HC595_H
 
 #include "gpio.h"
 #include "tsms_driver.h"
@@ -50,3 +48,5 @@ void SN74HC595_clearStorageRegister(struct SN74HC595_Handler* handler);
 void SN74HC595_writeByteToShiftRegister(struct SN74HC595_Handler* handler, uint8_t data);
 void SN74HC595_latchToStorageRegister(struct SN74HC595_Handler* handler);
 void SN74HC595_writeByte(struct SN74HC595_Handler* handler, uint8_t data);
+
+#endif //TSMS_SN74HC595_H
