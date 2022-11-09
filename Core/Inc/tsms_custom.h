@@ -1,7 +1,3 @@
-//
-// Created by 周蜀杰 on 2022/10/29.
-//
-
 #ifndef TSMS_CUSTOM_H
 #define TSMS_CUSTOM_H
 

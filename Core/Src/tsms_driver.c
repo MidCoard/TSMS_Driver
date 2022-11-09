@@ -148,23 +148,6 @@ TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
 
     return reg;
 }
-// writeAt and readAt method are all written or read by MSB
-TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
-	uint32_t mask = TSMS_MASK(bits);
-	if (mask == 0)
-		return TSMS_FAIL;
-	reg->value &= ~(mask<<start);
-	reg->value |= (value & mask)<<start;
-	return TSMS_SUCCESS;
-}
-
-TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value) {
-	uint32_t mask = TSMS_MASK(bits);
-	if (mask == 0)
-		return TSMS_FAIL;
-	*value = (reg->value >> start) & mask;
-	return TSMS_SUCCESS;
-}
 
 TSMS_RESULT TSMS_REG_release(TSMS_RHP reg) {
 	free(reg);
@@ -260,6 +243,8 @@ TSMS_RHLP TSMS_REG_createList(int n,...) {
 }
 
 TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
+	for (int i = 0;i<list->size;i++)
+		TSMS_REG_release(list->regs[i]);
 	free(list->regs);
 	free(list->ids);
 	free(list->sizes);
@@ -294,13 +279,8 @@ TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t v
 	uint8_t temp;
 	if (list->types[pos] == TSMS_REGISTER_MSB)
 		temp = value;
-	else {
-		temp = 0;
-		for (uint8_t i = 0;i<list->sizes[pos];i++) {
-			temp <<= 1;
-			temp |= (value & (1<<i)) ? 1 : 0;
-		}
-	}
+	else
+		temp = TSMS_UTIL_reverseData(value, list->sizes[pos]);
 	return TSMS_REG_writeAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], temp);
 }
 
@@ -311,16 +291,10 @@ TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* v
 	TSMS_RESULT result = TSMS_REG_readAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], &val);
 	if (result != TSMS_SUCCESS)
 		return result;
-	if (list->types[pos] == TSMS_REGISTER_MSB) {
+	if (list->types[pos] == TSMS_REGISTER_MSB)
 		*value = val;
-	} else {
-		uint32_t temp = 0;
-		for (uint8_t i = 0;i<list->sizes[pos];i++) {
-			temp <<= 1;
-			temp |= (val & (1<<i)) ? 1 : 0;
-		}
-		*value = temp;
-	}
+	else
+		*value = TSMS_UTIL_reverseData(val, list->sizes[pos]);
 	return TSMS_SUCCESS;
 }
 
@@ -330,13 +304,8 @@ uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t 
 	uint8_t temp;
 	if (list->types[pos] == TSMS_REGISTER_MSB)
 		temp = value;
-	else {
-		temp = 0;
-		for (uint8_t i = 0;i<list->sizes[pos];i++) {
-			temp <<= 1;
-			temp |= (value & (1<<i)) ? 1 : 0;
-		}
-	}
+	else
+		temp = TSMS_UTIL_reverseData(value, list->sizes[pos]);
 	return TSMS_REG_tempWriteAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], temp);
 }
 
@@ -345,4 +314,22 @@ uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_
 	if (mask == 0)
 		return 0;
 	return reg->value | (value & mask)<<start;
+}
+
+// writeAt and readAt method are all written or read by MSB
+TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
+	uint32_t mask = TSMS_MASK(bits);
+	if (mask == 0)
+		return TSMS_FAIL;
+	reg->value &= ~(mask<<start);
+	reg->value |= (value & mask)<<start;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value) {
+	uint32_t mask = TSMS_MASK(bits);
+	if (mask == 0)
+		return TSMS_FAIL;
+	*value = (reg->value >> start) & mask;
+	return TSMS_SUCCESS;
 }

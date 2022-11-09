@@ -23,6 +23,8 @@ TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element);
 
 uint8_t TSMS_UTIL_reverseByte(uint8_t v);
 
+uint32_t TSMS_UTIL_reverseData(uint32_t v, uint8_t bits);
+
 TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list);
 
 #endif //TSMS_UTIL_H
