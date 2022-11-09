@@ -98,9 +98,9 @@ void ADS1115_disableComparatorLatch(struct ADS1115_Handler * handler);
 
 void ADS1115_setComparatorQueueMode(struct ADS1115_Handler * handler, ADS1115_COMPARATOR_QUEUE_MODE queue);
 
-void ADS1115_setLowThreshold(struct ADS1115_Handler * handler, uint16_t threshold);
+void ADS1115_setLowThreshold(struct ADS1115_Handler * handler, float threshold);
 
-void ADS1115_setHighThreshold(struct ADS1115_Handler * handler, uint16_t threshold);
+void ADS1115_setHighThreshold(struct ADS1115_Handler * handler, float threshold);
 
 void ADS1115_setChannel(struct ADS1115_Handler * handler, ADS1115_CHANNEL_MUX channel);
 

@@ -132,14 +132,14 @@ void ADS1115_setComparatorQueueMode(struct ADS1115_Handler *handler, ADS1115_COM
 	                      TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_CONFIG));
 }
 
-void ADS1115_setLowThreshold(struct ADS1115_Handler *handler, uint16_t threshold) {
-	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH, threshold);
-	ADS1115_writeRegister(handler, ADS1115_REG_LO_THRESH, threshold);
+void ADS1115_setLowThreshold(struct ADS1115_Handler *handler, float threshold) {
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH, (uint16_t)(threshold / handler->gain));
+	ADS1115_writeRegister(handler, ADS1115_REG_LO_THRESH, TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH));
 }
 
-void ADS1115_setHighThreshold(struct ADS1115_Handler *handler, uint16_t threshold) {
-	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH, threshold);
-	ADS1115_writeRegister(handler, ADS1115_REG_HI_THRESH, threshold);
+void ADS1115_setHighThreshold(struct ADS1115_Handler *handler, float threshold) {
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH, (uint16_t)(threshold / handler->gain));
+	ADS1115_writeRegister(handler, ADS1115_REG_HI_THRESH,  TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH));
 }
 
 void ADS1115_setChannel(struct ADS1115_Handler *handler, ADS1115_CHANNEL_MUX channel) {
