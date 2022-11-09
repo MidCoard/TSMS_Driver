@@ -13,20 +13,13 @@ static void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
 	__tsms_internal_addAndRemove(reg, 0,mask);
 }
 
-uint8_t position[32]; // notice this is globally used. If use multithreading to access the register configuration, there may be something wrong.
-
 TSMS_RHP TSMS_REG_Register(uint8_t bits) {
 	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->bits = bits;
 	reg->value = 0;
-	reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
-	memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
-	reg->sizes = malloc(sizeof (uint8_t) * 8);
-	memset(reg->sizes, 0, sizeof (uint8_t) * 8);
-	reg->starts = malloc(sizeof (uint8_t) * 8);
-	memset(reg->starts, 0, sizeof (uint8_t) * 8);
+	reg->positions = TSMS_NULL;
 	return reg;
 }
 
@@ -36,33 +29,16 @@ TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
 		return TSMS_NULL;
 	reg->bits = 8;
 	reg->value = 0;
+	reg->positions = malloc(sizeof (uint8_t) * 8);
 
-	position[0] = bit0;
-	position[1] = bit1;
-	position[2] = bit2;
-	position[3] = bit3;
-	position[4] = bit4;
-	position[5] = bit5;
-	position[6] = bit6;
-	position[7] = bit7;
-	reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
-	memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 8);
-
-	reg->sizes = malloc(sizeof (uint8_t) * 8);
-	memset(reg->sizes, 0, sizeof (uint8_t) * 8);
-
-	reg->starts = malloc(sizeof (uint8_t) * 8);
-	memset(reg->starts, 0, sizeof (uint8_t) * 8);
-
-	uint8_t previous = -1;
-	for (uint8_t i = 0;i<8;i++) {
-		uint8_t now = position[i];
-		reg->sizes[position[i]]++;
-		if (now != previous)
-			reg->starts[now] = i;
-		previous = now;
-	}
-
+	reg->positions[0] = bit0;
+	reg->positions[1] = bit1;
+	reg->positions[2] = bit2;
+	reg->positions[3] = bit3;
+	reg->positions[4] = bit4;
+	reg->positions[5] = bit5;
+	reg->positions[6] = bit6;
+	reg->positions[7] = bit7;
 	return reg;
 }
 
@@ -73,41 +49,24 @@ TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
 		return TSMS_NULL;
 	reg->bits = 16;
 	reg->value = 0;
+	reg->positions = malloc(sizeof (uint8_t) * 16);
 
-	position[0] = bit0;
-	position[1] = bit1;
-	position[2] = bit2;
-	position[3] = bit3;
-	position[4] = bit4;
-	position[5] = bit5;
-	position[6] = bit6;
-	position[7] = bit7;
-	position[8] = bit8;
-	position[9] = bit9;
-	position[10] = bit10;
-	position[11] = bit11;
-	position[12] = bit12;
-	position[13] = bit13;
-	position[14] = bit14;
-	position[15] = bit15;
-
-	reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 16);
-	memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 16);
-
-	reg->sizes = malloc(sizeof (uint8_t) * 16);
-	memset(reg->sizes, 0, sizeof (uint8_t) * 16);
-
-	reg->starts = malloc(sizeof (uint8_t) * 16);
-	memset(reg->starts, 0, sizeof (uint8_t) * 16);
-
-	uint8_t previous = -1;
-	for (uint8_t i = 0;i<16;i++) {
-		uint8_t now = position[i];
-		reg->sizes[position[i]]++;
-		if (now != previous)
-			reg->starts[now] = i;
-		previous = now;
-	}
+	reg->positions[0] = bit0;
+	reg->positions[1] = bit1;
+	reg->positions[2] = bit2;
+	reg->positions[3] = bit3;
+	reg->positions[4] = bit4;
+	reg->positions[5] = bit5;
+	reg->positions[6] = bit6;
+	reg->positions[7] = bit7;
+	reg->positions[8] = bit8;
+	reg->positions[9] = bit9;
+	reg->positions[10] = bit10;
+	reg->positions[11] = bit11;
+	reg->positions[12] = bit12;
+	reg->positions[13] = bit13;
+	reg->positions[14] = bit14;
+	reg->positions[15] = bit15;
 
 	return reg;
 }
@@ -118,50 +77,31 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
         return TSMS_NULL;
     reg->bits = 24;
 	reg->value = 0;
-
-    position[0] = bit0;
-    position[1] = bit1;
-    position[2] = bit2;
-    position[3] = bit3;
-    position[4] = bit4;
-    position[5] = bit5;
-    position[6] = bit6;
-    position[7] = bit7;
-    position[8] = bit8;
-    position[9] = bit9;
-    position[10] = bit10;
-    position[11] = bit11;
-    position[12] = bit12;
-    position[13] = bit13;
-    position[14] = bit14;
-    position[15] = bit15;
-    position[16] = bit16;
-    position[17] = bit17;
-    position[18] = bit18;
-    position[19] = bit19;
-    position[20] = bit20;
-    position[21] = bit21;
-    position[22] = bit22;
-    position[23] = bit23;
-
-    reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 24);
-    memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 24);
-
-    reg->sizes = malloc(sizeof (uint8_t) * 24);
-    memset(reg->sizes, 0, sizeof (uint8_t) * 24);
-
-    reg->starts = malloc(sizeof (uint8_t) * 24);
-    memset(reg->starts, 0, sizeof (uint8_t) * 24);
-
-    uint8_t previous = -1;
-    for (uint8_t i = 0;i<24;i++) {
-        uint8_t now = position[i];
-        reg->sizes[position[i]]++;
-        if (now != previous)
-            reg->starts[now] = i;
-        previous = now;
-    }
-
+	reg->positions = malloc(sizeof (uint8_t) * 24);
+    reg->positions[0] = bit0;
+    reg->positions[1] = bit1;
+    reg->positions[2] = bit2;
+    reg->positions[3] = bit3;
+    reg->positions[4] = bit4;
+    reg->positions[5] = bit5;
+    reg->positions[6] = bit6;
+    reg->positions[7] = bit7;
+    reg->positions[8] = bit8;
+    reg->positions[9] = bit9;
+    reg->positions[10] = bit10;
+    reg->positions[11] = bit11;
+    reg->positions[12] = bit12;
+    reg->positions[13] = bit13;
+    reg->positions[14] = bit14;
+    reg->positions[15] = bit15;
+    reg->positions[16] = bit16;
+    reg->positions[17] = bit17;
+    reg->positions[18] = bit18;
+    reg->positions[19] = bit19;
+    reg->positions[20] = bit20;
+    reg->positions[21] = bit21;
+    reg->positions[22] = bit22;
+    reg->positions[23] = bit23;
     return reg;
 }
 
@@ -171,100 +111,50 @@ TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
         return TSMS_NULL;
     reg->bits = 32;
 	reg->value = 0;
+	reg->positions = malloc(sizeof (uint8_t) * 32);
 
-    position[0] = bit0;
-    position[1] = bit1;
-    position[2] = bit2;
-    position[3] = bit3;
-    position[4] = bit4;
-    position[5] = bit5;
-    position[6] = bit6;
-    position[7] = bit7;
-    position[8] = bit8;
-    position[9] = bit9;
-    position[10] = bit10;
-    position[11] = bit11;
-    position[12] = bit12;
-    position[13] = bit13;
-    position[14] = bit14;
-    position[15] = bit15;
-    position[16] = bit16;
-    position[17] = bit17;
-    position[18] = bit18;
-    position[19] = bit19;
-    position[20] = bit20;
-    position[21] = bit21;
-    position[22] = bit22;
-    position[23] = bit23;
-    position[24] = bit24;
-    position[25] = bit25;
-    position[26] = bit26;
-    position[27] = bit27;
-    position[28] = bit28;
-    position[29] = bit29;
-    position[30] = bit30;
-    position[31] = bit31;
-
-    reg->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * 32);
-    memset(reg->types,TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * 32);
-
-    reg->sizes = malloc(sizeof (uint8_t) * 32);
-    memset(reg->sizes, 0, sizeof (uint8_t) * 32);
-
-    reg->starts = malloc(sizeof (uint8_t) * 32);
-    memset(reg->starts, 0, sizeof (uint8_t) * 32);
-
-    uint8_t previous = -1;
-    for (uint8_t i = 0;i<32;i++) {
-        uint8_t now = position[i];
-        reg->sizes[position[i]]++;
-        if (now != previous)
-            reg->starts[now] = i;
-        previous = now;
-    }
+    reg->positions[0] = bit0;
+    reg->positions[1] = bit1;
+    reg->positions[2] = bit2;
+    reg->positions[3] = bit3;
+    reg->positions[4] = bit4;
+    reg->positions[5] = bit5;
+    reg->positions[6] = bit6;
+    reg->positions[7] = bit7;
+    reg->positions[8] = bit8;
+    reg->positions[9] = bit9;
+    reg->positions[10] = bit10;
+    reg->positions[11] = bit11;
+    reg->positions[12] = bit12;
+    reg->positions[13] = bit13;
+    reg->positions[14] = bit14;
+    reg->positions[15] = bit15;
+    reg->positions[16] = bit16;
+    reg->positions[17] = bit17;
+    reg->positions[18] = bit18;
+    reg->positions[19] = bit19;
+    reg->positions[20] = bit20;
+    reg->positions[21] = bit21;
+    reg->positions[22] = bit22;
+    reg->positions[23] = bit23;
+    reg->positions[24] = bit24;
+    reg->positions[25] = bit25;
+    reg->positions[26] = bit26;
+    reg->positions[27] = bit27;
+    reg->positions[28] = bit28;
+    reg->positions[29] = bit29;
+    reg->positions[30] = bit30;
+    reg->positions[31] = bit31;
 
     return reg;
 }
-
-TSMS_RESULT TSMS_REG_write(TSMS_RHP reg, uint8_t pos, uint32_t value) {
-	if (reg->types[pos] == TSMS_REGISTER_MSB)
-		return TSMS_REG_writeAt(reg, reg->starts[pos], reg->sizes[pos] ,value);
-	else {
-		uint8_t size = reg->sizes[pos];
-		uint32_t temp = 0;
-		for (uint8_t i = 0;i<size;i++) {
-			temp |= (value & (1<<i)) ? 1 : 0;
-			temp <<= 1;
-		}
-		return TSMS_REG_writeAt(reg, reg->starts[pos],reg->sizes[pos], temp);
-	}
-}
-// writeAt and readAt method are all written or spiRead by MSB
+// writeAt and readAt method are all written or read by MSB
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
 	uint32_t mask = TSMS_MASK(bits);
 	if (mask == 0)
 		return TSMS_FAIL;
 	reg->value &= ~(mask<<start);
 	reg->value |= (value & mask)<<start;
-	return TSMS_SUCCESS;
-}
-
-TSMS_RESULT TSMS_REG_read(TSMS_RHP reg, uint8_t pos, uint32_t * value) {
-	uint32_t val = 0;
-	TSMS_RESULT result = TSMS_REG_readAt(reg, reg->starts[pos], reg->sizes[pos], &val);
-	if (result != TSMS_SUCCESS)
-		return result;
-	if (reg->types[pos] == TSMS_REGISTER_MSB)
-		*value = val;
-	else {
-		uint8_t size = reg->sizes[pos];
-		uint32_t temp = 0;
-		for (uint8_t i = 0;i<size;i++) {
-			temp |= (val & (1<<i)) ? 1 : 0;
-			temp <<= 1;
-		}
-		*value = temp;
-	}
 	return TSMS_SUCCESS;
 }
 
@@ -277,17 +167,15 @@ TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t*
 }
 
 TSMS_RESULT TSMS_REG_release(TSMS_RHP reg) {
-	free(reg->sizes);
-	free(reg->starts);
-	free(reg->types);
 	free(reg);
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_REG_configure(TSMS_RHP reg,uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type) {
-	reg->starts[pos] = left;
-	reg->sizes[pos] = right - left + 1;
-	reg->types[pos] = type;
+TSMS_RESULT TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type) {
+	list->ids[pos] = reg;
+	list->starts[pos] = left;
+	list->sizes[pos] = right - left + 1;
+	list->types[pos] = type;
 	return TSMS_SUCCESS;
 }
 
@@ -335,14 +223,48 @@ TSMS_RHLP TSMS_REG_createList(int n,...) {
 	list->regs = malloc(sizeof (TSMS_RHP) * n);
 	va_list l;
 	va_start(l,n);
-	for (int i = 0;i<n;i++)
-		list->regs[i] = va_arg(l,TSMS_RHP);
+	uint8_t mx = 0;
+	for (int i = 0;i<n;i++) {
+		list->regs[i] = va_arg(l, TSMS_RHP);
+		if (list->regs[i]->positions != TSMS_NULL)
+			for (int j = 0;j<list->regs[i]->bits;j++)
+				if (list->regs[i]->positions[j] > mx)
+					mx = list->regs[i]->positions[j];
+	}
 	va_end(l);
+	list->maxSize = mx + 1;
+	list->ids = malloc(sizeof (uint8_t) * list->maxSize);
+	memset(list->ids, 0, sizeof (uint8_t) * list->maxSize);
+	list->sizes = malloc(sizeof (uint8_t) * list->maxSize);
+	memset(list->sizes, 0, sizeof (uint8_t) * list->maxSize);
+	list->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * list->maxSize);
+	memset(list->types, TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * list->maxSize);
+	list->starts = malloc(sizeof (uint8_t) * list->maxSize);
+	memset(list->starts, 0, sizeof (uint8_t) * list->maxSize);
+	uint8_t previous = -1;
+	for (int i = 0;i<n;i++) {
+		if (list->regs[i]->positions != TSMS_NULL) {
+			for (int j = 0; j < list->regs[i]->bits; j++) {
+				uint8_t now = list->regs[i]->positions[j];
+				list->sizes[now]++;
+				if (now != previous) {
+					list->ids[now] = i;
+					list->starts[now] = j;
+				}
+				previous = now;
+			}
+			free(list->regs[i]->positions);
+		}
+	}
 	return list;
 }
 
 TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
 	free(list->regs);
+	free(list->ids);
+	free(list->sizes);
+	free(list->starts);
+	free(list->types);
 	free(list);
 	return TSMS_SUCCESS;
 }
@@ -366,61 +288,56 @@ TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t val
 	return TSMS_REG_setRegister(list->regs[pos], value);
 }
 
-TSMS_RESULT TSMS_REG_writeRegister(TSMS_RHP reg, uint8_t pos, uint32_t value) {
-	return TSMS_REG_write(reg, pos, value);
-}
-
 TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
-	TSMS_RESULT result = TSMS_FAIL;
-	for (int i = 0;i<list->size;i ++)
-		if (TSMS_REG_writeRegister(list->regs[i], pos, value) == TSMS_SUCCESS) {
-			result = TSMS_SUCCESS;
-			break;
+	if (list->maxSize <= pos || pos < 0)
+		return TSMS_FAIL;
+	uint8_t temp;
+	if (list->types[pos] == TSMS_REGISTER_MSB)
+		temp = value;
+	else {
+		temp = 0;
+		for (uint8_t i = 0;i<list->sizes[pos];i++) {
+			temp <<= 1;
+			temp |= (value & (1<<i)) ? 1 : 0;
 		}
-	return result;
+	}
+	return TSMS_REG_writeAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], temp);
 }
-
-TSMS_RESULT TSMS_REG_readRegister(TSMS_RHP reg, uint8_t pos, uint32_t* value) {
-	return TSMS_REG_read(reg, pos ,value);
-}
-
 
 TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value) {
-	TSMS_RESULT result = TSMS_FAIL;
-	for (int i = 0;i<list->size;i ++)
-		if (TSMS_REG_readRegister(list->regs[i], pos, value) == TSMS_SUCCESS) {
-			result = TSMS_SUCCESS;
-			break;
+	if (list->maxSize <= pos || pos < 0)
+		return TSMS_FAIL;
+	uint32_t val;
+	TSMS_RESULT result = TSMS_REG_readAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], &val);
+	if (result != TSMS_SUCCESS)
+		return result;
+	if (list->types[pos] == TSMS_REGISTER_MSB) {
+		*value = val;
+	} else {
+		uint32_t temp = 0;
+		for (uint8_t i = 0;i<list->sizes[pos];i++) {
+			temp <<= 1;
+			temp |= (val & (1<<i)) ? 1 : 0;
 		}
-	return result;
+		*value = temp;
+	}
+	return TSMS_SUCCESS;
 }
 
 uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
-	uint32_t ret = 0;
-	for (int i = 0;i<list->size;i++)
-		if ((ret = TSMS_REG_tempWriteRegister(list->regs[i],pos, value)) != 0)
-			return ret;
-	return ret;
-}
-
-
-uint32_t TSMS_REG_tempWriteRegister(TSMS_RHP reg, uint8_t pos, uint32_t value) {
-	return TSMS_REG_tempWrite(reg, pos, value);
-}
-
-
-uint32_t TSMS_REG_tempWrite(TSMS_RHP reg, uint8_t pos, uint32_t value) {
-	if (reg->types[pos] == TSMS_REGISTER_MSB)
-		return TSMS_REG_tempWriteAt(reg, reg->starts[pos], reg->sizes[pos] ,value);
+	if (list->maxSize <= pos || pos < 0)
+		return TSMS_FAIL;
+	uint8_t temp;
+	if (list->types[pos] == TSMS_REGISTER_MSB)
+		temp = value;
 	else {
-		uint8_t size = reg->sizes[pos];
-		uint32_t temp = 0;
-		for (uint8_t i = 0;i<size;i++) {
-			temp |= (value & (1<<i)) ? 1 : 0;
+		temp = 0;
+		for (uint8_t i = 0;i<list->sizes[pos];i++) {
 			temp <<= 1;
+			temp |= (value & (1<<i)) ? 1 : 0;
 		}
-		return TSMS_REG_tempWriteAt(reg, reg->starts[pos],reg->sizes[pos], temp);
 	}
+	return TSMS_REG_tempWriteAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], temp);
 }
 
 uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {

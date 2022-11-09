@@ -18,3 +18,4 @@ This library contains following examples:
 - SN74HC595 8-bit shift register
 - AD7606 16-bit ADC
 - DAC8831 16-bit DAC
+- ADS1115 16-bit ADC

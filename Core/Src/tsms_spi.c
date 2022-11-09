@@ -189,112 +189,13 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 
 #endif
 
-TSMS_RESULT TSMS_SPI_transmitBytes(TSMS_SHP spi, uint8_t * data, uint32_t length) {
-	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-		if (HAL_SPI_Transmit(spi->hardwareHandler, data, length, 0xffffffff) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
-#else
-		return TSMS_TIMEOUT;
-#endif
-	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_HIGH(spi);
-		else TSMS_SPI_CS_LOW(spi);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0;i < length;i++)
-			TSMS_SPI_transmitCustomBit(spi, 8, data[i]);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_LOW(spi);
-		else TSMS_SPI_CS_HIGH(spi);
-		return TSMS_SUCCESS;
-	}
-}
-
-TSMS_RESULT TSMS_SPI_transmitHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t length) {
-	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-#warning transmitting 16 bits data is not tested!
-		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff ) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
-#else
-		return TSMS_TIMEOUT;
-#endif
-	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_HIGH(spi);
-		else TSMS_SPI_CS_LOW(spi);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0;i < length;i++)
-			TSMS_SPI_transmitCustomBit(spi, 16, data[i]);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_LOW(spi);
-		else TSMS_SPI_CS_HIGH(spi);
-		return TSMS_SUCCESS;
-	}
-}
-
-TSMS_RESULT TSMS_SPI_transmitWords(TSMS_SHP spi, uint32_t *data, uint32_t length) {
-	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-#warning transmitting 32 bits data is not tested!
-		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
-#else
-		return TSMS_TIMEOUT;
-#endif
-	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_HIGH(spi);
-		else TSMS_SPI_CS_LOW(spi);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0;i < length;i++)
-			TSMS_SPI_transmitCustomBit(spi, 32, data[i]);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_LOW(spi);
-		else TSMS_SPI_CS_HIGH(spi);
-		return TSMS_SUCCESS;
-	}
-}
-
-TSMS_RESULT TSMS_SPI_transmit24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length) {
-	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-#warning transmitting 24 bits data is not tested!
-		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
-#else
-		return TSMS_TIMEOUT;
-#endif
-	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_HIGH(spi);
-		else TSMS_SPI_CS_LOW(spi);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0;i < length;i++)
-			TSMS_SPI_transmitCustomBit(spi,24 , data[i]);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_LOW(spi);
-		else TSMS_SPI_CS_HIGH(spi);
-		return TSMS_SUCCESS;
-	}
-}
 
 TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length) {
 	if (spi->isHardware) {
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-#warning transmitting 24 bits data is not tested!
-		if (HAL_SPI_Transmit(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
+
+		// todo ????????
+		return TSMS_ERROR;
 #else
 		return TSMS_TIMEOUT;
 #endif
@@ -313,108 +214,11 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 	}
 }
 
-TSMS_RESULT TSMS_SPI_receiveBytes(TSMS_SHP spi, uint8_t *data, uint32_t length) {
-	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-		if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-			return TSMS_SUCCESS;
-		else return TSMS_ERROR;
-#else
-		return TSMS_TIMEOUT;
-#endif
-	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_HIGH(spi);
-		else TSMS_SPI_CS_LOW(spi);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0;i < length;i++)
-			TSMS_SPI_receiveCustomBit(spi, 8, data + i);
-		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
-			TSMS_SPI_CS_LOW(spi);
-		else TSMS_SPI_CS_HIGH(spi);
-		return TSMS_SUCCESS;
-	}
-}
-
-TSMS_RESULT TSMS_SPI_receiveHalfWords(TSMS_SHP spi, uint16_t *data, uint32_t length) {
-    if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-        if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-            return TSMS_SUCCESS;
-        else return TSMS_ERROR;
-#else
-        return TSMS_TIMEOUT;
-#endif
-    } else {
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_HIGH(spi);
-        else TSMS_SPI_CS_LOW(spi);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        for (uint32_t i = 0;i < length;i++)
-            TSMS_SPI_receiveCustomBit(spi, 16, data + i);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_LOW(spi);
-        else TSMS_SPI_CS_HIGH(spi);
-        return TSMS_SUCCESS;
-    }
-}
-
-TSMS_RESULT TSMS_SPI_receiveWords(TSMS_SHP spi, uint32_t *data, uint32_t length) {
-    if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-        if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-            return TSMS_SUCCESS;
-        else return TSMS_ERROR;
-#else
-        return TSMS_TIMEOUT;
-#endif
-    } else {
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_HIGH(spi);
-        else TSMS_SPI_CS_LOW(spi);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        for (uint32_t i = 0;i < length;i++)
-            TSMS_SPI_receiveCustomBit(spi, 32, data + i);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_LOW(spi);
-        else TSMS_SPI_CS_HIGH(spi);
-        return TSMS_SUCCESS;
-    }
-}
-
-TSMS_RESULT TSMS_SPI_receive24Bits(TSMS_SHP spi, uint32_t *data, uint32_t length) {
-    if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-        if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-            return TSMS_SUCCESS;
-        else return TSMS_ERROR;
-#else
-        return TSMS_TIMEOUT;
-#endif
-    } else {
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_HIGH(spi);
-        else TSMS_SPI_CS_LOW(spi);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        for (uint32_t i = 0;i < length;i++)
-            TSMS_SPI_receiveCustomBit(spi, 24, data + i);
-	    TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-        if (spi->csValid == TSMS_GPIO_HIGH)
-            TSMS_SPI_CS_LOW(spi);
-        else TSMS_SPI_CS_HIGH(spi);
-        return TSMS_SUCCESS;
-    }
-}
-
 TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length) {
     if (spi->isHardware) {
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
-        if (HAL_SPI_Receive(spi->hardwareHandler,data,length,0xffffffff) == HAL_OK)
-            return TSMS_SUCCESS;
-        else return TSMS_ERROR;
+	    // todo ????????
+		return TSMS_ERROR;
 #else
         return TSMS_TIMEOUT;
 #endif

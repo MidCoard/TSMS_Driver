@@ -1,4 +1,4 @@
-#include "dac8831.h"
+#include "DAC8831.h"
 
 static void DAC8831_writeData(struct DAC8831_Handler * handler,uint16_t data) {
 	handler->handler->spiWrite(handler->handler->spi, &data, 16, 1 );
