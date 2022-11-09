@@ -19,3 +19,8 @@ This library contains following examples:
 - AD7606 16-bit ADC
 - DAC8831 16-bit DAC
 - ADS1115 16-bit ADC
+
+
+
+## License
+This library is licensed under the AGPL-3.0 license. See [LICENSE](LICENSE) for details.

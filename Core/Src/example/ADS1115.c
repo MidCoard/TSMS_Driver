@@ -1,8 +1,4 @@
-//
-// Created by 周蜀杰 on 2022/11/9.
-//
-
-#include "ads1115.h"
+#include "ADS1115.h"
 
 static uint8_t ADS1115_BUFFER[3];
 

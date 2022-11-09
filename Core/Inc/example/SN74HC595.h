@@ -1,7 +1,3 @@
-//
-// Created by SimilarTriangles on 2022/10/24.
-//
-
 #ifndef TSMS_SN74HC595_H
 #define TSMS_SN74HC595_H
 

@@ -1,6 +1,3 @@
-//
-// Created by 周蜀杰 on 2022/10/29.
-//
 #include "tsms_custom.h"
 
 TSMS_INLINE void __tsms_internal_custom_delay() {

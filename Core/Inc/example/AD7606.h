@@ -1,7 +1,3 @@
-//
-// Created by 周蜀杰 on 2022/11/1.
-//
-
 #ifndef TSMS_AD7606_H
 #define TSMS_AD7606_H
 

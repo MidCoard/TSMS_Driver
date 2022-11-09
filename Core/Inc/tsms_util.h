@@ -13,8 +13,6 @@ struct TSMS_UTIL_LIST {
 typedef struct TSMS_UTIL_LIST* TSMS_UTIL_LIST_POINTER;
 typedef TSMS_UTIL_LIST_POINTER TSMS_ULP;
 
-uint32_t * TSMS_UTIL_gen32BitPointer(uint32_t v);
-
 TSMS_ULP TSMS_UTIL_createList(int initSize);
 
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element);

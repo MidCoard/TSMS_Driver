@@ -1,7 +1,3 @@
-//
-// Created by SimilarTriangles on 2022/10/24.
-//
-
 #include "SN74HC595.h"
 
 void SN74HC595_clearStorageRegister(struct SN74HC595_Handler* handler){

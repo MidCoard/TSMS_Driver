@@ -1,6 +1,3 @@
-//
-// Created by 周蜀杰 on 2022/11/1.
-//
 #include "AD7606.h"
 
 static void AD7606_busyInterrupt(void * handler, TSMS_GHP gpio) {

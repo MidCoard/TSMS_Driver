@@ -1,10 +1,5 @@
 #include "tsms_util.h"
 
-uint32_t * TSMS_UTIL_gen32BitPointer(uint32_t v) {
-	uint32_t t = v;
-	return &t;
-}
-
 TSMS_ULP TSMS_UTIL_createList(int initSize) {
 	TSMS_ULP list = malloc(sizeof(struct TSMS_UTIL_LIST));
 	if (list == TSMS_NULL)
@@ -49,7 +44,6 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
 TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element) {
 	for (uint32_t i = 0; i < list->length; i++)
 		if (list->list[i] == element)
-			// todo opt it should remove now but call the removeList function
 			return TSMS_UTIL_removeList(list, i);
 	return TSMS_FAIL;
 }
