@@ -5,7 +5,7 @@ TSMS_INLINE static void __tsms_iic_delay() {
 	volatile int v;
 	int i;
 
-	for (i = 0; i < 100; ++i) {
+	for (i = 0; i < 3; ++i) {
 		v;
 	}
 }
@@ -40,15 +40,18 @@ TSMS_INLINE static void __tsms_internal_iic_release1(TSMS_IHP iic) {
 }
 
 TSMS_INLINE uint8_t TSMS_IIC_readBit(TSMS_IHP handler) {
+	handler->delay();
+	handler->delay();
 	TSMS_IIC_SCL_HIGH(handler);
+	handler->delay();
 	TSMS_GPIO_STATUS status = TSMS_GPIO_read(handler->sda);
 	handler->delay();
 	TSMS_IIC_SCL_LOW(handler);
-	handler->delay();
 	return status;
 }
 
 TSMS_INLINE void TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
+	handler->delay();
 	if (bit)
 		TSMS_IIC_SDA_HIGH(handler);
 	else
@@ -56,8 +59,8 @@ TSMS_INLINE void TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 	handler->delay();
 	TSMS_IIC_SCL_HIGH(handler);
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
 	handler->delay();
+	TSMS_IIC_SCL_LOW(handler);
 }
 
 #if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
@@ -113,8 +116,6 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 		return TSMS_NULL;
 	iic->sda = sda;
 	iic->scl = scl;
-	TSMS_GPIO_setMode(iic->sda, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
-	TSMS_GPIO_setMode(iic->scl, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
 	TSMS_IIC_SDA_HIGH(iic);
 	TSMS_IIC_SCL_HIGH(iic);
 	iic->isHardware = false;
@@ -128,8 +129,6 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 #endif
 
 
-
-
 TSMS_RESULT TSMS_IIC_release(TSMS_IHP iic) {
 	if (iic == TSMS_NULL)
 		return TSMS_ERROR;
@@ -139,11 +138,19 @@ TSMS_RESULT TSMS_IIC_release(TSMS_IHP iic) {
 
 uint8_t TSMS_IIC_read(TSMS_IHP handler, bool nack) {
 	uint8_t v = 0;
-	TSMS_GPIO_setMode(handler->sda, TSMS_GPIO_INPUT, TSMS_GPIO_PULL_UP);
 	for (int i = 0; i < 8; i++)
 		v = (v << 1u) | TSMS_IIC_readBit(handler);
-	TSMS_GPIO_setMode(handler->sda, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
-	TSMS_IIC_writeBit(handler,nack);
+	handler->delay();
+	if (nack)
+		TSMS_IIC_SDA_HIGH(handler);
+	else
+		TSMS_IIC_SDA_LOW(handler);
+	handler->delay();
+	TSMS_IIC_SCL_HIGH(handler);
+	handler->delay();
+	handler->delay();
+	TSMS_IIC_SCL_LOW(handler);
+	TSMS_IIC_SDA_HIGH(handler);
 	return v;
 }
 
@@ -180,22 +187,17 @@ TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler,uint8_t v) {
 }
 
 bool TSMS_IIC_wait(TSMS_IHP handler) {
-	uint16_t time = 0;
-	TSMS_IIC_SDA_HIGH(handler);
-	TSMS_GPIO_setMode(handler->sda, TSMS_GPIO_INPUT, TSMS_GPIO_PULL_UP);
+	handler->delay();
 	handler->delay();
 	TSMS_IIC_SCL_HIGH(handler);
-	while (TSMS_GPIO_read(handler->sda)) {
-		time++;
-		if (time > TSMS_IIC_TIMEOUT) {
-			TSMS_IIC_SCL_LOW(handler);
-			TSMS_GPIO_setMode(handler->sda, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
-			TSMS_IIC_stop(handler);
-			return false;
-		}
+	handler->delay();
+	if (TSMS_GPIO_read(handler->sda)) {
+		TSMS_IIC_SCL_LOW(handler);
+		TSMS_IIC_stop(handler);
+		return false;
 	}
+	handler->delay();
 	TSMS_IIC_SCL_LOW(handler);
-	TSMS_GPIO_setMode(handler->sda, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
 	return true;
 }
 
