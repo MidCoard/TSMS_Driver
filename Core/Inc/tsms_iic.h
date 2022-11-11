@@ -3,8 +3,6 @@
 
 #include "tsms_gpio.h"
 
-#define TSMS_IIC_TIMEOUT 250
-
 #define TSMS_IIC_WRITE 0
 #define TSMS_IIC_READ 1
 

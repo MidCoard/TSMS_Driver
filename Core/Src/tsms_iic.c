@@ -187,11 +187,13 @@ TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler,uint8_t v) {
 }
 
 bool TSMS_IIC_wait(TSMS_IHP handler) {
+	TSMS_IIC_SDA_HIGH(handler);
 	handler->delay();
 	handler->delay();
 	TSMS_IIC_SCL_HIGH(handler);
 	handler->delay();
 	if (TSMS_GPIO_read(handler->sda)) {
+		handler->delay();
 		TSMS_IIC_SCL_LOW(handler);
 		TSMS_IIC_stop(handler);
 		return false;
