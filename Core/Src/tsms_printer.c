@@ -72,9 +72,12 @@ TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
 	return TSMS_SUCCESS;
 }
 
-int __io_putchar(int ch) {
+void print(const char * str, ...) {
 	if (defaultPrinter == TSMS_NULL)
-		return -1;
-	TSMS_PRINTER_printChar(defaultPrinter, ch);
-	return 1;
+		return;
+	va_list p;
+	va_start(p, str);
+	vsprintf(stringBuffer, str, p);
+	va_end(p);
+	TSMS_PRINTER_print(defaultPrinter, stringBuffer);
 }

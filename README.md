@@ -19,6 +19,7 @@ This library contains following examples:
 - AD7606 16-bit ADC
 - DAC8831 16-bit DAC
 - ADS1115 16-bit ADC
+- AD7190 24-bit ADC
 
 
 
