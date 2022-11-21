@@ -46,6 +46,12 @@
 #define TSMS_STM32_GPIO
 #endif
 
+#if defined(USE_HAL_DRIVER) && defined(STM32G070xx)
+#define TSMS_STM32
+#define TSMS_STM32_GPIO
+#endif
+
+
 #ifdef TSMS_STM32
 
 #include "main.h" // for stm32 hal driver, this can directly access the whole stm32 hardware interface

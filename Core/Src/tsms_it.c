@@ -1,30 +1,29 @@
 #include "tsms_it.h"
-#include "tsms_util.h"
 
-struct TSMS_IT_GPIO {
-	TSMS_GHP gpio;
-	TSMS_IT_GPIO_TYPE type;
-	TSMS_IT_GPIO_CALLBACK callback;
-	void* handler;
-};
-
-typedef struct TSMS_IT_GPIO * TSMS_IT_GPIO_POINTER;
-typedef TSMS_IT_GPIO_POINTER TSMS_IGP;
-
-TSMS_ULP list = TSMS_NULL;
+TSMS_ULP gpioList = TSMS_NULL;
+TSMS_ULP printerList = TSMS_NULL;
 
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
-	list = TSMS_UTIL_createList(10);
+	gpioList = TSMS_UTIL_createList(10);
+	printerList = TSMS_UTIL_createList(10);
 	return TSMS_SUCCESS;
 }
 
 #ifdef TSMS_STM32
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	for (int i = 0;i<list->length;i++) {
-		TSMS_IGP gpio = list->list[i];
+	for (int i = 0; i < gpioList->length; i++) {
+		TSMS_IGP gpio = gpioList->list[i];
 		if (gpio->gpio->pin == GPIO_Pin)
 			gpio->callback(gpio->handler, gpio->gpio);
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	for (int i = 0; i < printerList->length; i++) {
+		TSMS_IPP printer = printerList->list[i];
+		if (printer->printer->handler == huart)
+			printer->callback(printer->handler, printer->printer);
 	}
 }
 
@@ -38,6 +37,17 @@ TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_
 	igp->type = type;
 	igp->callback = callback;
 	igp->handler = handler;
-	TSMS_UTIL_addList(list, igp);
+	TSMS_UTIL_addList(gpioList, igp);
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, void* handler) {
+	TSMS_IPP ipp = malloc(sizeof(struct TSMS_IT_PRINTER));
+	if (ipp == TSMS_NULL)
+		return TSMS_ERROR;
+	ipp->printer = php;
+	ipp->callback = callback;
+	ipp->handler = handler;
+	TSMS_UTIL_addList(printerList, ipp);
 	return TSMS_SUCCESS;
 }

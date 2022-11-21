@@ -15,7 +15,24 @@ TSMS_ULP TSMS_UTIL_createList(int initSize) {
 	return list;
 }
 
+TSMS_UCLP TSMS_UTIL_createCharList(int initSize) {
+	TSMS_UCLP list = malloc(sizeof(struct TSMS_UTIL_CHAR_LIST));
+	if (list == TSMS_NULL)
+		return TSMS_NULL;
+	list->list = malloc(initSize * sizeof(char));
+	if (list->list == TSMS_NULL) {
+		free(list);
+		return TSMS_NULL;
+	}
+	list->actualLength = initSize;
+	list->length = 0;
+	list->initLength = initSize;
+	return list;
+}
+
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	if(list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(void*));
@@ -26,7 +43,22 @@ TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_UTIL_addCharList(TSMS_UCLP list, char element) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if(list->actualLength <= list->length) {
+		list->actualLength *= 2;
+		list->list = realloc(list->list, list->actualLength * sizeof(char));
+		if (list->list == TSMS_NULL)
+			return TSMS_ERROR;
+	}
+	list->list[list->length++] = element;
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	if (index >= list->length)
 		return TSMS_ERROR;
 	for (uint32_t i = index; i < list->length - 1; i++)
@@ -42,6 +74,8 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
 }
 
 TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	for (uint32_t i = 0; i < list->length; i++)
 		if (list->list[i] == element)
 			return TSMS_UTIL_removeList(list, i);
@@ -66,4 +100,35 @@ uint32_t TSMS_UTIL_reverseData(uint32_t v, uint8_t bits) {
 		v >>= 1;
 	}
 	return t;
+}
+
+TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	list->length = 0;
+	return TSMS_SUCCESS;
+}
+
+bool TSMS_UTIL_startsWith(const char* str, const char* prefix) {
+	if (str == TSMS_NULL || prefix == TSMS_NULL)
+		return false;
+	uint32_t i = 0;
+	while (prefix[i] != '\0') {
+		if (str[i] != prefix[i])
+			return false;
+		i++;
+	}
+	return true;
+}
+
+TSMS_RESULT TSMS_UTIL_getString(TSMS_UCLP list, pString str) {
+	free(str->cString);
+	str->cString = malloc(list->length + 1);
+	if (str->cString == TSMS_NULL)
+		return TSMS_FAIL;
+	for (uint32_t i = 0; i < list->length; i++)
+		str->cString[i] = list->list[i];
+	str->cString[list->length] = '\0';
+	str->length = list->length;
+	return TSMS_SUCCESS;
 }
