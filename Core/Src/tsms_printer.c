@@ -9,7 +9,7 @@ TSMS_PHP defaultPrinter = TSMS_NULL;
 static void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 	if (php->buffer != 0) {
 		if (php->buffer == '\n') {
-			TSMS_UTIL_getString(php->str, php->strBuffer);
+			TSMS_STRING_getString(php->str, php->strBuffer);
 			TSMS_UTIL_clearCharList(php->str);
 			if (php->callback != TSMS_NULL)
 				php->callback(php->callbackData, php);

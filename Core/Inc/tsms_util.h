@@ -2,7 +2,6 @@
 #define TSMS_UTIL_H
 
 #include "tsms.h"
-#include "tsms_string.h"
 
 struct TSMS_UTIL_LIST {
 	void** list;
@@ -45,7 +44,5 @@ TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list);
 TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list);
 
 bool TSMS_UTIL_startsWith(const char* str, const char* prefix);
-
-TSMS_RESULT TSMS_UTIL_getString(TSMS_UCLP list, pString buffer);
 
 #endif //TSMS_UTIL_H

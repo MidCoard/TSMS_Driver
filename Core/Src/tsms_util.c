@@ -126,15 +126,3 @@ bool TSMS_UTIL_startsWith(const char* str, const char* prefix) {
 	}
 	return true;
 }
-
-TSMS_RESULT TSMS_UTIL_getString(TSMS_UCLP list, pString str) {
-	free(str->cString);
-	str->cString = malloc(list->length + 1);
-	if (str->cString == TSMS_NULL)
-		return TSMS_FAIL;
-	for (uint32_t i = 0; i < list->length; i++)
-		str->cString[i] = list->list[i];
-	str->cString[list->length] = '\0';
-	str->length = list->length;
-	return TSMS_SUCCESS;
-}

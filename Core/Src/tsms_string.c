@@ -82,3 +82,18 @@ TSMS_ULP TSMS_STRING_split(pString str, char spilt) {
 float TSMS_STRING_toFloat(pString str) {
 	return atof(str->cString);
 }
+
+
+TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString str) {
+	if (str->staticString)
+		return TSMS_ERROR;
+	free(str->cString);
+	str->cString = malloc(list->length + 1);
+	if (str->cString == TSMS_NULL)
+		return TSMS_FAIL;
+	for (uint32_t i = 0; i < list->length; i++)
+		str->cString[i] = list->list[i];
+	str->cString[list->length] = '\0';
+	str->length = list->length;
+	return TSMS_SUCCESS;
+}
