@@ -23,8 +23,62 @@ pString TSMS_STRING_create() {
 	pString str = malloc(sizeof(tString));
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
+	str->staticString = false;
 	str->cString = TSMS_NULL;
 	str->length = 0;
 	return str;
 }
 
+pString TSMS_STRING_static(const char* cString) {
+	pString str = malloc(sizeof(tString));
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	str->staticString = true;
+	str->cString = cString;
+	str->length = strlen(cString);
+	return str;
+}
+
+TSMS_RESULT TSMS_STRING_release(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_SUCCESS;
+	if (!str->staticString)
+		free(str->cString);
+	free(str);
+	return TSMS_SUCCESS;
+}
+
+pString TSMS_STRING_subString(pString str, int start, int end) {
+	if (start < 0 || end < 0 || start > end || end > str->length)
+		return TSMS_NULL;
+	pString sub = TSMS_STRING_create();
+	if (sub == TSMS_NULL)
+		return TSMS_NULL;
+	sub->cString = malloc(end - start + 1);
+	if (sub->cString == TSMS_NULL) {
+		TSMS_STRING_release(sub);
+		return TSMS_NULL;
+	}
+	for (int i = start; i < end; i++)
+		sub->cString[i - start] = str->cString[i];
+	sub->cString[end - start] = '\0';
+	sub->length = end - start;
+	return sub;
+}
+
+TSMS_ULP TSMS_STRING_split(pString str, char spilt) {
+	TSMS_ULP ulp = TSMS_UTIL_createList(10);
+	if (ulp == TSMS_NULL)
+		return TSMS_NULL;
+	int pos = 0;
+	for (int i = 0; i < str->length; i++)
+		if (str->cString[i] == spilt) {
+			TSMS_UTIL_addList(ulp, TSMS_STRING_subString(str, pos, i));
+			pos = i + 1;
+		}
+	return ulp;
+}
+
+float TSMS_STRING_toFloat(pString str) {
+	return atof(str->cString);
+}

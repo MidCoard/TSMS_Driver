@@ -51,6 +51,11 @@
 #define TSMS_STM32_GPIO
 #endif
 
+#if defined(USE_HAL_DRIVER) && defined(STM32F722xx)
+#define TSMS_STM32
+#define TSMS_STM32_GPIO
+#endif
+
 
 #ifdef TSMS_STM32
 

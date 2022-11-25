@@ -7,15 +7,16 @@ TSMS_PHP defaultPrinter = TSMS_NULL;
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
 
 static void __tsms_internal_callback(void * handler, TSMS_PHP php) {
-	if (php->buffer == '\n') {
-		TSMS_UTIL_getString(php->str, php->strBuffer);
-		TSMS_UTIL_clearCharList(php->str);
-		if (php->callback != TSMS_NULL)
-			php->callback(php->callbackData, php);
-		else
-			php->hasData = true;
+	if (php->buffer != 0) {
+		if (php->buffer == '\n') {
+			TSMS_UTIL_getString(php->str, php->strBuffer);
+			TSMS_UTIL_clearCharList(php->str);
+			if (php->callback != TSMS_NULL)
+				php->callback(php->callbackData, php);
+			else
+				php->hasData = true;
+		} else TSMS_UTIL_addCharList(php->str, php->buffer);
 	}
-	else TSMS_UTIL_addCharList(php->str, php->buffer);
 	HAL_UART_Receive_IT(php->handler,  &php->buffer, 1);
 }
 
@@ -48,7 +49,7 @@ pString TSMS_PRINTER_getBlocking(TSMS_PHP printer) {
 
 TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *str) {
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
-	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str), 10000);
+	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str),1000);
 	return status == HAL_OK ? TSMS_SUCCESS : TSMS_ERROR;
 #else
 	return TSMS_TIMEOUT;

@@ -88,6 +88,12 @@ TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_UTIL_releaseCharList(TSMS_UCLP list) {
+	free(list->list);
+	free(list);
+	return TSMS_SUCCESS;
+}
+
 uint8_t TSMS_UTIL_reverseByte(uint8_t v) {
 	return TSMS_UTIL_reverseData(v, 8);
 }
