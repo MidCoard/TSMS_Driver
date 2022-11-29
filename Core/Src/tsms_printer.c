@@ -9,7 +9,11 @@ TSMS_PHP defaultPrinter = TSMS_NULL;
 static void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 	if (php->buffer != 0) {
 		if (php->buffer == '\n') {
-			TSMS_STRING_getString(php->str, php->strBuffer);
+			if (php->customBuffer != TSMS_NULL)
+				TSMS_STRING_getString(php->str, php->customBuffer);
+			else
+				TSMS_STRING_getString(php->str, php->strBuffer);
+			php->customBuffer = TSMS_NULL;
 			TSMS_UTIL_clearCharList(php->str);
 			if (php->callback != TSMS_NULL)
 				php->callback(php->callbackData, php);
@@ -27,6 +31,7 @@ TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler) {
 	printer->str = TSMS_UTIL_createCharList(1024);
 	printer->callback = TSMS_NULL;
 	printer->strBuffer = TSMS_STRING_create();
+	printer->customBuffer = TSMS_NULL;
 	TSMS_IT_addPrinter(printer, __tsms_internal_callback, TSMS_NULL);
 	HAL_UART_Receive_IT(printer->handler,  &printer->buffer, 1);
 	return printer;
@@ -45,6 +50,11 @@ pString TSMS_PRINTER_get(TSMS_PHP printer) {
 pString TSMS_PRINTER_getBlocking(TSMS_PHP printer) {
 	while (!printer->hasData);
 	return TSMS_PRINTER_get(printer);
+}
+
+pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer) {
+	printer->customBuffer = customBuffer;
+	return TSMS_PRINTER_getBlocking(printer);
 }
 
 TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *str) {

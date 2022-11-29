@@ -20,6 +20,7 @@ struct TSMS_PRINTER_HANDLER {
 	TSMS_PRINTER_CALLBACK callback;
 	void *callbackData;
 	pString strBuffer;
+	pString customBuffer;
 };
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
@@ -35,6 +36,8 @@ TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, 
 pString TSMS_PRINTER_get(TSMS_PHP printer);
 
 pString TSMS_PRINTER_getBlocking(TSMS_PHP printer);
+
+pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer);
 
 TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *);
 
