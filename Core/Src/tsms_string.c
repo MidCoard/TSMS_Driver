@@ -76,6 +76,8 @@ TSMS_ULP TSMS_STRING_split(pString str, char spilt) {
 			TSMS_UTIL_addList(ulp, TSMS_STRING_subString(str, pos, i));
 			pos = i + 1;
 		}
+	if (pos < str->length)
+		TSMS_UTIL_addList(ulp, TSMS_STRING_subString(str, pos, str->length));
 	return ulp;
 }
 
