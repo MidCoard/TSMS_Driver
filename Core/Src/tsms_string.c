@@ -85,6 +85,10 @@ float TSMS_STRING_toFloat(pString str) {
 	return atof(str->cString);
 }
 
+int TSMS_STRING_toInt(pString str) {
+	return atoi(str->cString);
+}
+
 
 TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString str) {
 	if (str->staticString)

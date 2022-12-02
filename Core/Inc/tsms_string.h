@@ -29,6 +29,8 @@ TSMS_ULP TSMS_STRING_split(pString str, char spilt);
 
 float TSMS_STRING_toFloat(pString str);
 
+int TSMS_STRING_toInt(pString str);
+
 TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString buffer);
 
 #endif //TSMS_STRING_H
