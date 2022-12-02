@@ -103,3 +103,24 @@ TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString str) {
 	str->length = list->length;
 	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT TSMS_STRING_copy(pString str, pString buffer) {
+	if (buffer->staticString)
+		return TSMS_ERROR;
+	free(buffer->cString);
+	buffer->cString = malloc(str->length + 1);
+	if (buffer->cString == TSMS_NULL)
+		return TSMS_FAIL;
+	for (uint32_t i = 0; i < str->length; i++)
+		buffer->cString[i] = str->cString[i];
+	buffer->cString[str->length] = '\0';
+	buffer->length = str->length;
+	return TSMS_SUCCESS;
+}
+
+uint32_t TSMS_STRING_indexOf(pString str, char c) {
+	for (uint32_t i = 0; i < str->length; i++)
+		if (str->cString[i] == c)
+			return i;
+	return -1;
+}

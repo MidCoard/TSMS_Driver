@@ -33,4 +33,8 @@ int TSMS_STRING_toInt(pString str);
 
 TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString buffer);
 
+TSMS_RESULT TSMS_STRING_copy(pString str, pString buffer);
+
+uint32_t TSMS_STRING_indexOf(pString str, char c);
+
 #endif //TSMS_STRING_H
