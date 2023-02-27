@@ -114,18 +114,3 @@ TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list) {
 	list->length = 0;
 	return TSMS_SUCCESS;
 }
-
-void TSMS_UTIL_itoa(int v, char* str) {
-	if (v == 0) {
-		str[0] = '0';
-		str[1] = '\0';
-		return;
-	}
-	int i = 0;
-	while (v != 0) {
-		str[i++] = (v % 10) + '0';
-		v /= 10;
-	}
-	str[i] = '\0';
-	TSMS_UTIL_reverseString(str);
-}

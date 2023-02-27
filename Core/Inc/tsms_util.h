@@ -29,6 +29,7 @@ TSMS_ULP TSMS_UTIL_createList(int initSize);
 TSMS_UCLP TSMS_UTIL_createCharList(int initSize);
 
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element);
+
 TSMS_RESULT TSMS_UTIL_addCharList(TSMS_UCLP list, char element);
 
 TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index);
@@ -44,8 +45,5 @@ TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list);
 TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list);
 
 TSMS_RESULT TSMS_UTIL_releaseCharList(TSMS_UCLP list);
-
-void TSMS_UTIL_itoa(int v, char* str);
-void TSMS_UTIL_reverseString(char* str);
 
 #endif //TSMS_UTIL_H

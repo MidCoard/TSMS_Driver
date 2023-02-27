@@ -72,7 +72,7 @@ TSMS_RESULT TSMS_PRINTER_println(TSMS_PHP printer, char *str) {
 }
 
 TSMS_RESULT TSMS_PRINTER_printInt(TSMS_PHP printer, int v) {
-	TSMS_UTIL_itoa(v, printer->stringBuffer);
+	sprintf(printer->stringBuffer, "%d", v);
 	return TSMS_PRINTER_print(printer, printer->stringBuffer);
 }
 
