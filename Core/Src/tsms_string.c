@@ -28,6 +28,21 @@ pString TSMS_STRING_create() {
 	return str;
 }
 
+pString TSMS_STRING_createWith(const char* cString) {
+	pString str = TSMS_STRING_create();
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	str->cString = malloc(strlen(cString) + 1);
+	if (str->cString == TSMS_NULL) {
+		TSMS_STRING_release(str);
+		return TSMS_NULL;
+	}
+	strcpy(str->cString, cString);
+	str->length = strlen(cString);
+	str->staticString = false;
+	return str;
+}
+
 pString TSMS_STRING_static(const char* cString) {
 	pString str = malloc(sizeof(tString));
 	if (str == TSMS_NULL)

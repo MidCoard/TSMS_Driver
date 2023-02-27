@@ -1,4 +1,5 @@
 #include "tsms_printer.h"
+
 TSMS_PHP defaultPrinter = TSMS_NULL;
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)

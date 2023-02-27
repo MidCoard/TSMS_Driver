@@ -1,7 +1,6 @@
 #ifndef TSMS_DRIVER_H
 #define TSMS_DRIVER_H
 
-
 #include "tsms_spi.h"
 #include "tsms_iic.h"
 #include "tsms_custom.h"

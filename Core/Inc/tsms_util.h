@@ -45,8 +45,6 @@ TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list);
 
 TSMS_RESULT TSMS_UTIL_releaseCharList(TSMS_UCLP list);
 
-bool TSMS_UTIL_startsWith(const char* str, const char* prefix);
-
 void TSMS_UTIL_itoa(int v, char* str);
 void TSMS_UTIL_reverseString(char* str);
 

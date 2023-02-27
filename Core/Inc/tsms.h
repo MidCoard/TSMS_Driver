@@ -1,12 +1,13 @@
 #ifndef TSMS_H
 #define TSMS_H
 
-#include "stdbool.h"
 #include "memory.h"
 #include "stdarg.h"
+#include "stdbool.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "tsms_def.h"
+#include "tsms_delay.h"
 
 #ifdef TSMS_OPTIMIZATION
 #define TSMS_INLINE inline
@@ -68,30 +69,10 @@
 
 #endif
 
-#define TSMS_NULL 0
-
-typedef enum {
-	TSMS_SUCCESS, TSMS_ERROR, TSMS_TIMEOUT, TSMS_FAIL
-} TSMS_RESULT;
-
-typedef void(*TSMS_DELAY_FUNCTION)();
-
-typedef int32_t TSMS_DELAY_TIME;
-
-typedef void(*TSMS_DELAY_FUNCTION)();
-typedef void(*TSMS_CUSTOM_DELAY_FUNCTION)(TSMS_DELAY_TIME);
-
-#define TSMS_MASK(x) ((1<<x)-1)
-
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency);
 TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency);
 TSMS_RESULT TSMS_IIC_init(TSMS_CLOCK_FREQUENCY frequency);
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
-
-#define TSMS_NO_DELAY_TIME (-1)
-
-void TSMS_NO_DELAY(TSMS_DELAY_TIME time);
-
 
 #endif //TSMS_H

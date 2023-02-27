@@ -115,18 +115,6 @@ TSMS_RESULT TSMS_UTIL_clearCharList(TSMS_UCLP list) {
 	return TSMS_SUCCESS;
 }
 
-bool TSMS_UTIL_startsWith(const char* str, const char* prefix) {
-	if (str == TSMS_NULL || prefix == TSMS_NULL)
-		return false;
-	uint32_t i = 0;
-	while (prefix[i] != '\0') {
-		if (str[i] != prefix[i])
-			return false;
-		i++;
-	}
-	return true;
-}
-
 void TSMS_UTIL_itoa(int v, char* str) {
 	if (v == 0) {
 		str[0] = '0';
@@ -140,16 +128,4 @@ void TSMS_UTIL_itoa(int v, char* str) {
 	}
 	str[i] = '\0';
 	TSMS_UTIL_reverseString(str);
-}
-
-void TSMS_UTIL_reverseString(char* str) {
-	uint32_t i = 0;
-	uint32_t j = strlen(str) - 1;
-	while (i < j) {
-		char t = str[i];
-		str[i] = str[j];
-		str[j] = t;
-		i++;
-		j--;
-	}
 }

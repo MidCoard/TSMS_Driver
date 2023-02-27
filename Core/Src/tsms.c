@@ -7,5 +7,3 @@ TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency) {
 	result |= TSMS_IIC_init(frequency);
 	return result;
 }
-
-void TSMS_NO_DELAY(TSMS_DELAY_TIME time) {}
