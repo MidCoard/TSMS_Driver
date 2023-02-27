@@ -1,5 +1,7 @@
 #include "tsms_string.h"
 
+pString TSMS_STRING_EMPTY;
+
 bool TSMS_STRING_equals(pString str1, pString str2) {
 	if (str1->length != str2->length)
 		return false;
@@ -28,7 +30,7 @@ pString TSMS_STRING_create() {
 	return str;
 }
 
-pString TSMS_STRING_createWith(const char* cString) {
+pString TSMS_STRING_createAndInit(const char* cString) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
@@ -138,4 +140,9 @@ uint32_t TSMS_STRING_indexOf(pString str, char c) {
 		if (str->cString[i] == c)
 			return i;
 	return -1;
+}
+
+TSMS_RESULT TSMS_STRING_init() {
+	TSMS_STRING_EMPTY = TSMS_STRING_static("");
+	return TSMS_SUCCESS;
 }

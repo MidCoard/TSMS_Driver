@@ -1,7 +1,7 @@
 #include "tsms_iic.h"
 #include "tsms_util.h"
 
-TSMS_INLINE static void __tsms_iic_delay() {
+TSMS_INLINE  void __tsms_iic_delay() {
 	volatile int v;
 	int i;
 
@@ -10,57 +10,57 @@ TSMS_INLINE static void __tsms_iic_delay() {
 	}
 }
 
-TSMS_INLINE static void TSMS_IIC_SDA_HIGH(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_iic_sda_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_HIGH);
 }
 
-TSMS_INLINE static void TSMS_IIC_SDA_LOW(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_iic_sda_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_LOW);
 }
 
-TSMS_INLINE static void TSMS_IIC_SCL_HIGH(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_iic_scl_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_HIGH);
 }
 
-TSMS_INLINE static void TSMS_IIC_SCL_LOW(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_iic_scl_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_LOW);
 }
 
-TSMS_INLINE static void __tsms_internal_iic_release0(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_internal_iic_release0(TSMS_IHP iic) {
 #if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
 	HAL_I2C_DeInit(iic->hardwareHandler);
 #endif
 	free(iic);
 }
 
-TSMS_INLINE static void __tsms_internal_iic_release1(TSMS_IHP iic) {
+TSMS_INLINE  void __tsms_internal_iic_release1(TSMS_IHP iic) {
 	TSMS_GPIO_release(iic->scl);
 	TSMS_GPIO_release(iic->sda);
 	free(iic);
 }
 
-TSMS_INLINE uint8_t TSMS_IIC_readBit(TSMS_IHP handler) {
+uint8_t TSMS_IIC_readBit(TSMS_IHP handler) {
 	handler->delay();
 	handler->delay();
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
 	TSMS_GPIO_STATUS status = TSMS_GPIO_read(handler->sda);
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
+	__tsms_iic_scl_low(handler);
 	return status;
 }
 
-TSMS_INLINE void TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
+void TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 	handler->delay();
 	if (bit)
-		TSMS_IIC_SDA_HIGH(handler);
+		__tsms_iic_sda_high(handler);
 	else
-		TSMS_IIC_SDA_LOW(handler);
+		__tsms_iic_sda_low(handler);
 	handler->delay();
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
+	__tsms_iic_scl_low(handler);
 }
 
 #if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
@@ -116,8 +116,8 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 		return TSMS_NULL;
 	iic->sda = sda;
 	iic->scl = scl;
-	TSMS_IIC_SDA_HIGH(iic);
-	TSMS_IIC_SCL_HIGH(iic);
+	__tsms_iic_sda_high(iic);
+	__tsms_iic_scl_high(iic);
 	iic->isHardware = false;
 	iic->delay = __tsms_iic_delay;
 	iic->release = __tsms_internal_iic_release0;
@@ -142,38 +142,38 @@ uint8_t TSMS_IIC_read(TSMS_IHP handler, bool nack) {
 		v = (v << 1u) | TSMS_IIC_readBit(handler);
 	handler->delay();
 	if (nack)
-		TSMS_IIC_SDA_HIGH(handler);
+		__tsms_iic_sda_high(handler);
 	else
-		TSMS_IIC_SDA_LOW(handler);
+		__tsms_iic_sda_low(handler);
 	handler->delay();
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
-	TSMS_IIC_SDA_HIGH(handler);
+	__tsms_iic_scl_low(handler);
+	__tsms_iic_sda_high(handler);
 	return v;
 }
 
 
 TSMS_RESULT TSMS_IIC_start(TSMS_IHP handler) {
-	TSMS_IIC_SDA_HIGH(handler);
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_sda_high(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
-	TSMS_IIC_SDA_LOW(handler);
+	__tsms_iic_sda_low(handler);
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
+	__tsms_iic_scl_low(handler);
 	handler->delay();
 	return TSMS_SUCCESS;
 }
 
 
 TSMS_RESULT TSMS_IIC_stop(TSMS_IHP handler) {
-	TSMS_IIC_SCL_LOW(handler);
-	TSMS_IIC_SDA_LOW(handler);
+	__tsms_iic_scl_low(handler);
+	__tsms_iic_sda_low(handler);
 	handler->delay();
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
-	TSMS_IIC_SDA_HIGH(handler);
+	__tsms_iic_sda_high(handler);
 	handler->delay();
 	return TSMS_SUCCESS;
 }
@@ -187,19 +187,19 @@ TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler,uint8_t v) {
 }
 
 bool TSMS_IIC_wait(TSMS_IHP handler) {
-	TSMS_IIC_SDA_HIGH(handler);
+	__tsms_iic_sda_high(handler);
 	handler->delay();
 	handler->delay();
-	TSMS_IIC_SCL_HIGH(handler);
+	__tsms_iic_scl_high(handler);
 	handler->delay();
 	if (TSMS_GPIO_read(handler->sda)) {
 		handler->delay();
-		TSMS_IIC_SCL_LOW(handler);
+		__tsms_iic_scl_low(handler);
 		TSMS_IIC_stop(handler);
 		return false;
 	}
 	handler->delay();
-	TSMS_IIC_SCL_LOW(handler);
+	__tsms_iic_scl_low(handler);
 	return true;
 }
 

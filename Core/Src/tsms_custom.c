@@ -9,11 +9,21 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n,...) {
 	va_list args;
 	va_start(args, n);
 	TSMS_CHP handler = (TSMS_CHP) malloc(sizeof(struct TSMS_CUSTOM_HANDLER));
+	if (handler == TSMS_NULL) {
+		va_end(args);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_createAndInit("Failed to allocate memory for custom handler"));
+		return TSMS_NULL;
+	}
 	handler->sda = TSMS_NULL_GHP;
 	handler->scl = TSMS_NULL_GHP;
 	handler->delay = __tsms_internal_custom_delay;
 	handler->customDelay = TSMS_NULL;
 	handler->list = TSMS_UTIL_createList(10);
+	if (handler->list == TSMS_NULL) {
+		free(handler);
+		va_end(args);
+		return TSMS_NULL;
+	}
 	for (int i = 0; i < n; i++)
 		TSMS_UTIL_addList(handler->list, va_arg(args, TSMS_GHP));
 	va_end(args);

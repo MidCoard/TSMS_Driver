@@ -8,11 +8,12 @@
 #include "stdlib.h"
 #include "tsms_def.h"
 #include "tsms_delay.h"
+#include "tsms_err.h"
 
 #ifdef TSMS_OPTIMIZATION
-#define TSMS_INLINE inline
+#define TSMS_INLINE inline static
 #else
-#define TSMS_INLINE
+#define TSMS_INLINE static
 #endif
 
 #ifndef TSMS_DRIVER
@@ -72,6 +73,7 @@
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency);
 TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency);
 TSMS_RESULT TSMS_IIC_init(TSMS_CLOCK_FREQUENCY frequency);
+TSMS_RESULT TSMS_STRING_init();
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
 

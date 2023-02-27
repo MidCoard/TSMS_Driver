@@ -13,11 +13,15 @@ struct TSMS_STRING_HANDLER {
 typedef struct TSMS_STRING_HANDLER tString;
 typedef tString* pString;
 
+extern pString TSMS_STRING_EMPTY;
+
 bool TSMS_STRING_equals(pString str1, pString str2);
 
 bool TSMS_STRING_startsWith(pString str, pString prefix);
 
 pString TSMS_STRING_create();
+
+pString TSMS_STRING_createAndInit(const char* cString);
 
 pString TSMS_STRING_static(const char* cString);
 
