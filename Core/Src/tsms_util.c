@@ -126,3 +126,30 @@ bool TSMS_UTIL_startsWith(const char* str, const char* prefix) {
 	}
 	return true;
 }
+
+void TSMS_UTIL_itoa(int v, char* str) {
+	if (v == 0) {
+		str[0] = '0';
+		str[1] = '\0';
+		return;
+	}
+	int i = 0;
+	while (v != 0) {
+		str[i++] = (v % 10) + '0';
+		v /= 10;
+	}
+	str[i] = '\0';
+	TSMS_UTIL_reverseString(str);
+}
+
+void TSMS_UTIL_reverseString(char* str) {
+	uint32_t i = 0;
+	uint32_t j = strlen(str) - 1;
+	while (i < j) {
+		char t = str[i];
+		str[i] = str[j];
+		str[j] = t;
+		i++;
+		j--;
+	}
+}

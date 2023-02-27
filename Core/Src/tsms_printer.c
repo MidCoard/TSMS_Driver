@@ -1,7 +1,4 @@
 #include "tsms_printer.h"
-
-char stringBuffer[1024];
-char charBuffer[2] = {0, 0};
 TSMS_PHP defaultPrinter = TSMS_NULL;
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
@@ -32,6 +29,7 @@ TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler) {
 	printer->callback = TSMS_NULL;
 	printer->strBuffer = TSMS_STRING_create();
 	printer->customBuffer = TSMS_NULL;
+	printer->stringBuffer = malloc(1024 * sizeof(char));
 	TSMS_IT_addPrinter(printer, __tsms_internal_callback, TSMS_NULL);
 	HAL_UART_Receive_IT(printer->handler,  &printer->buffer, 1);
 	return printer;
@@ -73,8 +71,8 @@ TSMS_RESULT TSMS_PRINTER_println(TSMS_PHP printer, char *str) {
 }
 
 TSMS_RESULT TSMS_PRINTER_printInt(TSMS_PHP printer, int v) {
-	itoa(v, stringBuffer, 10);
-	return TSMS_PRINTER_print(printer, stringBuffer);
+	TSMS_UTIL_itoa(v, printer->stringBuffer);
+	return TSMS_PRINTER_print(printer, printer->stringBuffer);
 }
 
 TSMS_RESULT TSMS_PRINTER_printIntln(TSMS_PHP printer, int v) {
@@ -83,8 +81,9 @@ TSMS_RESULT TSMS_PRINTER_printIntln(TSMS_PHP printer, int v) {
 }
 
 TSMS_RESULT TSMS_PRINTER_printChar(TSMS_PHP printer, char c) {
-	charBuffer[0] = c;
-	return TSMS_PRINTER_print(printer, charBuffer);
+	printer->stringBuffer[0] = c;
+	printer->stringBuffer[1] = '\0';
+	return TSMS_PRINTER_print(printer, printer->stringBuffer);
 }
 
 TSMS_RESULT TSMS_PRINTER_printCharln(TSMS_PHP printer, char c) {
@@ -93,8 +92,8 @@ TSMS_RESULT TSMS_PRINTER_printCharln(TSMS_PHP printer, char c) {
 }
 
 TSMS_RESULT TSMS_PRINTER_printFloat(TSMS_PHP printer, float f) {
-	sprintf(stringBuffer, "%f", f);
-	return TSMS_PRINTER_print(printer, stringBuffer);
+	sprintf(printer->stringBuffer, "%f", f);
+	return TSMS_PRINTER_print(printer, printer->stringBuffer);
 }
 
 TSMS_RESULT TSMS_PRINTER_printFloatln(TSMS_PHP printer, float f) {
@@ -105,9 +104,9 @@ TSMS_RESULT TSMS_PRINTER_printFloatln(TSMS_PHP printer, float f) {
 TSMS_RESULT TSMS_PRINTER_printf(TSMS_PHP printer, const char *str, ...) {
 	va_list p;
 	va_start(p, str);
-	vsprintf(stringBuffer, str, p);
+	vsprintf(printer->stringBuffer, str, p);
 	va_end(p);
-	return TSMS_PRINTER_print(printer, stringBuffer);
+	return TSMS_PRINTER_print(printer, printer->stringBuffer);
 }
 
 TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
@@ -120,9 +119,9 @@ void print(const char * str, ...) {
 		return;
 	va_list p;
 	va_start(p, str);
-	vsprintf(stringBuffer, str, p);
+	vsprintf(defaultPrinter->stringBuffer, str, p);
 	va_end(p);
-	TSMS_PRINTER_print(defaultPrinter, stringBuffer);
+	TSMS_PRINTER_print(defaultPrinter, defaultPrinter->stringBuffer);
 }
 
 TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK callback, void *data) {
@@ -130,5 +129,14 @@ TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK cal
 		return TSMS_ERROR;
 	printer->callback = callback;
 	printer->callbackData = data;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
+	TSMS_STRING_release(printer->strBuffer);
+	TSMS_STRING_release(printer->customBuffer);
+	TSMS_UTIL_releaseCharList(printer->str);
+	free(printer->stringBuffer);
+	free(printer);
 	return TSMS_SUCCESS;
 }

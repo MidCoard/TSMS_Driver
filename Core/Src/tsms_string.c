@@ -9,7 +9,6 @@ bool TSMS_STRING_equals(pString str1, pString str2) {
 	return true;
 }
 
-
 bool TSMS_STRING_startsWith(pString str, pString prefix) {
 	if (str->length < prefix->length)
 		return false;
@@ -109,6 +108,7 @@ TSMS_RESULT TSMS_STRING_copy(pString str, pString buffer) {
 		return TSMS_ERROR;
 	free(buffer->cString);
 	buffer->cString = malloc(str->length + 1);
+	// todo replace with realloc
 	if (buffer->cString == TSMS_NULL)
 		return TSMS_FAIL;
 	for (uint32_t i = 0; i < str->length; i++)

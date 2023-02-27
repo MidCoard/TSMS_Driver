@@ -21,6 +21,7 @@ struct TSMS_PRINTER_HANDLER {
 	void *callbackData;
 	pString strBuffer;
 	pString customBuffer;
+	char* stringBuffer;
 };
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)

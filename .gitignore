@@ -18,4 +18,5 @@ TSMS.ioc
 !/Core/Src/example/
 /Core/Startup/
 .idea
+test.c
 
