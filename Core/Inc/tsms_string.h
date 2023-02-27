@@ -4,14 +4,14 @@
 struct TSMS_STRING_HANDLER;
 
 typedef struct TSMS_STRING_HANDLER tString;
-typedef tString* pString;
+typedef tString *pString;
 
 #include <math.h>
 #include "tsms.h"
 #include "tsms_util.h"
 
 struct TSMS_STRING_HANDLER {
-	char* cStr;
+	char *cStr;
 	uint32_t length;
 	bool staticString;
 };
@@ -24,9 +24,9 @@ bool TSMS_STRING_startsWith(pString str, pString prefix);
 
 pString TSMS_STRING_create();
 
-pString TSMS_STRING_createAndInit(const char* cStr);
+pString TSMS_STRING_createAndInit(const char *cStr);
 
-pString TSMS_STRING_static(const char* cStr);
+pString TSMS_STRING_static(const char *cStr);
 
 TSMS_RESULT TSMS_STRING_release(pString str);
 

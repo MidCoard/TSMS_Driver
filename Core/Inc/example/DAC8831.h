@@ -9,12 +9,14 @@ struct DAC8831_Handler {
 	float reference;
 };
 
-void DAC8831_update(struct DAC8831_Handler * handler);
+void DAC8831_update(struct DAC8831_Handler *handler);
 
-void DAC8831_setAnalogOutput(struct DAC8831_Handler * handler,float out);
+void DAC8831_setAnalogOutput(struct DAC8831_Handler *handler, float out);
 
-void DAC8831_setAnalogOutputLater(struct DAC8831_Handler * handler,float out);
+void DAC8831_setAnalogOutputLater(struct DAC8831_Handler *handler, float out);
 
-struct DAC8831_Handler * DAC8831_initHardware(GPIO_TypeDef * sdi, uint16_t sdiPin, GPIO_TypeDef * sclk, uint16_t sclkPin, GPIO_TypeDef * cs, uint16_t csPin, GPIO_TypeDef * ldac, uint16_t ldacPin, float reference);
+struct DAC8831_Handler *
+DAC8831_initHardware(GPIO_TypeDef *sdi, uint16_t sdiPin, GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *cs,
+                     uint16_t csPin, GPIO_TypeDef *ldac, uint16_t ldacPin, float reference);
 
 #endif //TSMS_DAC8831_H

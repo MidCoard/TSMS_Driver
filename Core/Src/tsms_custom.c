@@ -2,10 +2,10 @@
 
 TSMS_INLINE void __tsms_internal_custom_delay() {
 	volatile uint8_t c = 1;
-	while(c--);
+	while (c--);
 }
 
-TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n,...) {
+TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 	va_list args;
 	va_start(args, n);
 	TSMS_CHP handler = (TSMS_CHP) malloc(sizeof(struct TSMS_CUSTOM_HANDLER));
@@ -38,7 +38,8 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n,...) {
 	return handler;
 }
 
-TSMS_CHP TSMS_CUSTOM_createSpecialHandler(TSMS_CUSTOM_DELAY_FUNCTION delay,TSMS_GHP scl, TSMS_GHP sda, uint32_t n, ...) {
+TSMS_CHP
+TSMS_CUSTOM_createSpecialHandler(TSMS_CUSTOM_DELAY_FUNCTION delay, TSMS_GHP scl, TSMS_GHP sda, uint32_t n, ...) {
 	va_list args;
 	va_start(args, n);
 	TSMS_CHP handler = TSMS_CUSTOM_createHandler(n, args);

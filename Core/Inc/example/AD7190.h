@@ -44,7 +44,7 @@
 
 #define AD7190_REG_ADDRESS(x) ((x)<<3)
 
-typedef enum{
+typedef enum {
 	AD7190_CURRENT_CHANNEL_0,
 	AD7190_CURRENT_CHANNEL_1,
 	AD7190_CURRENT_CHANNEL_2,
@@ -56,7 +56,7 @@ typedef enum{
 	AD7190_CURRENT_CHANNEL_TEMP = AD7190_CURRENT_CHANNEL_2
 } AD7190_CURRENT_CHANNEL;
 
-typedef enum{
+typedef enum {
 	AD7190_CHANNEL_0 = 1,
 	AD7190_CHANNEL_1 = 2,
 	AD7190_CHANNEL_2 = 4,
@@ -74,7 +74,7 @@ typedef enum{
 #include "tsms_driver.h"
 #include "tsms_it.h"
 
-typedef enum{
+typedef enum {
 	AD7190_REG_COMM,
 	AD7190_REG_STATUS,
 	AD7190_REG_MODE,
@@ -86,7 +86,7 @@ typedef enum{
 	AD7190_REG_FULL_SCALE
 } AD7190_REGISTER;
 typedef uint8_t AD7190_CLOCK_MODE;
-typedef enum{
+typedef enum {
 	AD7190_MODE_CONTINUOUS_CONV,
 	AD7190_MODE_SINGLE_CONV,
 	AD7190_MODE_IDLE,
@@ -96,7 +96,7 @@ typedef enum{
 	AD7190_MODE_CAL_SYS_ZERO,
 	AD7190_MODE_CAL_SYS_FULL
 } AD7190_MODE;
-typedef enum{
+typedef enum {
 	AD7190_GAIN_5V,
 	AD7190_GAIN_0_625V = 3,
 	AD7190_GAIN_0_3125V,
@@ -104,17 +104,17 @@ typedef enum{
 	AD7190_GAIN_0_078125V,
 	AD7190_GAIN_0_0390625V,
 } AD7190_GAIN;
-typedef enum{
+typedef enum {
 	AD7190_REF_IN1,
 	AD7190_REF_IN2
 } AD7190_REFERENCE;
-typedef enum{
+typedef enum {
 	AD7190_GPIO_P0,
 	AD7190_GPIO_P1,
 	AD7190_GPIO_P2,
 	AD7190_GPIO_P3
 } AD7190_GPIO;
-typedef enum{
+typedef enum {
 	AD7190_CLOCK_MODE_EXT_CRY,
 	AD7190_CLOCK_MODE_EXT_CLK,
 	AD7190_CLOCK_MODE_INT_CLK,
@@ -129,49 +129,94 @@ struct AD7190_Handler {
 	float gain;
 };
 
-struct AD7190_Handler * AD7190_initSoftware(GPIO_TypeDef * sclk, uint16_t sclkPin, GPIO_TypeDef * mosi, uint16_t mosiPin, GPIO_TypeDef * miso, uint16_t misoPin, GPIO_TypeDef * cs, uint16_t csPin,float reference);
+struct AD7190_Handler *
+AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, uint16_t mosiPin, GPIO_TypeDef *miso,
+                    uint16_t misoPin, GPIO_TypeDef *cs, uint16_t csPin, float reference);
+
 void AD7190_enableContinuousMode(struct AD7190_Handler *handler);
+
 void AD7190_disableContinuousMode(struct AD7190_Handler *handler);
+
 void AD7190_enableSingleCycleConversion(struct AD7190_Handler *handler);
+
 void AD7190_disableSingleCycleConversion(struct AD7190_Handler *handler);
+
 void AD7190_enableParityCheck(struct AD7190_Handler *handler);
+
 void AD7190_disableParityCheck(struct AD7190_Handler *handler);
+
 AD7190_CURRENT_CHANNEL AD7190_getCurrentChannel(struct AD7190_Handler *handler);
+
 bool AD7190_isDataReady(struct AD7190_Handler *handler);
+
 bool AD7190_isError(struct AD7190_Handler *handler);
+
 bool AD7190_isReferenceDetected(struct AD7190_Handler *handler);
+
 bool AD7190_isParityError(struct AD7190_Handler *handler);
+
 void AD7190_setFilterDivider(struct AD7190_Handler *handler, uint16_t divider);
+
 void AD7190_enable60HzRejection(struct AD7190_Handler *handler);
+
 void AD7190_disable60HzRejection(struct AD7190_Handler *handler);
+
 void AD7190_enableSin3Filter(struct AD7190_Handler *handler);
+
 void AD7190_disableSin3Filter(struct AD7190_Handler *handler);
+
 void AD7190_setClockMode(struct AD7190_Handler *handler, AD7190_CLOCK_MODE mode);
+
 void AD7190_setMode(struct AD7190_Handler *handler, AD7190_MODE mode);
+
 void AD7190_setGain(struct AD7190_Handler *handler, AD7190_GAIN gain);
+
 bool AD7190_setReference(struct AD7190_Handler *handler, AD7190_REFERENCE reference);
+
 void AD7190_setChannels(struct AD7190_Handler *handler, AD7190_CHANNELS channel);
+
 void AD7190_enableDataStatusRead(struct AD7190_Handler *handler);
+
 void AD7190_disableDataStatusRead(struct AD7190_Handler *handler);
+
 void AD7190_enableBipolar(struct AD7190_Handler *handler);
+
 void AD7190_enableUnipolar(struct AD7190_Handler *handler);
+
 void AD7190_enableBuffer(struct AD7190_Handler *handler);
+
 void AD7190_disableBuffer(struct AD7190_Handler *handler);
+
 void AD7190_enableReferenceDetected(struct AD7190_Handler *handler);
+
 void AD7190_disableReferenceDetected(struct AD7190_Handler *handler);
+
 void AD7190_enableBurnoutCurrent(struct AD7190_Handler *handler);
+
 void AD7190_disableBurnoutCurrent(struct AD7190_Handler *handler);
+
 void AD7190_enableChop(struct AD7190_Handler *handler);
+
 void AD7190_disableChop(struct AD7190_Handler *handler);
+
 void AD7190_openBridgePowerDownSwitch(struct AD7190_Handler *handler);
+
 void AD7190_closeBridgePowerDownSwitch(struct AD7190_Handler *handler);
+
 void AD7190_enableGPIO01(struct AD7190_Handler *handler);
+
 void AD7190_disableGPIO01(struct AD7190_Handler *handler);
+
 void AD7190_enableGPIO23(struct AD7190_Handler *handler);
+
 void AD7190_disableGPIO23(struct AD7190_Handler *handler);
+
 void AD7190_writeGPIO(struct AD7190_Handler *handler, AD7190_GPIO gpio, AD7190_GPIO_STATUS state);
+
 float *AD7190_readData(struct AD7190_Handler *handler);
+
 void AD7190_reset(struct AD7190_Handler *handler);
+
 AD7190_GPIO_STATUS AD7190_readGPIO(struct AD7190_Handler *handler, AD7190_GPIO gpio);
 
 #endif //TSMS_AD7190_H

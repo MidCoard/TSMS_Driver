@@ -6,7 +6,7 @@
 
 struct TSMS_CUSTOM_HANDLER;
 
-typedef struct TSMS_CUSTOM_HANDLER * TSMS_CUSTOM_HANDLER_POINTER;
+typedef struct TSMS_CUSTOM_HANDLER *TSMS_CUSTOM_HANDLER_POINTER;
 typedef TSMS_CUSTOM_HANDLER_POINTER TSMS_CHP;
 
 struct TSMS_CUSTOM_HANDLER {
@@ -18,9 +18,10 @@ struct TSMS_CUSTOM_HANDLER {
 	TSMS_TRANSFER_TYPE transferType;
 };
 
-TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n,...);
+TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...);
 
-TSMS_CHP TSMS_CUSTOM_createSpecialHandler(TSMS_CUSTOM_DELAY_FUNCTION delay,TSMS_GHP scl, TSMS_GHP sda, uint32_t n, ...);
+TSMS_CHP
+TSMS_CUSTOM_createSpecialHandler(TSMS_CUSTOM_DELAY_FUNCTION delay, TSMS_GHP scl, TSMS_GHP sda, uint32_t n, ...);
 
 TSMS_CHP TSMS_CUSTOM_createParallelHandler(TSMS_CUSTOM_DELAY_FUNCTION delay, TSMS_TRANSFER_TYPE type, uint32_t n, ...);
 

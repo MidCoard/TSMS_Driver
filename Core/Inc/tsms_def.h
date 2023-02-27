@@ -3,7 +3,7 @@
 
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
-typedef enum{
+typedef enum {
 	TSMS_TRANSFER_MSB = 0U, TSMS_TRANSFER_LSB
 } TSMS_TRANSFER_TYPE;
 

@@ -35,14 +35,17 @@ struct SN74HC595_Handler {
 	TSMS_DHP handler;
 };
 
-struct SN74HC595_Handler * SN74HC595_initHardware(GPIO_TypeDef* srclr, uint16_t srclrPin,
-                            GPIO_TypeDef* srclk, uint16_t srclkPin,
-                            GPIO_TypeDef* rclk, uint16_t rclkPin,
-                            GPIO_TypeDef* data, uint16_t dataPin);
+struct SN74HC595_Handler *SN74HC595_initHardware(GPIO_TypeDef *srclr, uint16_t srclrPin,
+                                                 GPIO_TypeDef *srclk, uint16_t srclkPin,
+                                                 GPIO_TypeDef *rclk, uint16_t rclkPin,
+                                                 GPIO_TypeDef *data, uint16_t dataPin);
 
-void SN74HC595_clearStorageRegister(struct SN74HC595_Handler* handler);
-void SN74HC595_writeByteToShiftRegister(struct SN74HC595_Handler* handler, uint8_t data);
-void SN74HC595_latchToStorageRegister(struct SN74HC595_Handler* handler);
-void SN74HC595_writeByte(struct SN74HC595_Handler* handler, uint8_t data);
+void SN74HC595_clearStorageRegister(struct SN74HC595_Handler *handler);
+
+void SN74HC595_writeByteToShiftRegister(struct SN74HC595_Handler *handler, uint8_t data);
+
+void SN74HC595_latchToStorageRegister(struct SN74HC595_Handler *handler);
+
+void SN74HC595_writeByte(struct SN74HC595_Handler *handler, uint8_t data);
 
 #endif //TSMS_SN74HC595_H

@@ -40,7 +40,7 @@ pString TSMS_STRING_create() {
 	return str;
 }
 
-pString TSMS_STRING_createAndInit(const char* cStr) {
+pString TSMS_STRING_createAndInit(const char *cStr) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
@@ -56,7 +56,7 @@ pString TSMS_STRING_createAndInit(const char* cStr) {
 	return str;
 }
 
-pString TSMS_STRING_static(const char* cStr) {
+pString TSMS_STRING_static(const char *cStr) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;

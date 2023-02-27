@@ -121,7 +121,7 @@ TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT print(const char * str, ...) {
+TSMS_RESULT print(const char *str, ...) {
 	if (defaultPrinter == TSMS_NULL)
 		return TSMS_ERROR;
 	va_list p;

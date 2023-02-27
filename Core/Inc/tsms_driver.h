@@ -13,22 +13,24 @@ struct TSMS_REGISTER_HANDLER {
 
 struct TSMS_REGISTER_HANDLER_LIST;
 
-typedef struct TSMS_REGISTER_HANDLER_LIST * TSMS_REGISTER_HANDLER_LIST_POINTER;
+typedef struct TSMS_REGISTER_HANDLER_LIST *TSMS_REGISTER_HANDLER_LIST_POINTER;
 typedef TSMS_REGISTER_HANDLER_LIST_POINTER TSMS_RHLP;
 
-typedef enum{
+typedef enum {
 	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM
 } TSMS_DRIVER_TYPE;
 
-typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
-typedef TSMS_RESULT(*TSMS_DRIVER_SPI_READER)(TSMS_SHP, uint32_t*, uint8_t, uint32_t);
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t *, uint8_t, uint32_t);
 
-typedef TSMS_RESULT(*TSMS_DRIVER_SPI_TRANSFORM)(TSMS_SHP, uint32_t*, uint8_t, uint8_t , uint32_t ,uint32_t);
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_READER)(TSMS_SHP, uint32_t *, uint8_t, uint32_t);
 
-typedef TSMS_RESULT(*TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM)(TSMS_SHP, uint32_t,...);
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_TRANSFORM)(TSMS_SHP, uint32_t *, uint8_t, uint8_t, uint32_t, uint32_t);
 
-typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t , uint32_t, TSMS_BITS);
-typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t , uint32_t*, TSMS_BITS);
+typedef TSMS_RESULT(*TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM)(TSMS_SHP, uint32_t, ...);
+
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t, uint32_t, TSMS_BITS);
+
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t, uint32_t *, TSMS_BITS);
 
 struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_TYPE type;
@@ -44,16 +46,16 @@ struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_IIC_READER iicRead;
 };
 
-typedef struct TSMS_REGISTER_HANDLER * TSMS_REGISTER_HANDLER_POINTER;
-typedef TSMS_REGISTER_HANDLER_POINTER  TSMS_RHP;
+typedef struct TSMS_REGISTER_HANDLER *TSMS_REGISTER_HANDLER_POINTER;
+typedef TSMS_REGISTER_HANDLER_POINTER TSMS_RHP;
 
-typedef struct TSMS_DRIVER_HANDLER * TSMS_DRIVER_HANDLER_POINTER;
+typedef struct TSMS_DRIVER_HANDLER *TSMS_DRIVER_HANDLER_POINTER;
 typedef TSMS_DRIVER_HANDLER_POINTER TSMS_DHP;
 
 struct TSMS_REGISTER_HANDLER_LIST {
-	TSMS_RHP* regs;
+	TSMS_RHP *regs;
 	int size;
-	TSMS_REGISTER_DATA_TYPE * types;
+	TSMS_REGISTER_DATA_TYPE *types;
 	uint8_t *sizes;
 	uint8_t *starts;
 	uint8_t *ids;
@@ -82,15 +84,17 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT);
 TSMS_RHP TSMS_REG_32BitRegister(TSMS_REGISTER_32BIT);
 
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value);
+
 uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value);
 
-TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value);
+TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t *value);
 
-TSMS_RESULT TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type);
+TSMS_RESULT
+TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type);
 
 TSMS_RESULT TSMS_REG_release(TSMS_RHP reg);
 
-TSMS_RHLP TSMS_REG_createList(int n,...);
+TSMS_RHLP TSMS_REG_createList(int n, ...);
 
 TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list);
 
@@ -104,7 +108,7 @@ TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t val
 
 TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
 
-TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value);
+TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t *value);
 
 uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value);
 

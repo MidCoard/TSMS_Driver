@@ -1,7 +1,7 @@
 #include "tsms_iic.h"
 #include "tsms_util.h"
 
-TSMS_INLINE  void __tsms_iic_delay() {
+TSMS_INLINE void __tsms_iic_delay() {
 	volatile int v;
 	int i;
 
@@ -10,30 +10,30 @@ TSMS_INLINE  void __tsms_iic_delay() {
 	}
 }
 
-TSMS_INLINE  void __tsms_iic_sda_high(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_iic_sda_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_HIGH);
 }
 
-TSMS_INLINE  void __tsms_iic_sda_low(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_iic_sda_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_LOW);
 }
 
-TSMS_INLINE  void __tsms_iic_scl_high(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_iic_scl_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_HIGH);
 }
 
-TSMS_INLINE  void __tsms_iic_scl_low(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_iic_scl_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_LOW);
 }
 
-TSMS_INLINE  void __tsms_internal_iic_release0(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_release0(TSMS_IHP iic) {
 #if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
 	HAL_I2C_DeInit(iic->hardwareHandler);
 #endif
 	free(iic);
 }
 
-TSMS_INLINE  void __tsms_internal_iic_release1(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_release1(TSMS_IHP iic) {
 	TSMS_GPIO_release(iic->scl);
 	TSMS_GPIO_release(iic->sda);
 	free(iic);
@@ -71,7 +71,7 @@ TSMS_RESULT TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 #if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
 #if defined(TSMS_STM32_IIC_USE_HAL_GPIO)
 TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * sdaPort, uint16_t sdaPin,
-                                    GPIO_TypeDef * sclPort, uint16_t sclPin,
+									GPIO_TypeDef * sclPort, uint16_t sclPin,
 									uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof (struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
@@ -123,6 +123,7 @@ TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, TSMS_TRANSFER_TY
 	return iic;
 }
 #else
+
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
@@ -199,11 +200,11 @@ TSMS_RESULT TSMS_IIC_stop(TSMS_IHP handler) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler,uint8_t v) {
+TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler, uint8_t v) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	for (int i = 0; i < 8; i++) {
-		TSMS_IIC_writeBit(handler,(v & (0x80)) ? TSMS_GPIO_HIGH : TSMS_GPIO_LOW);
+		TSMS_IIC_writeBit(handler, (v & (0x80)) ? TSMS_GPIO_HIGH : TSMS_GPIO_LOW);
 		v <<= 1;
 	}
 	return TSMS_SUCCESS;
@@ -228,7 +229,7 @@ bool TSMS_IIC_wait(TSMS_IHP handler) {
 	return true;
 }
 
-TSMS_RESULT TSMS_IIC_writeBytes(TSMS_IHP handler, uint8_t * data, uint16_t length) {
+TSMS_RESULT TSMS_IIC_writeBytes(TSMS_IHP handler, uint8_t *data, uint16_t length) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	if (handler->isHardware) {
@@ -254,7 +255,7 @@ TSMS_RESULT TSMS_IIC_writeBytes(TSMS_IHP handler, uint8_t * data, uint16_t lengt
 	}
 }
 
-TSMS_RESULT TSMS_IIC_readBytes(TSMS_IHP handler, uint8_t * data, uint16_t length) {
+TSMS_RESULT TSMS_IIC_readBytes(TSMS_IHP handler, uint8_t *data, uint16_t length) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	if (handler->isHardware) {
@@ -286,12 +287,12 @@ TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t
 		for (int i = 0; i < bits + 1; i++)
 			buffer[i + 1] = TSMS_UTIL_reverseByte((data >> (i * 8)) & 0xff);
 	else
-		for (int i = bits; i >= 0; i --)
+		for (int i = bits; i >= 0; i--)
 			buffer[bits - i + 1] = (data >> (i * 8)) & 0xff;
 	return TSMS_IIC_writeBytes(handler, buffer, bits + 2);
 }
 
-TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t * data, TSMS_BITS bits) {
+TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t *data, TSMS_BITS bits) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	uint8_t buffer[4];

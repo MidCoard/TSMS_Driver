@@ -61,7 +61,7 @@ ADS1115_initHardware(GPIO_TypeDef *sda, uint16_t sdaPin, GPIO_TypeDef *scl, uint
 float ADS1115_readData(struct ADS1115_Handler *handler) {
 	uint16_t data = ADS1115_readRegister(handler, ADS1115_REG_CONVERSION);
 	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_CONVERSION, data);
-	return ((int16_t)data) * handler->gain;
+	return ((int16_t) data) * handler->gain;
 }
 
 void ADS1115_setDataRate(struct ADS1115_Handler *handler, ADS1115_DATA_RATE dataRate) {
@@ -133,13 +133,15 @@ void ADS1115_setComparatorQueueMode(struct ADS1115_Handler *handler, ADS1115_COM
 }
 
 void ADS1115_setLowThreshold(struct ADS1115_Handler *handler, float threshold) {
-	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH, (uint16_t)(threshold / handler->gain));
-	ADS1115_writeRegister(handler, ADS1115_REG_LO_THRESH, TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH));
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH, (uint16_t) (threshold / handler->gain));
+	ADS1115_writeRegister(handler, ADS1115_REG_LO_THRESH,
+	                      TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH));
 }
 
 void ADS1115_setHighThreshold(struct ADS1115_Handler *handler, float threshold) {
-	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH, (uint16_t)(threshold / handler->gain));
-	ADS1115_writeRegister(handler, ADS1115_REG_HI_THRESH,  TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH));
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH, (uint16_t) (threshold / handler->gain));
+	ADS1115_writeRegister(handler, ADS1115_REG_HI_THRESH,
+	                      TSMS_REG_getRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH));
 }
 
 void ADS1115_setChannel(struct ADS1115_Handler *handler, ADS1115_CHANNEL_MUX channel) {

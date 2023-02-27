@@ -19,7 +19,7 @@ TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
 
 #endif
 
-TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS  status) {
+TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS status) {
 	if (gpio == TSMS_NULL_GHP)
 		return TSMS_ERROR;
 #ifdef TSMS_STM32_GPIO

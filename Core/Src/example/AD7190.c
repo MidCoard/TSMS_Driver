@@ -457,10 +457,11 @@ float *AD7190_readData(struct AD7190_Handler *handler) {
 				handler->data[value] = AD7190_convertData(handler,
 				                                          TSMS_REG_getRegisterByList(handler->handler->regs,
 				                                                                     AD7190_REG_DATA));
-			else handler->data[AD7190_CURRENT_CHANNEL_TEMP] = AD7190_convertTemperature(handler,
-			                                                                            TSMS_REG_getRegisterByList(
-					                                                                            handler->handler->regs,
-					                                                                            AD7190_REG_DATA));
+			else
+				handler->data[AD7190_CURRENT_CHANNEL_TEMP] = AD7190_convertTemperature(handler,
+				                                                                       TSMS_REG_getRegisterByList(
+						                                                                       handler->handler->regs,
+						                                                                       AD7190_REG_DATA));
 		} else {
 			// not recommended
 			AD7190_readRegister(handler, AD7190_REG_STATUS);
@@ -470,10 +471,11 @@ float *AD7190_readData(struct AD7190_Handler *handler) {
 				handler->data[value] = AD7190_convertData(handler,
 				                                          TSMS_REG_getRegisterByList(handler->handler->regs,
 				                                                                     AD7190_REG_DATA));
-			else handler->data[AD7190_CURRENT_CHANNEL_TEMP] = AD7190_convertTemperature(handler,
-			                                                                            TSMS_REG_getRegisterByList(
-					                                                                            handler->handler->regs,
-					                                                                            AD7190_REG_DATA));
+			else
+				handler->data[AD7190_CURRENT_CHANNEL_TEMP] = AD7190_convertTemperature(handler,
+				                                                                       TSMS_REG_getRegisterByList(
+						                                                                       handler->handler->regs,
+						                                                                       AD7190_REG_DATA));
 		}
 	}
 	return handler->data;

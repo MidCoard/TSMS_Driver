@@ -47,14 +47,26 @@ typedef uint8_t AD7606_RANGE;
 typedef uint8_t AD7606_REFERENCE_MODE;
 typedef uint8_t AD7606_MODE;
 
-struct AD7606_Handler * AD7606_initSerialHardware(GPIO_TypeDef* byteSelect,uint16_t byteSelectPin,GPIO_TypeDef * db15, uint16_t db15Pin,GPIO_TypeDef* standBy,uint16_t standByPin,GPIO_TypeDef* range,uint16_t rangePin,GPIO_TypeDef* convstA,uint16_t convstAPin,GPIO_TypeDef* convstB,uint16_t convstBPin,GPIO_TypeDef* os0,uint16_t os0Pin,GPIO_TypeDef* os1,uint16_t os1Pin,GPIO_TypeDef* os2,uint16_t os2Pin,GPIO_TypeDef* referenceSelect,uint16_t referenceSelectPin,
-                                                  GPIO_TypeDef* reset,uint16_t resetPin,GPIO_TypeDef* cs,uint16_t csPin,GPIO_TypeDef* sclk,uint16_t sclkPin,GPIO_TypeDef* busy,uint16_t busyPin,GPIO_TypeDef* firstData,uint16_t firstDataPin,GPIO_TypeDef* doutA, uint16_t doutAPin, GPIO_TypeDef* doutB, uint16_t doutBPin, float referenceVoltage);
+struct AD7606_Handler *
+AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO_TypeDef *db15, uint16_t db15Pin,
+                          GPIO_TypeDef *standBy, uint16_t standByPin, GPIO_TypeDef *range, uint16_t rangePin,
+                          GPIO_TypeDef *convstA, uint16_t convstAPin, GPIO_TypeDef *convstB, uint16_t convstBPin,
+                          GPIO_TypeDef *os0, uint16_t os0Pin, GPIO_TypeDef *os1, uint16_t os1Pin, GPIO_TypeDef *os2,
+                          uint16_t os2Pin, GPIO_TypeDef *referenceSelect, uint16_t referenceSelectPin,
+                          GPIO_TypeDef *reset, uint16_t resetPin, GPIO_TypeDef *cs, uint16_t csPin, GPIO_TypeDef *sclk,
+                          uint16_t sclkPin, GPIO_TypeDef *busy, uint16_t busyPin, GPIO_TypeDef *firstData,
+                          uint16_t firstDataPin, GPIO_TypeDef *doutA, uint16_t doutAPin, GPIO_TypeDef *doutB,
+                          uint16_t doutBPin, float referenceVoltage);
 
 
-void AD7606_setOverSampleRate(struct AD7606_Handler * handler, AD7606_OS_RATE overSampleRate);
-void AD7606_setRange(struct AD7606_Handler * handler, AD7606_RANGE range);
-void AD7606_setReferenceMode(struct AD7606_Handler * handler, AD7606_REFERENCE_MODE referenceMode);
-void AD7606_setMode(struct AD7606_Handler * handler, AD7606_MODE mode);
-float * AD7606_readData(struct AD7606_Handler* handler);
+void AD7606_setOverSampleRate(struct AD7606_Handler *handler, AD7606_OS_RATE overSampleRate);
+
+void AD7606_setRange(struct AD7606_Handler *handler, AD7606_RANGE range);
+
+void AD7606_setReferenceMode(struct AD7606_Handler *handler, AD7606_REFERENCE_MODE referenceMode);
+
+void AD7606_setMode(struct AD7606_Handler *handler, AD7606_MODE mode);
+
+float *AD7606_readData(struct AD7606_Handler *handler);
 
 #endif //TSMS_AD7606_H
