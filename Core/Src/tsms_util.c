@@ -36,6 +36,24 @@ TSMS_UCLP TSMS_UTIL_createCharList(int initSize) {
 	return list;
 }
 
+TSMS_UILP TSMS_UTIL_createIntList(int initSize) {
+	TSMS_UILP list = malloc(sizeof(struct TSMS_UTIL_INT_LIST));
+	if (list == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_UILP"));
+		return TSMS_NULL;
+	}
+	list->list = malloc(initSize * sizeof(int));
+	if (list->list == TSMS_NULL) {
+		free(list);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for list"));
+		return TSMS_NULL;
+	}
+	list->actualLength = initSize;
+	list->length = 0;
+	list->initLength = initSize;
+	return list;
+}
+
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
@@ -57,6 +75,21 @@ TSMS_RESULT TSMS_UTIL_addCharList(TSMS_UCLP list, char element) {
 	if (list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(char));
+		if (list->list == TSMS_NULL) {
+			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
+			return TSMS_ERROR;
+		}
+	}
+	list->list[list->length++] = element;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_addIntList(TSMS_UILP list, int element) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if (list->actualLength <= list->length) {
+		list->actualLength *= 2;
+		list->list = realloc(list->list, list->actualLength * sizeof(int));
 		if (list->list == TSMS_NULL) {
 			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
 			return TSMS_ERROR;
@@ -92,6 +125,13 @@ TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void *element) {
 	return TSMS_FAIL;
 }
 
+TSMS_RESULT TSMS_UTIL_clearList(TSMS_ULP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	list->length = 0;
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
@@ -101,6 +141,21 @@ TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list) {
 }
 
 TSMS_RESULT TSMS_UTIL_releaseCharList(TSMS_UCLP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	free(list->list);
+	free(list);
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_clearIntList(TSMS_UILP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	list->length = 0;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_releaseIntList(TSMS_UILP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	free(list->list);
