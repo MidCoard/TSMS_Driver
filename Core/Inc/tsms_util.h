@@ -1,6 +1,17 @@
 #ifndef TSMS_UTIL_H
 #define TSMS_UTIL_H
 
+
+struct TSMS_UTIL_LIST;
+
+typedef struct TSMS_UTIL_LIST* TSMS_UTIL_LIST_POINTER;
+typedef TSMS_UTIL_LIST_POINTER TSMS_ULP;
+
+struct TSMS_UTIL_CHAR_LIST;
+
+typedef struct TSMS_UTIL_CHAR_LIST* TSMS_UTIL_CHAR_LIST_POINTER;
+typedef TSMS_UTIL_CHAR_LIST_POINTER TSMS_UCLP;
+
 #include "tsms.h"
 
 struct TSMS_UTIL_LIST {
@@ -10,9 +21,6 @@ struct TSMS_UTIL_LIST {
 	uint32_t initLength;
 };
 
-typedef struct TSMS_UTIL_LIST* TSMS_UTIL_LIST_POINTER;
-typedef TSMS_UTIL_LIST_POINTER TSMS_ULP;
-
 
 struct TSMS_UTIL_CHAR_LIST {
 	char* list;
@@ -20,9 +28,6 @@ struct TSMS_UTIL_CHAR_LIST {
 	uint32_t actualLength;
 	uint32_t initLength;
 };
-
-typedef struct TSMS_UTIL_CHAR_LIST* TSMS_UTIL_CHAR_LIST_POINTER;
-typedef TSMS_UTIL_CHAR_LIST_POINTER TSMS_UCLP;
 
 TSMS_ULP TSMS_UTIL_createList(int initSize);
 

@@ -24,13 +24,13 @@ TSMS_CHP TSMS_CUSTOM_createSpecialHandler(TSMS_CUSTOM_DELAY_FUNCTION delay,TSMS_
 
 TSMS_CHP TSMS_CUSTOM_createParallelHandler(TSMS_CUSTOM_DELAY_FUNCTION delay, TSMS_TRANSFER_TYPE type, uint32_t n, ...);
 
-TSMS_RESULT TSMS_CUSTOM_parallelWrite(TSMS_CHP handler, uint32_t *data, uint32_t length);
+TSMS_RESULT TSMS_CUSTOM_parallelWrite(TSMS_CHP handler, const uint32_t *data, uint32_t length);
 
 TSMS_RESULT TSMS_CUSTOM_parallelRead(TSMS_CHP handler, uint32_t *data, uint32_t length);
 
 TSMS_GHP TSMS_CUSTOM_getGPIO(TSMS_CHP handler, uint32_t index);
 
-void TSMS_CUSTOM_delay(TSMS_CHP handler, TSMS_DELAY_TIME time);
+TSMS_RESULT TSMS_CUSTOM_delay(TSMS_CHP handler, TSMS_DELAY_TIME time);
 
 TSMS_RESULT TSMS_CUSTOM_release(TSMS_CHP handler);
 

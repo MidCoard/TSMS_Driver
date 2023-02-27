@@ -1,22 +1,24 @@
 #include "tsms_driver.h"
 
-static void __tsms_internal_addAndRemove(TSMS_RHP reg, uint32_t add,uint32_t remove) {
+TSMS_INLINE void __tsms_internal_addAndRemove(TSMS_RHP reg, uint32_t add,uint32_t remove) {
 	reg->value |= add;
 	reg->value &= remove;
 }
 
-static void __tsms_internal_add(TSMS_RHP reg, uint32_t offset) {
+TSMS_INLINE void __tsms_internal_add(TSMS_RHP reg, uint32_t offset) {
 	__tsms_internal_addAndRemove(reg,offset,0xFFFFFFFF);
 }
 
-static void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
+TSMS_INLINE void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
 	__tsms_internal_addAndRemove(reg, 0,mask);
 }
 
 TSMS_RHP TSMS_REG_Register(uint8_t bits) {
 	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
-	if (reg == TSMS_NULL)
+	if (reg == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_RHP"));
 		return TSMS_NULL;
+	}
 	reg->bits = bits;
 	reg->value = 0;
 	reg->positions = TSMS_NULL;
@@ -24,11 +26,9 @@ TSMS_RHP TSMS_REG_Register(uint8_t bits) {
 }
 
 TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
-	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+	TSMS_RHP reg = TSMS_REG_Register(8);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->bits = 8;
-	reg->value = 0;
 	reg->positions = malloc(sizeof (uint8_t) * 8);
 
 	reg->positions[0] = bit0;
@@ -44,11 +44,9 @@ TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
 
 
 TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
-	TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+	TSMS_RHP reg = TSMS_REG_Register(16);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->bits = 16;
-	reg->value = 0;
 	reg->positions = malloc(sizeof (uint8_t) * 16);
 
 	reg->positions[0] = bit0;
@@ -72,12 +70,11 @@ TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
 }
 
 TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
-    TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+	TSMS_RHP reg = TSMS_REG_Register(24);
     if (reg == TSMS_NULL)
         return TSMS_NULL;
-    reg->bits = 24;
-	reg->value = 0;
 	reg->positions = malloc(sizeof (uint8_t) * 24);
+
     reg->positions[0] = bit0;
     reg->positions[1] = bit1;
     reg->positions[2] = bit2;
@@ -106,11 +103,9 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
 }
 
 TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
-    TSMS_RHP reg = malloc(sizeof (struct TSMS_REGISTER_HANDLER));
+	TSMS_RHP reg = TSMS_REG_Register(32);
     if (reg == TSMS_NULL)
         return TSMS_NULL;
-    reg->bits = 32;
-	reg->value = 0;
 	reg->positions = malloc(sizeof (uint8_t) * 32);
 
     reg->positions[0] = bit0;
@@ -150,11 +145,15 @@ TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
 }
 
 TSMS_RESULT TSMS_REG_release(TSMS_RHP reg) {
+	if (reg == TSMS_NULL)
+		return TSMS_ERROR;
 	free(reg);
 	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t left, uint8_t right, TSMS_REGISTER_DATA_TYPE type) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	list->ids[pos] = reg;
 	list->starts[pos] = left;
 	list->sizes[pos] = right - left + 1;
@@ -163,45 +162,65 @@ TSMS_RESULT TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t
 }
 
 TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
-	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (driver == TSMS_NULL)
+	if (spi == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("spi handler is null"));
 		return TSMS_NULL;
-	driver->type = TSMS_DRIVER_SPI;
-	driver->spi = spi;
-	driver->regs = regs;
-	driver->spiWrite = TSMS_SPI_transmitCustomBits;
-	driver->spiRead = TSMS_SPI_receiveCustomBits;
-	driver->spiTransform = TSMS_SPI_transform;
-	driver->spiSequenceTransform = TSMS_SPI_sequenceTransform;
-	return driver;
+	}
+	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_DHP"));
+		return TSMS_NULL;
+	}
+	handler->type = TSMS_DRIVER_SPI;
+	handler->spi = spi;
+	handler->regs = regs;
+	handler->spiWrite = TSMS_SPI_transmitCustomBits;
+	handler->spiRead = TSMS_SPI_receiveCustomBits;
+	handler->spiTransform = TSMS_SPI_transform;
+	handler->spiSequenceTransform = TSMS_SPI_sequenceTransform;
+	return handler;
 }
 
 TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
-	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (driver == TSMS_NULL)
+	if (iic == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("iic handler is null"));
 		return TSMS_NULL;
-	driver->type = TSMS_DRIVER_IIC;
-	driver->iic = iic;
-	driver->regs = regs;
-	driver->iicWrite = TSMS_IIC_writeCustomRegister;
-	driver->iicRead = TSMS_IIC_readCustomRegister;
-	return driver;
+	}
+	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_DHP"));
+		return TSMS_NULL;
+	}
+	handler->type = TSMS_DRIVER_IIC;
+	handler->iic = iic;
+	handler->regs = regs;
+	handler->iicWrite = TSMS_IIC_writeCustomRegister;
+	handler->iicRead = TSMS_IIC_readCustomRegister;
+	return handler;
 }
 
 TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs) {
-	TSMS_DHP driver = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (driver == TSMS_NULL)
+	if (custom == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("custom handler is null"));
 		return TSMS_NULL;
-	driver->type = TSMS_DRIVER_CUSTOM;
-	driver->custom = custom;
-	driver->regs = regs;
-	return driver;
+	}
+	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_DHP"));
+		return TSMS_NULL;
+	}
+	handler->type = TSMS_DRIVER_CUSTOM;
+	handler->custom = custom;
+	handler->regs = regs;
+	return handler;
 }
 
 TSMS_RHLP TSMS_REG_createList(int n,...) {
 	TSMS_RHLP list = malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_RHLP"));
 		return TSMS_NULL;
+	}
 	list->size = n;
 	list->regs = malloc(sizeof (TSMS_RHP) * n);
 	va_list l;
@@ -217,15 +236,19 @@ TSMS_RHLP TSMS_REG_createList(int n,...) {
 	va_end(l);
 	list->maxSize = mx + 1;
 	list->ids = malloc(sizeof (uint8_t) * list->maxSize);
-	memset(list->ids, 0, sizeof (uint8_t) * list->maxSize);
 	list->sizes = malloc(sizeof (uint8_t) * list->maxSize);
-	memset(list->sizes, 0, sizeof (uint8_t) * list->maxSize);
 	list->types = malloc(sizeof (TSMS_REGISTER_DATA_TYPE) * list->maxSize);
-	memset(list->types, TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * list->maxSize);
 	list->starts = malloc(sizeof (uint8_t) * list->maxSize);
+	if (list->ids == TSMS_NULL || list->sizes == TSMS_NULL || list->types == TSMS_NULL || list->starts == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("failed to malloc specific memory for TSMS_RHLP"));
+		return TSMS_NULL;
+	}
+	memset(list->ids, 0, sizeof (uint8_t) * list->maxSize);
+	memset(list->sizes, 0, sizeof (uint8_t) * list->maxSize);
+	memset(list->types, TSMS_REGISTER_MSB, sizeof (TSMS_REGISTER_DATA_TYPE) * list->maxSize);
 	memset(list->starts, 0, sizeof (uint8_t) * list->maxSize);
 	uint8_t previous = -1;
-	for (int i = 0;i<n;i++) {
+	for (int i = 0;i<n;i++)
 		if (list->regs[i]->positions != TSMS_NULL) {
 			for (int j = 0; j < list->regs[i]->bits; j++) {
 				uint8_t now = list->regs[i]->positions[j];
@@ -238,11 +261,12 @@ TSMS_RHLP TSMS_REG_createList(int n,...) {
 			}
 			free(list->regs[i]->positions);
 		}
-	}
 	return list;
 }
 
 TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	for (int i = 0;i<list->size;i++)
 		TSMS_REG_release(list->regs[i]);
 	free(list->regs);
@@ -255,6 +279,8 @@ TSMS_RESULT TSMS_REG_releaseList(TSMS_RHLP list) {
 }
 
 TSMS_RESULT TSMS_REG_setRegister(TSMS_RHP reg, uint32_t value) {
+	if (reg == TSMS_NULL)
+		return TSMS_ERROR;
 	reg->value = value;
 	return TSMS_SUCCESS;
 }
@@ -268,12 +294,16 @@ uint32_t TSMS_REG_getRegisterByList(TSMS_RHLP list, uint8_t pos) {
 }
 
 TSMS_RESULT TSMS_REG_setRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
-	if (list->size < pos || pos < 0)
+	if (list == TSMS_NULL)
 		return TSMS_ERROR;
+	if (list->size < pos || pos < 0)
+		return TSMS_FAIL;
 	return TSMS_REG_setRegister(list->regs[pos], value);
 }
 
 TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t value) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	if (list->maxSize <= pos || pos < 0)
 		return TSMS_FAIL;
 	uint8_t temp;
@@ -285,6 +315,8 @@ TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t v
 }
 
 TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t* value) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	if (list->maxSize <= pos || pos < 0)
 		return TSMS_FAIL;
 	uint32_t val;
@@ -318,6 +350,8 @@ uint32_t TSMS_REG_tempWriteAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_
 
 // writeAt and readAt method are all written or read by MSB
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value) {
+	if (reg == TSMS_NULL)
+		return TSMS_ERROR;
 	uint32_t mask = TSMS_MASK(bits);
 	if (mask == 0)
 		return TSMS_FAIL;
@@ -327,6 +361,8 @@ TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t
 }
 
 TSMS_RESULT TSMS_REG_readAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t* value) {
+	if (reg == TSMS_NULL)
+		return TSMS_ERROR;
 	uint32_t mask = TSMS_MASK(bits);
 	if (mask == 0)
 		return TSMS_FAIL;

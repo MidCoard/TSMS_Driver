@@ -39,6 +39,8 @@ TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler) {
 #endif
 
 pString TSMS_PRINTER_get(TSMS_PHP printer) {
+	if (printer == TSMS_NULL)
+		return TSMS_NULL;
 	if (printer->hasData) {
 		printer->hasData = false;
 		return printer->strBuffer;
@@ -47,11 +49,15 @@ pString TSMS_PRINTER_get(TSMS_PHP printer) {
 }
 
 pString TSMS_PRINTER_getBlocking(TSMS_PHP printer) {
+	if (printer == TSMS_NULL)
+		return TSMS_NULL;
 	while (!printer->hasData);
 	return TSMS_PRINTER_get(printer);
 }
 
 pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer) {
+	if (printer == TSMS_NULL)
+		return TSMS_NULL;
 	printer->customBuffer = customBuffer;
 	return TSMS_PRINTER_getBlocking(printer);
 }
@@ -61,7 +67,7 @@ TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *str) {
 	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str),1000);
 	return status == HAL_OK ? TSMS_SUCCESS : TSMS_ERROR;
 #else
-	return TSMS_TIMEOUT;
+	return TSMS_FAIL;
 #endif
 
 }
@@ -115,18 +121,19 @@ TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
 	return TSMS_SUCCESS;
 }
 
-void print(const char * str, ...) {
+TSMS_RESULT print(const char * str, ...) {
 	if (defaultPrinter == TSMS_NULL)
-		return;
+		return TSMS_ERROR;
 	va_list p;
 	va_start(p, str);
 	vsprintf(defaultPrinter->stringBuffer, str, p);
 	va_end(p);
 	TSMS_PRINTER_print(defaultPrinter, defaultPrinter->stringBuffer);
+	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK callback, void *data) {
-	if (printer->callback != TSMS_NULL)
+	if (printer == TSMS_NULL)
 		return TSMS_ERROR;
 	printer->callback = callback;
 	printer->callbackData = data;
@@ -134,6 +141,8 @@ TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK cal
 }
 
 TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
+	if (printer == TSMS_NULL)
+		return TSMS_ERROR;
 	TSMS_STRING_release(printer->strBuffer);
 	TSMS_STRING_release(printer->customBuffer);
 	TSMS_UTIL_releaseCharList(printer->str);

@@ -2,11 +2,14 @@
 
 TSMS_ULP TSMS_UTIL_createList(int initSize) {
 	TSMS_ULP list = malloc(sizeof(struct TSMS_UTIL_LIST));
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_ULP"));
 		return TSMS_NULL;
+	}
 	list->list = malloc(initSize * sizeof(void*));
 	if (list->list == TSMS_NULL) {
 		free(list);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for list"));
 		return TSMS_NULL;
 	}
 	list->actualLength = initSize;
@@ -17,11 +20,14 @@ TSMS_ULP TSMS_UTIL_createList(int initSize) {
 
 TSMS_UCLP TSMS_UTIL_createCharList(int initSize) {
 	TSMS_UCLP list = malloc(sizeof(struct TSMS_UTIL_CHAR_LIST));
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_UCLP"));
 		return TSMS_NULL;
+	}
 	list->list = malloc(initSize * sizeof(char));
 	if (list->list == TSMS_NULL) {
 		free(list);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for list"));
 		return TSMS_NULL;
 	}
 	list->actualLength = initSize;
@@ -36,8 +42,10 @@ TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void* element) {
 	if(list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(void*));
-		if (list->list == TSMS_NULL)
+		if (list->list == TSMS_NULL) {
+			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
 			return TSMS_ERROR;
+		}
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -49,8 +57,10 @@ TSMS_RESULT TSMS_UTIL_addCharList(TSMS_UCLP list, char element) {
 	if(list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(char));
-		if (list->list == TSMS_NULL)
+		if (list->list == TSMS_NULL) {
+			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
 			return TSMS_ERROR;
+		}
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -60,7 +70,7 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index >= list->length)
-		return TSMS_ERROR;
+		return TSMS_FAIL;
 	for (uint32_t i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i+1];
 	list->length--;
@@ -83,12 +93,16 @@ TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void* element) {
 }
 
 TSMS_RESULT TSMS_UTIL_releaseList(TSMS_ULP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	free(list->list);
 	free(list);
 	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_UTIL_releaseCharList(TSMS_UCLP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
 	free(list->list);
 	free(list);
 	return TSMS_SUCCESS;

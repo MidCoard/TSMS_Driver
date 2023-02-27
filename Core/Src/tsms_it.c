@@ -30,6 +30,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 #endif
 
 TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_CALLBACK callback, void* handler){
+	if (gpio == TSMS_NULL)
+		return TSMS_ERROR;
 	TSMS_IGP igp = malloc(sizeof(struct TSMS_IT_GPIO));
 	if (igp == TSMS_NULL)
 		return TSMS_ERROR;
@@ -42,6 +44,8 @@ TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_
 }
 
 TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, void* handler) {
+	if (php == TSMS_NULL)
+		return TSMS_ERROR;
 	TSMS_IPP ipp = malloc(sizeof(struct TSMS_IT_PRINTER));
 	if (ipp == TSMS_NULL)
 		return TSMS_ERROR;

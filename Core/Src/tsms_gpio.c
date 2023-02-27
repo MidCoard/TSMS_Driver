@@ -3,11 +3,15 @@
 #ifdef TSMS_STM32_GPIO
 
 TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
-	if (port == NULL)
+	if (port == NULL) {
+		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("STM32 GPIO is null"));
 		return TSMS_NULL_GHP;
+	}
 	TSMS_GHP gpio = malloc(sizeof (struct TSMS_GPIO_HANDLER));
-	if (gpio == TSMS_NULL)
+	if (gpio == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("malloc failed for TSMS_GHP"));
 		return TSMS_NULL_GHP;
+	}
 	gpio->port = port;
 	gpio->pin = pin;
 	return gpio;
@@ -17,12 +21,12 @@ TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
 
 TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS  status) {
 	if (gpio == TSMS_NULL_GHP)
-		return TSMS_SUCCESS;
+		return TSMS_ERROR;
 #ifdef TSMS_STM32_GPIO
 	HAL_GPIO_WritePin(gpio->port,gpio->pin,status ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	return TSMS_SUCCESS;
 #else
-	return TSMS_TIMEOUT;
+	return TSMS_FAIL;
 #endif
 }
 
@@ -38,6 +42,8 @@ TSMS_GPIO_STATUS TSMS_GPIO_read(TSMS_GHP gpio) {
 
 
 TSMS_RESULT TSMS_GPIO_release(TSMS_GHP gpio) {
+	if (gpio == TSMS_NULL_GHP)
+		return TSMS_ERROR;
 	free(gpio);
 	return TSMS_SUCCESS;
 }
@@ -67,6 +73,6 @@ TSMS_RESULT TSMS_GPIO_setMode(TSMS_GHP gpio, TSMS_GPIO_MODE mode, TSMS_GPIO_PULL
 	HAL_GPIO_Init(gpio->port, &GPIO_InitStruct);
 	return TSMS_SUCCESS;
 #else
-	return TSMS_TIMEOUT;
+	return TSMS_FAIL;
 #endif
 }
