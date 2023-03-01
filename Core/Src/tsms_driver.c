@@ -1,16 +1,16 @@
 #include "tsms_driver.h"
 
-TSMS_INLINE void __tsms_internal_addAndRemove(TSMS_RHP reg, uint32_t add, uint32_t remove) {
+TSMS_INLINE void __tsms_internal_add_and_remove(TSMS_RHP reg, uint32_t add, uint32_t remove) {
 	reg->value |= add;
 	reg->value &= remove;
 }
 
 TSMS_INLINE void __tsms_internal_add(TSMS_RHP reg, uint32_t offset) {
-	__tsms_internal_addAndRemove(reg, offset, 0xFFFFFFFF);
+	__tsms_internal_add_and_remove(reg, offset, 0xFFFFFFFF);
 }
 
 TSMS_INLINE void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
-	__tsms_internal_addAndRemove(reg, 0, mask);
+	__tsms_internal_add_and_remove(reg, 0, mask);
 }
 
 TSMS_RHP TSMS_REG_Register(uint8_t bits) {
