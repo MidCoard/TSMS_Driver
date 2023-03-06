@@ -11,7 +11,7 @@ bool TSMS_STRING_equals(pString str1, pString str2) {
 		return false;
 	if (str1->length != str2->length)
 		return false;
-	for (uint32_t i = 0; i < str1->length; i++)
+	for (TSMS_POS i = 0; i < str1->length; i++)
 		if (str1->cStr[i] != str2->cStr[i])
 			return false;
 	return true;
@@ -22,7 +22,7 @@ bool TSMS_STRING_startsWith(pString str, pString prefix) {
 		return false;
 	if (str->length < prefix->length)
 		return false;
-	for (uint32_t i = 0; i < prefix->length; i++)
+	for (TSMS_POS i = 0; i < prefix->length; i++)
 		if (str->cStr[i] != prefix->cStr[i])
 			return false;
 	return true;
@@ -132,7 +132,7 @@ TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString str) {
 	str->cStr = malloc(list->length + 1);
 	if (str->cStr == TSMS_NULL)
 		return TSMS_ERROR;
-	for (uint32_t i = 0; i < list->length; i++)
+	for (TSMS_POS i = 0; i < list->length; i++)
 		str->cStr[i] = list->list[i];
 	str->cStr[list->length] = '\0';
 	str->length = list->length;
@@ -145,17 +145,17 @@ TSMS_RESULT TSMS_STRING_copy(pString str1, pString str2) {
 	str2->cStr = realloc(str2->cStr, str1->length + 1);
 	if (str2->cStr == TSMS_NULL)
 		return TSMS_ERROR;
-	for (uint32_t i = 0; i < str1->length; i++)
+	for (TSMS_POS i = 0; i < str1->length; i++)
 		str2->cStr[i] = str1->cStr[i];
 	str2->cStr[str1->length] = '\0';
 	str2->length = str1->length;
 	return TSMS_SUCCESS;
 }
 
-uint32_t TSMS_STRING_indexOf(pString str, char c) {
+long TSMS_STRING_indexOf(pString str, char c) {
 	if (str == TSMS_NULL)
 		return -1;
-	for (uint32_t i = 0; i < str->length; i++)
+	for (TSMS_POS i = 0; i < str->length; i++)
 		if (str->cStr[i] == c)
 			return i;
 	return -1;

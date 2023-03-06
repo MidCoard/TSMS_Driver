@@ -3,6 +3,10 @@
 
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
+typedef uint32_t TSMS_SIZE;
+
+typedef uint32_t TSMS_POS;
+
 typedef enum {
 	TSMS_TRANSFER_MSB = 0U, TSMS_TRANSFER_LSB
 } TSMS_TRANSFER_TYPE;
@@ -21,7 +25,6 @@ typedef enum {
 	TSMS_TIMEOUT, // a timeout occurred ( one specific case of failure )
 	TSMS_FAIL // a failed operation
 } TSMS_RESULT;
-
 
 #define TSMS_MASK(x) ((1<<x)-1)
 

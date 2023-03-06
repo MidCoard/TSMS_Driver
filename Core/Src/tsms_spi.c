@@ -212,7 +212,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 		else __tsms_spi_cs_low(spi);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		for (uint32_t i = 0; i < length; i++)
+		for (TSMS_POS i = 0; i < length; i++)
 			__tsms_spi_transmit_custom_bit(spi, bits, data[i]);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);

@@ -26,40 +26,40 @@ typedef TSMS_UTIL_LONG_LIST_POINTER TSMS_ULLP;
 
 struct TSMS_UTIL_LIST {
 	void **list;
-	uint32_t length;
-	uint32_t actualLength;
-	uint32_t initLength;
+	TSMS_SIZE length;
+	TSMS_SIZE actualLength;
+	TSMS_SIZE initLength;
 };
 
 
 struct TSMS_UTIL_CHAR_LIST {
 	char *list;
-	uint32_t length;
-	uint32_t actualLength;
-	uint32_t initLength;
+	TSMS_SIZE length;
+	TSMS_SIZE actualLength;
+	TSMS_SIZE initLength;
 };
 
 struct TSMS_UTIL_INT_LIST {
 	int *list;
-	uint32_t length;
-	uint32_t actualLength;
-	uint32_t initLength;
+	TSMS_SIZE length;
+	TSMS_SIZE actualLength;
+	TSMS_SIZE initLength;
 };
 
 struct TSMS_UTIL_LONG_LIST {
 	long *list;
-	uint32_t length;
-	uint32_t actualLength;
-	uint32_t initLength;
+	TSMS_SIZE length;
+	TSMS_SIZE actualLength;
+	TSMS_SIZE initLength;
 };
 
-TSMS_ULP TSMS_UTIL_createList(int initSize);
+TSMS_ULP TSMS_UTIL_createList(TSMS_SIZE initSize);
 
-TSMS_UCLP TSMS_UTIL_createCharList(int initSize);
+TSMS_UCLP TSMS_UTIL_createCharList(TSMS_SIZE initSize);
 
-TSMS_UILP TSMS_UTIL_createIntList(int initSize);
+TSMS_UILP TSMS_UTIL_createIntList(TSMS_SIZE initSize);
 
-TSMS_ULLP TSMS_UTIL_createLongList(int initSize);
+TSMS_ULLP TSMS_UTIL_createLongList(TSMS_SIZE initSize);
 
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void *element);
 
@@ -69,7 +69,7 @@ TSMS_RESULT TSMS_UTIL_addIntList(TSMS_UILP list, int element);
 
 TSMS_RESULT TSMS_UTIL_addLongList(TSMS_ULLP list, long element);
 
-TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index);
+TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, TSMS_POS index);
 
 TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void *element);
 

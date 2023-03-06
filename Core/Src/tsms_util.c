@@ -1,6 +1,6 @@
 #include "tsms_util.h"
 
-TSMS_ULP TSMS_UTIL_createList(int initSize) {
+TSMS_ULP TSMS_UTIL_createList(TSMS_SIZE initSize) {
 	TSMS_ULP list = malloc(sizeof(struct TSMS_UTIL_LIST));
 	if (list == TSMS_NULL) {
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_ULP"));
@@ -18,7 +18,7 @@ TSMS_ULP TSMS_UTIL_createList(int initSize) {
 	return list;
 }
 
-TSMS_UCLP TSMS_UTIL_createCharList(int initSize) {
+TSMS_UCLP TSMS_UTIL_createCharList(TSMS_SIZE initSize) {
 	TSMS_UCLP list = malloc(sizeof(struct TSMS_UTIL_CHAR_LIST));
 	if (list == TSMS_NULL) {
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_UCLP"));
@@ -36,7 +36,7 @@ TSMS_UCLP TSMS_UTIL_createCharList(int initSize) {
 	return list;
 }
 
-TSMS_UILP TSMS_UTIL_createIntList(int initSize) {
+TSMS_UILP TSMS_UTIL_createIntList(TSMS_SIZE initSize) {
 	TSMS_UILP list = malloc(sizeof(struct TSMS_UTIL_INT_LIST));
 	if (list == TSMS_NULL) {
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_UILP"));
@@ -54,7 +54,7 @@ TSMS_UILP TSMS_UTIL_createIntList(int initSize) {
 	return list;
 }
 
-TSMS_ULLP TSMS_UTIL_createLongList(int initSize) {
+TSMS_ULLP TSMS_UTIL_createLongList(TSMS_SIZE initSize) {
 	TSMS_ULLP list = malloc(sizeof(struct TSMS_UTIL_LONG_LIST));
 	if (list == TSMS_NULL) {
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_ULLP"));
@@ -132,12 +132,12 @@ TSMS_RESULT TSMS_UTIL_addLongList(TSMS_ULLP list, long element) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
+TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index >= list->length)
 		return TSMS_FAIL;
-	for (uint32_t i = index; i < list->length - 1; i++)
+	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
 	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
@@ -152,7 +152,7 @@ TSMS_RESULT TSMS_UTIL_removeList(TSMS_ULP list, uint32_t index) {
 TSMS_RESULT TSMS_UTIL_removeListElement(TSMS_ULP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	for (uint32_t i = 0; i < list->length; i++)
+	for (TSMS_POS i = 0; i < list->length; i++)
 		if (list->list[i] == element)
 			return TSMS_UTIL_removeList(list, i);
 	return TSMS_FAIL;
