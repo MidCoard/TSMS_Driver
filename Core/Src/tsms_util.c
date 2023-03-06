@@ -54,6 +54,24 @@ TSMS_UILP TSMS_UTIL_createIntList(int initSize) {
 	return list;
 }
 
+TSMS_ULLP TSMS_UTIL_createLongList(int initSize) {
+	TSMS_ULLP list = malloc(sizeof(struct TSMS_UTIL_LONG_LIST));
+	if (list == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_ULLP"));
+		return TSMS_NULL;
+	}
+	list->list = malloc(initSize * sizeof(long));
+	if (list->list == TSMS_NULL) {
+		free(list);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for list"));
+		return TSMS_NULL;
+	}
+	list->actualLength = initSize;
+	list->length = 0;
+	list->initLength = initSize;
+	return list;
+}
+
 TSMS_RESULT TSMS_UTIL_addList(TSMS_ULP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
@@ -90,6 +108,21 @@ TSMS_RESULT TSMS_UTIL_addIntList(TSMS_UILP list, int element) {
 	if (list->actualLength <= list->length) {
 		list->actualLength *= 2;
 		list->list = realloc(list->list, list->actualLength * sizeof(int));
+		if (list->list == TSMS_NULL) {
+			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
+			return TSMS_ERROR;
+		}
+	}
+	list->list[list->length++] = element;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_addLongList(TSMS_ULLP list, long element) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if (list->actualLength <= list->length) {
+		list->actualLength *= 2;
+		list->list = realloc(list->list, list->actualLength * sizeof(long));
 		if (list->list == TSMS_NULL) {
 			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, TSMS_STRING_static("realloc failed for list"));
 			return TSMS_ERROR;
@@ -156,6 +189,21 @@ TSMS_RESULT TSMS_UTIL_clearIntList(TSMS_UILP list) {
 }
 
 TSMS_RESULT TSMS_UTIL_releaseIntList(TSMS_UILP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	free(list->list);
+	free(list);
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_clearLongList(TSMS_ULLP list) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	list->length = 0;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_UTIL_releaseLongList(TSMS_ULLP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	free(list->list);
