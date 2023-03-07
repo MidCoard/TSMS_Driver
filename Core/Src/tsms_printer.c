@@ -145,7 +145,7 @@ TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
 		return TSMS_ERROR;
 	TSMS_STRING_release(printer->strBuffer);
 	TSMS_STRING_release(printer->customBuffer);
-	TSMS_UTIL_releaseCharList(printer->str);
+	TSMS_LIST_releaseCharList(printer->str);
 	free(printer->stringBuffer);
 	free(printer);
 	return TSMS_SUCCESS;

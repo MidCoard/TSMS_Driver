@@ -5,7 +5,7 @@ typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
 typedef uint32_t TSMS_SIZE;
 
-typedef uint32_t TSMS_POS;
+typedef long TSMS_POS;
 
 typedef enum {
 	TSMS_TRANSFER_MSB = 0U, TSMS_TRANSFER_LSB

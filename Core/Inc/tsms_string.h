@@ -8,11 +8,12 @@ typedef tString *pString;
 
 #include <math.h>
 #include "tsms.h"
-#include "tsms_util.h"
+#include "tsms_list.h"
+#include "tsms_map.h"
 
 struct TSMS_STRING_HANDLER {
 	char *cStr;
-	uint32_t length;
+	TSMS_SIZE length;
 	bool staticString;
 };
 
@@ -30,15 +31,15 @@ pString TSMS_STRING_static(const char *cStr);
 
 TSMS_RESULT TSMS_STRING_release(pString str);
 
-pString TSMS_STRING_subString(pString str, int start, int end);
+pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end);
 
-TSMS_ULP TSMS_STRING_split(pString str, char spilt);
+TSMS_LLP TSMS_STRING_split(pString str, char spilt);
 
 float TSMS_STRING_toFloat(pString str);
 
 int TSMS_STRING_toInt(pString str);
 
-TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString buffer);
+TSMS_RESULT TSMS_STRING_getString(TSMS_LCLP list, pString buffer);
 
 TSMS_RESULT TSMS_STRING_copy(pString str1, pString str2);
 

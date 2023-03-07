@@ -4,6 +4,17 @@ pString TSMS_EMPTY_STRING;
 
 pString TSMS_FAIL_STRING;
 
+TSMS_MHP STATIC_MAP;
+
+TSMS_INLINE long __internal_tsms_hash(void* p) {
+	char* str = p;
+	size_t len = strlen(str);
+	long hash = 0;
+	for (size_t i = 0; i < len; i++)
+		hash = hash * 31 + str[i];
+	return hash;
+}
+
 bool TSMS_STRING_equals(pString str1, pString str2) {
 	if (str1 == TSMS_NULL && str2 == TSMS_NULL)
 		return true;
@@ -57,25 +68,30 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 }
 
 pString TSMS_STRING_static(const char *cStr) {
+	pString tmp = TSMS_MAP_get(STATIC_MAP, cStr);
+	if (tmp != TSMS_NULL)
+		return tmp;
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
 	str->staticString = true;
 	str->cStr = cStr;
 	str->length = strlen(cStr);
+	TSMS_MAP_put(STATIC_MAP, cStr, str);
 	return str;
 }
 
 TSMS_RESULT TSMS_STRING_release(pString str) {
 	if (str == TSMS_NULL)
 		return TSMS_ERROR;
-	if (!str->staticString)
-		free(str->cStr);
+	if (str->staticString)
+		return TSMS_ERROR;
+	free(str->cStr);
 	free(str);
 	return TSMS_SUCCESS;
 }
 
-pString TSMS_STRING_subString(pString str, int start, int end) {
+pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end) {
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
 	if (start < 0 || end < 0 || start > end || end > str->length)
@@ -88,27 +104,27 @@ pString TSMS_STRING_subString(pString str, int start, int end) {
 		TSMS_STRING_release(sub);
 		return TSMS_NULL;
 	}
-	for (int i = start; i < end; i++)
+	for (TSMS_POS i = start; i < end; i++)
 		sub->cStr[i - start] = str->cStr[i];
 	sub->cStr[end - start] = '\0';
 	sub->length = end - start;
 	return sub;
 }
 
-TSMS_ULP TSMS_STRING_split(pString str, char spilt) {
+TSMS_LLP TSMS_STRING_split(pString str, char spilt) {
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
-	TSMS_ULP ulp = TSMS_UTIL_createList(10);
+	TSMS_LLP ulp = TSMS_LIST_createList(10);
 	if (ulp == TSMS_NULL)
 		return TSMS_NULL;
 	int pos = 0;
 	for (int i = 0; i < str->length; i++)
 		if (str->cStr[i] == spilt) {
-			TSMS_UTIL_addList(ulp, TSMS_STRING_subString(str, pos, i));
+			TSMS_LIST_addList(ulp, TSMS_STRING_subString(str, pos, i));
 			pos = i + 1;
 		}
 	if (pos < str->length)
-		TSMS_UTIL_addList(ulp, TSMS_STRING_subString(str, pos, str->length));
+		TSMS_LIST_addList(ulp, TSMS_STRING_subString(str, pos, str->length));
 	return ulp;
 }
 
@@ -125,7 +141,7 @@ int TSMS_STRING_toInt(pString str) {
 }
 
 
-TSMS_RESULT TSMS_STRING_getString(TSMS_UCLP list, pString str) {
+TSMS_RESULT TSMS_STRING_getString(TSMS_LCLP list, pString str) {
 	if (str->staticString)
 		return TSMS_ERROR;
 	free(str->cStr);
@@ -164,5 +180,6 @@ long TSMS_STRING_indexOf(pString str, char c) {
 TSMS_RESULT TSMS_STRING_init() {
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
 	TSMS_FAIL_STRING = TSMS_STRING_static("malloc failed for string");
+	STATIC_MAP = TSMS_MAP_create(256, __internal_tsms_hash);
 	return TSMS_SUCCESS;
 }

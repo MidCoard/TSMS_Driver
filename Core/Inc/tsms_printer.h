@@ -15,7 +15,7 @@ struct TSMS_PRINTER_HANDLER {
 	UART_HandleTypeDef *handler;
 #endif
 	char buffer;
-	TSMS_UCLP str;
+	TSMS_LCLP str;
 	volatile bool hasData;
 	TSMS_PRINTER_CALLBACK callback;
 	void *callbackData;
