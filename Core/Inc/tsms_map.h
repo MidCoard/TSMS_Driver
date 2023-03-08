@@ -15,6 +15,18 @@ struct TSMS_MAP_NODE_HANDLER {
 	TSMS_MNHP next;
 };
 
+struct TSMS_LONG_MAP_NODE_HANDLER;
+
+typedef struct TSMS_LONG_MAP_NODE_HANDLER * TSMS_LONG_MAP_NODE_HANDLER_POINTER;
+
+typedef TSMS_LONG_MAP_NODE_HANDLER_POINTER TSMS_LMNHP;
+
+struct TSMS_LONG_MAP_NODE_HANDLER {
+	long key;
+	void* value;
+	TSMS_LMNHP next;
+};
+
 typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
 
 struct TSMS_MAP_HANDLER {
@@ -24,24 +36,88 @@ struct TSMS_MAP_HANDLER {
 	TSMS_SIZE size;
 };
 
+struct TSMS_LONG_MAP_HANDLER {
+	TSMS_LMNHP* base;
+	TSMS_SIZE diffusion;
+	TSMS_SIZE size;
+};
+
 typedef struct TSMS_MAP_HANDLER * TSMS_MAP_HANDLER_POINTER;
 
 typedef TSMS_MAP_HANDLER_POINTER TSMS_MHP;
 
-TSMS_MHP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash);
+typedef struct TSMS_LONG_MAP_HANDLER * TSMS_LONG_MAP_HANDLER_POINTER;
 
-TSMS_RESULT TSMS_MAP_put(TSMS_MHP map, void* key, void* value);
+typedef TSMS_LONG_MAP_HANDLER_POINTER TSMS_LMHP;
 
-void* TSMS_MAP_get(TSMS_MHP map, void* key);
+struct TSMS_MAP_ITERATOR_HANDLER {
+	TSMS_MHP map;
+	TSMS_POS current;
+	TSMS_MNHP next;
+};
 
-TSMS_RESULT TSMS_MAP_remove(TSMS_MHP map, void* key);
+typedef struct TSMS_MAP_ITERATOR_HANDLER * TSMS_MAP_ITERATOR_HANDLER_POINTER;
 
-TSMS_RESULT TSMS_MAP_release(TSMS_MHP map);
+typedef TSMS_MAP_ITERATOR_HANDLER_POINTER TSMS_MIHP;
 
-TSMS_LLP TSMS_MAP_keys(TSMS_MHP map);
+struct TSMS_LONG_MAP_ITERATOR_HANDLER {
+	TSMS_LMHP map;
+	TSMS_POS current;
+	TSMS_LMNHP next;
+};
 
-TSMS_LLP TSMS_MAP_values(TSMS_MHP map);
+typedef struct TSMS_LONG_MAP_ITERATOR_HANDLER * TSMS_LONG_MAP_ITERATOR_HANDLER_POINTER;
 
-TSMS_RESULT TSMS_MAP_clear(TSMS_MHP map);
+typedef TSMS_LONG_MAP_ITERATOR_HANDLER_POINTER TSMS_LMIHP;
+
+struct TSMS_PACKED_LONG {
+	long value;
+};
+
+typedef struct TSMS_PACKED_LONG * TSMS_PACKED_LONG_POINTER;
+
+typedef TSMS_PACKED_LONG_POINTER TSMS_LONG;
+
+TSMS_LONG TSMS_long(long value);
+
+TSMS_MHP TSMS_MAP_createMap(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash);
+
+TSMS_LMHP TSMS_MAP_createLongMap(TSMS_SIZE diffusion);
+
+TSMS_RESULT TSMS_MAP_putMap(TSMS_MHP map, void* key, void* value);
+
+TSMS_RESULT TSMS_MAP_putLongMap(TSMS_LMHP map, long key, void* value);
+
+void* TSMS_MAP_getMap(TSMS_MHP map, void* key);
+
+void* TSMS_MAP_getLongMap(TSMS_LMHP map, long key);
+
+TSMS_RESULT TSMS_MAP_removeMap(TSMS_MHP map, void* key);
+
+TSMS_RESULT TSMS_MAP_removeLongMap(TSMS_LMHP map, long key);
+
+TSMS_RESULT TSMS_MAP_releaseMap(TSMS_MHP map);
+
+TSMS_RESULT TSMS_MAP_releaseLongMap(TSMS_LMHP map);
+
+TSMS_MIHP TSMS_MAP_iteratorMap(TSMS_MHP map);
+
+bool TSMS_MAP_hasNextMap(TSMS_MIHP iter);
+
+void* TSMS_MAP_nextMapKey(TSMS_MIHP iter);
+
+void* TSMS_MAP_nextMapValue(TSMS_MIHP iter);
+
+TSMS_LMIHP TSMS_MAP_iteratorLongMap(TSMS_LMHP map);
+
+bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter);
+
+TSMS_LONG TSMS_MAP_nextLongMapKey(TSMS_LMIHP iter);
+
+TSMS_RESULT TSMS_MAP_clearMap(TSMS_MHP map);
+
+TSMS_RESULT TSMS_MAP_clearLongMap(TSMS_LMHP map);
+
+
 
 #endif //TSMS_MAP_H

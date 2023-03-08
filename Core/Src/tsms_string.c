@@ -68,7 +68,7 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 }
 
 pString TSMS_STRING_static(const char *cStr) {
-	pString tmp = TSMS_MAP_get(STATIC_MAP, cStr);
+	pString tmp = TSMS_MAP_getMap(STATIC_MAP, cStr);
 	if (tmp != TSMS_NULL)
 		return tmp;
 	pString str = TSMS_STRING_create();
@@ -77,7 +77,7 @@ pString TSMS_STRING_static(const char *cStr) {
 	str->staticString = true;
 	str->cStr = cStr;
 	str->length = strlen(cStr);
-	TSMS_MAP_put(STATIC_MAP, cStr, str);
+	TSMS_MAP_putMap(STATIC_MAP, cStr, str);
 	return str;
 }
 
@@ -180,6 +180,6 @@ long TSMS_STRING_indexOf(pString str, char c) {
 TSMS_RESULT TSMS_STRING_init() {
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
 	TSMS_FAIL_STRING = TSMS_STRING_static("malloc failed for string");
-	STATIC_MAP = TSMS_MAP_create(256, __internal_tsms_hash);
+	STATIC_MAP = TSMS_MAP_createMap(256, __internal_tsms_hash);
 	return TSMS_SUCCESS;
 }
