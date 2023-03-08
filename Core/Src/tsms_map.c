@@ -1,5 +1,9 @@
 #include "tsms_map.h"
 
+TSMS_MEH TSMS_EMPTY_MAP_ENTRY = {TSMS_NULL, TSMS_NULL};
+
+TSMS_LMEH TSMS_EMPTY_LONG_MAP_ENTRY = {0, TSMS_NULL};
+
 TSMS_INLINE TSMS_MNHP __internal_tsms_create_node(void * key, void * value) {
 	TSMS_MNHP node = malloc(sizeof (struct TSMS_MAP_NODE_HANDLER));
 	node->key = key;
@@ -8,16 +12,10 @@ TSMS_INLINE TSMS_MNHP __internal_tsms_create_node(void * key, void * value) {
 }
 
 TSMS_INLINE TSMS_LMNHP __internal_tsms_create_long_node(long key, void * value) {
-	TSMS_LMNHP node = malloc(sizeof (struct TSMS_LONG_MAP_NODE_HANDLER));
+	TSMS_LMNHP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE_HANDLER));
 	node->key = key;
 	node->value = value;
 	return node;
-}
-
-TSMS_LONG TSMS_long(long value) {
-	TSMS_LONG result = malloc(sizeof (struct TSMS_PACKED_LONG));
-	result->value = value;
-	return result;
 }
 
 TSMS_MHP TSMS_MAP_createMap(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
@@ -247,44 +245,28 @@ bool TSMS_MAP_hasNextMap(TSMS_MIHP iter) {
 	return true;
 }
 
-void * TSMS_MAP_nextMapKey(TSMS_MIHP iter) {
+TSMS_MEH TSMS_MAP_nextMapEntry(TSMS_MIHP iter) {
 	if (iter == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_EMPTY_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
 		for (; i < iter->map->diffusion; i++)
 			if (iter->map->base[i] != TSMS_NULL) {
 				iter->current = i;
 				iter->next = iter->map->base[i];
-				void * key = iter->next->key;
+				TSMS_MEH entry;
+				entry.key = iter->next->key;
+				entry.value = iter->next->value;
 				iter->next = iter->next->next;
-				return key;
+				return entry;
 			}
-		return TSMS_NULL;
+		return TSMS_EMPTY_MAP_ENTRY;
 	}
-	void * key = iter->next->key;
+	TSMS_MEH entry;
+	entry.key = iter->next->key;
+	entry.value = iter->next->value;
 	iter->next = iter->next->next;
-	return key;
-}
-
-void* TSMS_MAP_nextMapValue(TSMS_MIHP iter) {
-	if (iter == TSMS_NULL)
-		return TSMS_NULL;
-	if (iter->next == TSMS_NULL) {
-		TSMS_POS i = iter->current + 1;
-		for (; i < iter->map->diffusion; i++)
-			if (iter->map->base[i] != TSMS_NULL) {
-				iter->current = i;
-				iter->next = iter->map->base[i];
-				void * value = iter->next->value;
-				iter->next = iter->next->next;
-				return value;
-			}
-		return TSMS_NULL;
-	}
-	void * value = iter->next->value;
-	iter->next = iter->next->next;
-	return value;
+	return entry;
 }
 
 TSMS_LMIHP TSMS_MAP_iteratorLongMap(TSMS_LMHP map) {
@@ -310,24 +292,28 @@ bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter) {
 	return true;
 }
 
-TSMS_LONG TSMS_MAP_nextLongMapKey(TSMS_LMIHP iter) {
+TSMS_LMEH TSMS_MAP_nextLongMapEntry(TSMS_LMIHP iter) {
 	if (iter == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
 		for (; i < iter->map->diffusion; i++)
 			if (iter->map->base[i] != TSMS_NULL) {
 				iter->current = i;
 				iter->next = iter->map->base[i];
-				long key = iter->next->key;
+				TSMS_LMEH entry;
+				entry.key = iter->next->key;
+				entry.value = iter->next->value;
 				iter->next = iter->next->next;
-				return TSMS_long(key);
+				return entry;
 			}
-		return TSMS_NULL;
+		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	}
-	long key = iter->next->key;
+	TSMS_LMEH entry;
+	entry.key = iter->next->key;
+	entry.value = iter->next->value;
 	iter->next = iter->next->next;
-	return TSMS_long(key);
+	return entry;
 }
 
 TSMS_RESULT TSMS_MAP_clearMap(TSMS_MHP map) {

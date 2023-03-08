@@ -70,15 +70,25 @@ typedef struct TSMS_LONG_MAP_ITERATOR_HANDLER * TSMS_LONG_MAP_ITERATOR_HANDLER_P
 
 typedef TSMS_LONG_MAP_ITERATOR_HANDLER_POINTER TSMS_LMIHP;
 
-struct TSMS_PACKED_LONG {
-	long value;
+struct TSMS_MAP_ENTRY_HANDLER {
+	void* key;
+	void* value;
 };
 
-typedef struct TSMS_PACKED_LONG * TSMS_PACKED_LONG_POINTER;
+typedef struct TSMS_MAP_ENTRY_HANDLER TSMS_MEH;
 
-typedef TSMS_PACKED_LONG_POINTER TSMS_LONG;
 
-TSMS_LONG TSMS_long(long value);
+struct TSMS_LONG_MAP_ENTRY_HANDLER {
+	long key;
+	void* value;
+};
+
+typedef struct TSMS_LONG_MAP_ENTRY_HANDLER TSMS_LMEH;
+
+extern TSMS_MEH TSMS_EMPTY_MAP_ENTRY;
+
+extern TSMS_LMEH TSMS_EMPTY_LONG_MAP_ENTRY;
+
 
 TSMS_MHP TSMS_MAP_createMap(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash);
 
@@ -104,15 +114,13 @@ TSMS_MIHP TSMS_MAP_iteratorMap(TSMS_MHP map);
 
 bool TSMS_MAP_hasNextMap(TSMS_MIHP iter);
 
-void* TSMS_MAP_nextMapKey(TSMS_MIHP iter);
-
-void* TSMS_MAP_nextMapValue(TSMS_MIHP iter);
+TSMS_MEH TSMS_MAP_nextMapEntry(TSMS_MIHP iter);
 
 TSMS_LMIHP TSMS_MAP_iteratorLongMap(TSMS_LMHP map);
 
 bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter);
 
-TSMS_LONG TSMS_MAP_nextLongMapKey(TSMS_LMIHP iter);
+TSMS_LMEH TSMS_MAP_nextLongMapEntry(TSMS_LMIHP iter);
 
 TSMS_RESULT TSMS_MAP_clearMap(TSMS_MHP map);
 
