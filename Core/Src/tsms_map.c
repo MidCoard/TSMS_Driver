@@ -245,7 +245,7 @@ bool TSMS_MAP_hasNextMap(TSMS_MIHP iter) {
 	return true;
 }
 
-TSMS_MEH TSMS_MAP_nextMapEntry(TSMS_MIHP iter) {
+TSMS_MEH TSMS_MAP_nextMap(TSMS_MIHP iter) {
 	if (iter == TSMS_NULL)
 		return TSMS_EMPTY_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
@@ -292,7 +292,7 @@ bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter) {
 	return true;
 }
 
-TSMS_LMEH TSMS_MAP_nextLongMapEntry(TSMS_LMIHP iter) {
+TSMS_LMEH TSMS_MAP_nextLongMap(TSMS_LMIHP iter) {
 	if (iter == TSMS_NULL)
 		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
