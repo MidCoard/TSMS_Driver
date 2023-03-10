@@ -47,6 +47,6 @@ long TSMS_STRING_indexOf(pString str, char c);
 
 pString TSMS_STRING_createAndInitChar(char c);
 
-pString TSMS_STRING_append(pString str1, pString str2);
+TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
 #endif //TSMS_STRING_H

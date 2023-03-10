@@ -202,18 +202,18 @@ pString TSMS_STRING_createAndInitChar(char c) {
 	return str;
 }
 
-pString TSMS_STRING_append(pString str1, pString str2) {
+TSMS_RESULT TSMS_STRING_append(pString str1, pString str2) {
 	if (str1 == TSMS_NULL || str2 == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_ERROR;
 	if (str1->staticString)
-		return TSMS_NULL;
+		return TSMS_ERROR;
 	char* tmp = realloc(str1->cStr, str1->length + str2->length + 1);
 	if (tmp == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_ERROR;
 	str1->cStr = tmp;
 	for (TSMS_POS i = 0; i < str2->length; i++)
 		str1->cStr[str1->length + i] = str2->cStr[i];
 	str1->cStr[str1->length + str2->length] = '\0';
 	str1->length += str2->length;
-	return str1;
+	return TSMS_SUCCESS;
 }
