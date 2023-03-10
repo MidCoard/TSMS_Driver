@@ -116,7 +116,7 @@ TSMS_MIH TSMS_MAP_iteratorMap(TSMS_MHP map);
 
 bool TSMS_MAP_hasNextMap(TSMS_MIHP iter);
 
-TSMS_MEH kTSMS_MAP_nextMap(TSMS_MIHP iter);
+TSMS_MEH TSMS_MAP_nextMap(TSMS_MIHP iter);
 
 TSMS_LMIH TSMS_MAP_iteratorLongMap(TSMS_LMHP map);
 
