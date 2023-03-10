@@ -4,6 +4,10 @@ TSMS_MEH TSMS_EMPTY_MAP_ENTRY = {TSMS_NULL, TSMS_NULL};
 
 TSMS_LMEH TSMS_EMPTY_LONG_MAP_ENTRY = {0, TSMS_NULL};
 
+TSMS_MIH TSMS_EMPTY_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
+
+TSMS_LMIH TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
+
 TSMS_INLINE TSMS_MNHP __internal_tsms_create_node(void * key, void * value) {
 	TSMS_MNHP node = malloc(sizeof (struct TSMS_MAP_NODE_HANDLER));
 	node->key = key;
@@ -222,18 +226,15 @@ TSMS_RESULT TSMS_MAP_releaseLongMap(TSMS_LMHP map) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_MIHP TSMS_MAP_iteratorMap(TSMS_MHP map) {
+TSMS_MIH TSMS_MAP_iteratorMap(TSMS_MHP map) {
 	if (map == TSMS_NULL)
-		return TSMS_NULL;
-	TSMS_MIHP iter = malloc(sizeof(struct TSMS_MAP_ITERATOR_HANDLER));
-	iter->map = map;
-	iter->current = 0;
-	iter->next = map->base[0];
+		return TSMS_EMPTY_MAP_ITERATOR;
+	TSMS_MIH iter = {map, 0, map->base[0]};
 	return iter;
 }
 
 bool TSMS_MAP_hasNextMap(TSMS_MIHP iter) {
-	if (iter == TSMS_NULL)
+	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_MAP_ITERATOR)
 		return false;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
@@ -246,7 +247,7 @@ bool TSMS_MAP_hasNextMap(TSMS_MIHP iter) {
 }
 
 TSMS_MEH TSMS_MAP_nextMap(TSMS_MIHP iter) {
-	if (iter == TSMS_NULL)
+	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_MAP_ITERATOR)
 		return TSMS_EMPTY_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
@@ -269,18 +270,15 @@ TSMS_MEH TSMS_MAP_nextMap(TSMS_MIHP iter) {
 	return entry;
 }
 
-TSMS_LMIHP TSMS_MAP_iteratorLongMap(TSMS_LMHP map) {
+TSMS_LMIH TSMS_MAP_iteratorLongMap(TSMS_LMHP map) {
 	if (map == TSMS_NULL)
-		return TSMS_NULL;
-	TSMS_LMIHP iter = malloc(sizeof(struct TSMS_LONG_MAP_ITERATOR_HANDLER));
-	iter->map = map;
-	iter->current = 0;
-	iter->next = map->base[0];
+		return TSMS_EMPTY_LONG_MAP_ITERATOR;
+	TSMS_LMIH iter = {map, 0, map->base[0]};
 	return iter;
 }
 
 bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter) {
-	if (iter == TSMS_NULL)
+	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_LONG_MAP_ITERATOR)
 		return false;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
@@ -293,7 +291,7 @@ bool TSMS_MAP_hasNextLongMap(TSMS_LMIHP iter) {
 }
 
 TSMS_LMEH TSMS_MAP_nextLongMap(TSMS_LMIHP iter) {
-	if (iter == TSMS_NULL)
+	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_LONG_MAP_ITERATOR)
 		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
 		TSMS_POS i = iter->current + 1;
