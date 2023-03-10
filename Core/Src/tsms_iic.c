@@ -127,7 +127,8 @@ TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, TSMS_TRANSFER_TY
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_IHP");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	iic->sda = sda;

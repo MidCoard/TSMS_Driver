@@ -11,7 +11,8 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 	TSMS_CHP handler = (TSMS_CHP) malloc(sizeof(struct TSMS_CUSTOM_HANDLER));
 	if (handler == TSMS_NULL) {
 		va_end(args);
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_CHP"));
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_CHP");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	handler->sda = TSMS_NULL_GHP;
@@ -22,7 +23,8 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 	if (handler->list == TSMS_NULL) {
 		free(handler);
 		va_end(args);
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_CHP list"));
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_CHP list");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	for (int i = 0; i < n; i++) {
@@ -30,7 +32,8 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 		if (result != TSMS_SUCCESS) {
 			TSMS_CUSTOM_release(handler);
 			va_end(args);
-			TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("failed to add TSMS_GHP to TSMS_CHP list"));
+			tString temp = TSMS_STRING_temp("failed to add TSMS_GHP to TSMS_CHP list");
+			TSMS_ERR_report(TSMS_ERR_INIT_FAILED, &temp);
 			return TSMS_NULL;
 		}
 	}

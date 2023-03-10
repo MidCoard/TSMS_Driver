@@ -128,6 +128,4 @@ TSMS_RESULT TSMS_MAP_clearMap(TSMS_MHP map);
 
 TSMS_RESULT TSMS_MAP_clearLongMap(TSMS_LMHP map);
 
-
-
 #endif //TSMS_MAP_H

@@ -25,7 +25,8 @@ TSMS_INLINE TSMS_LMNHP __internal_tsms_create_long_node(long key, void * value) 
 TSMS_MHP TSMS_MAP_createMap(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
 	TSMS_MHP map = malloc(sizeof(struct TSMS_MAP_HANDLER));
 	if (map == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for map"));
+		tString temp = TSMS_STRING_temp("malloc failed for map");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	map->base = malloc(sizeof( TSMS_MNHP) * diffusion);
@@ -38,7 +39,8 @@ TSMS_MHP TSMS_MAP_createMap(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
 TSMS_LMHP TSMS_MAP_createLongMap(TSMS_SIZE diffusion) {
 	TSMS_LMHP map = malloc(sizeof(struct TSMS_LONG_MAP_HANDLER));
 	if (map == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for map"));
+		tString temp = TSMS_STRING_temp("malloc failed for map");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	map->base = malloc(sizeof( TSMS_LMNHP) * diffusion);

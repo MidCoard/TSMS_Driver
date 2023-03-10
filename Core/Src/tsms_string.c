@@ -2,8 +2,6 @@
 
 pString TSMS_EMPTY_STRING;
 
-pString TSMS_FAIL_STRING;
-
 TSMS_MHP STATIC_MAP;
 
 TSMS_INLINE long __internal_tsms_hash(void* p) {
@@ -42,7 +40,8 @@ bool TSMS_STRING_startsWith(pString str, pString prefix) {
 pString TSMS_STRING_create() {
 	pString str = malloc(sizeof(tString));
 	if (str == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_FAIL_STRING);
+		tString temp = TSMS_STRING_temp("malloc failed for tString");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->staticString = false;
@@ -58,7 +57,8 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 	str->cStr = malloc(strlen(cStr) + 1);
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for cStr"));
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	strcpy(str->cStr, cStr);
@@ -179,9 +179,8 @@ long TSMS_STRING_indexOf(pString str, char c) {
 }
 
 TSMS_RESULT TSMS_STRING_init() {
-	TSMS_EMPTY_STRING = TSMS_STRING_static("");
-	TSMS_FAIL_STRING = TSMS_STRING_static("malloc failed for string");
 	STATIC_MAP = TSMS_MAP_createMap(256, __internal_tsms_hash);
+	TSMS_EMPTY_STRING = TSMS_STRING_static("");
 	return TSMS_SUCCESS;
 }
 
@@ -192,7 +191,8 @@ pString TSMS_STRING_createAndInitChar(char c) {
 	str->cStr = malloc(sizeof (char) * 2);
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for cStr"));
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->cStr[0] = c;
@@ -216,4 +216,9 @@ TSMS_RESULT TSMS_STRING_append(pString str1, pString str2) {
 	str1->cStr[str1->length + str2->length] = '\0';
 	str1->length += str2->length;
 	return TSMS_SUCCESS;
+}
+
+tString TSMS_STRING_temp(const char* str) {
+	tString tStr = {str, strlen(str), false};
+	return tStr;
 }

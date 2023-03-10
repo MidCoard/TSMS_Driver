@@ -173,7 +173,8 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
                                         TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
 	TSMS_SHP spi = malloc(sizeof(struct TSMS_SPI_HANDLER));
 	if (spi == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_SHP"));
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SHP");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	spi->cs = cs;

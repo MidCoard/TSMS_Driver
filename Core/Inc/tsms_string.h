@@ -49,4 +49,6 @@ pString TSMS_STRING_createAndInitChar(char c);
 
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
+tString TSMS_STRING_temp(const char *cStr);
+
 #endif //TSMS_STRING_H
