@@ -158,9 +158,10 @@ TSMS_RESULT TSMS_STRING_getString(TSMS_LCLP list, pString str) {
 TSMS_RESULT TSMS_STRING_copy(pString str1, pString str2) {
 	if (str2->staticString)
 		return TSMS_ERROR;
-	str2->cStr = realloc(str2->cStr, str1->length + 1);
-	if (str2->cStr == TSMS_NULL)
+	char* tmp = realloc(str2->cStr, str1->length + 1);
+	if (tmp == TSMS_NULL)
 		return TSMS_ERROR;
+	str2->cStr = tmp;
 	for (TSMS_POS i = 0; i < str1->length; i++)
 		str2->cStr[i] = str1->cStr[i];
 	str2->cStr[str1->length] = '\0';
@@ -182,4 +183,37 @@ TSMS_RESULT TSMS_STRING_init() {
 	TSMS_FAIL_STRING = TSMS_STRING_static("malloc failed for string");
 	STATIC_MAP = TSMS_MAP_createMap(256, __internal_tsms_hash);
 	return TSMS_SUCCESS;
+}
+
+pString TSMS_STRING_createAndInitChar(char c) {
+	pString str = TSMS_STRING_create();
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	str->cStr = malloc(sizeof (char) * 2);
+	if (str->cStr == TSMS_NULL) {
+		TSMS_STRING_release(str);
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for cStr"));
+		return TSMS_NULL;
+	}
+	str->cStr[0] = c;
+	str->cStr[1] = '\0';
+	str->length = 1;
+	str->staticString = false;
+	return str;
+}
+
+pString TSMS_STRING_append(pString str1, pString str2) {
+	if (str1 == TSMS_NULL || str2 == TSMS_NULL)
+		return TSMS_NULL;
+	if (str1->staticString)
+		return TSMS_NULL;
+	char* tmp = realloc(str1->cStr, str1->length + str2->length + 1);
+	if (tmp == TSMS_NULL)
+		return TSMS_NULL;
+	str1->cStr = tmp;
+	for (TSMS_POS i = 0; i < str2->length; i++)
+		str1->cStr[str1->length + i] = str2->cStr[i];
+	str1->cStr[str1->length + str2->length] = '\0';
+	str1->length += str2->length;
+	return str1;
 }
