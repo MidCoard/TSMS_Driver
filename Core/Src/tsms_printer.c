@@ -62,7 +62,7 @@ pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer) {
 	return TSMS_PRINTER_getBlocking(printer);
 }
 
-TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *str) {
+TSMS_RESULT TSMS_print(TSMS_PHP printer, char * str) {
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
 	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str),1000);
 	return status == HAL_OK ? TSMS_SUCCESS : TSMS_ERROR;
@@ -72,51 +72,51 @@ TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *str) {
 
 }
 
-TSMS_RESULT TSMS_PRINTER_println(TSMS_PHP printer, char *str) {
-	TSMS_RESULT result = TSMS_PRINTER_print(printer, str);
-	return result | TSMS_PRINTER_print(printer, "\n");
+TSMS_RESULT TSMS_println(TSMS_PHP printer, char * str) {
+	TSMS_RESULT result = TSMS_print(printer, str);
+	return result | TSMS_print(printer, "\n");
 }
 
-TSMS_RESULT TSMS_PRINTER_printInt(TSMS_PHP printer, int v) {
+TSMS_RESULT TSMS_printInt(TSMS_PHP printer, int v) {
 	sprintf(printer->stringBuffer, "%d", v);
-	return TSMS_PRINTER_print(printer, printer->stringBuffer);
+	return TSMS_print(printer, printer->stringBuffer);
 }
 
-TSMS_RESULT TSMS_PRINTER_printIntln(TSMS_PHP printer, int v) {
-	TSMS_RESULT result = TSMS_PRINTER_printInt(printer, v);
-	return result | TSMS_PRINTER_print(printer, "\n");
+TSMS_RESULT TSMS_printIntln(TSMS_PHP printer, int v) {
+	TSMS_RESULT result = TSMS_printInt(printer, v);
+	return result | TSMS_print(printer, "\n");
 }
 
-TSMS_RESULT TSMS_PRINTER_printChar(TSMS_PHP printer, char c) {
+TSMS_RESULT TSMS_printChar(TSMS_PHP printer, char c) {
 	printer->stringBuffer[0] = c;
 	printer->stringBuffer[1] = '\0';
-	return TSMS_PRINTER_print(printer, printer->stringBuffer);
+	return TSMS_print(printer, printer->stringBuffer);
 }
 
-TSMS_RESULT TSMS_PRINTER_printCharln(TSMS_PHP printer, char c) {
-	TSMS_RESULT result = TSMS_PRINTER_printChar(printer, c);
-	return result | TSMS_PRINTER_print(printer, "\n");
+TSMS_RESULT TSMS_printCharln(TSMS_PHP printer, char c) {
+	TSMS_RESULT result = TSMS_printChar(printer, c);
+	return result | TSMS_print(printer, "\n");
 }
 
-TSMS_RESULT TSMS_PRINTER_printFloat(TSMS_PHP printer, float f) {
-	sprintf(printer->stringBuffer, "%f", f);
-	return TSMS_PRINTER_print(printer, printer->stringBuffer);
+TSMS_RESULT TSMS_printFloat(TSMS_PHP printer, float v) {
+	sprintf(printer->stringBuffer, "%f", v);
+	return TSMS_print(printer, printer->stringBuffer);
 }
 
-TSMS_RESULT TSMS_PRINTER_printFloatln(TSMS_PHP printer, float f) {
-	TSMS_RESULT result = TSMS_PRINTER_printFloat(printer, f);
-	return result | TSMS_PRINTER_print(printer, "\n");
+TSMS_RESULT TSMS_printFloatln(TSMS_PHP printer, float v) {
+	TSMS_RESULT result = TSMS_printFloat(printer, v);
+	return result | TSMS_print(printer, "\n");
 }
 
-TSMS_RESULT TSMS_PRINTER_printf(TSMS_PHP printer, const char *str, ...) {
+TSMS_RESULT TSMS_printf(TSMS_PHP printer, const char *c, ...) {
 	va_list p;
-	va_start(p, str);
-	vsprintf(printer->stringBuffer, str, p);
+	va_start(p, c);
+	vsprintf(printer->stringBuffer, c, p);
 	va_end(p);
-	return TSMS_PRINTER_print(printer, printer->stringBuffer);
+	return TSMS_print(printer, printer->stringBuffer);
 }
 
-TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer) {
+TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer) {
 	defaultPrinter = printer;
 	return TSMS_SUCCESS;
 }
@@ -128,7 +128,7 @@ TSMS_RESULT print(const char *str, ...) {
 	va_start(p, str);
 	vsprintf(defaultPrinter->stringBuffer, str, p);
 	va_end(p);
-	TSMS_PRINTER_print(defaultPrinter, defaultPrinter->stringBuffer);
+	TSMS_print(defaultPrinter, defaultPrinter->stringBuffer);
 	return TSMS_SUCCESS;
 }
 
@@ -145,7 +145,7 @@ TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
 		return TSMS_ERROR;
 	TSMS_STRING_release(printer->strBuffer);
 	TSMS_STRING_release(printer->customBuffer);
-	TSMS_LIST_releaseCharList(printer->str);
+	TSMS_CHAR_LIST_release(printer->str);
 	free(printer->stringBuffer);
 	free(printer);
 	return TSMS_SUCCESS;

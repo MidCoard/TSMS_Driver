@@ -15,7 +15,7 @@ struct TSMS_PRINTER_HANDLER {
 	UART_HandleTypeDef *handler;
 #endif
 	char buffer;
-	TSMS_LCLP str;
+	TSMS_CLP str;
 	volatile bool hasData;
 	TSMS_PRINTER_CALLBACK callback;
 	void *callbackData;
@@ -40,28 +40,28 @@ pString TSMS_PRINTER_getBlocking(TSMS_PHP printer);
 
 pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer);
 
-TSMS_RESULT TSMS_PRINTER_print(TSMS_PHP printer, char *);
-
-TSMS_RESULT TSMS_PRINTER_println(TSMS_PHP printer, char *);
-
-TSMS_RESULT TSMS_PRINTER_printInt(TSMS_PHP printer, int);
-
-TSMS_RESULT TSMS_PRINTER_printIntln(TSMS_PHP printer, int);
-
-TSMS_RESULT TSMS_PRINTER_printFloat(TSMS_PHP printer, float);
-
-TSMS_RESULT TSMS_PRINTER_printFloatln(TSMS_PHP printer, float);
-
-TSMS_RESULT TSMS_PRINTER_printChar(TSMS_PHP printer, char);
-
-TSMS_RESULT TSMS_PRINTER_printCharln(TSMS_PHP printer, char);
-
-TSMS_RESULT TSMS_PRINTER_printf(TSMS_PHP printer, const char *, ...);
-
-TSMS_RESULT TSMS_PRINTER_setDefaultPrinter(TSMS_PHP printer);
-
-TSMS_RESULT print(const char *, ...);
-
 TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK callback, void *data);
+
+TSMS_RESULT TSMS_print(TSMS_PHP printer, char * str);
+
+TSMS_RESULT TSMS_println(TSMS_PHP printer, char * str);
+
+TSMS_RESULT TSMS_printInt(TSMS_PHP printer, int v);
+
+TSMS_RESULT TSMS_printIntln(TSMS_PHP printer, int v);
+
+TSMS_RESULT TSMS_printFloat(TSMS_PHP printer, float v);
+
+TSMS_RESULT TSMS_printFloatln(TSMS_PHP printer, float v);
+
+TSMS_RESULT TSMS_printChar(TSMS_PHP printer, char c);
+
+TSMS_RESULT TSMS_printCharln(TSMS_PHP printer, char c);
+
+TSMS_RESULT TSMS_printf(TSMS_PHP printer, const char * c, ...);
+
+TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer);
+
+TSMS_RESULT print(const char * str, ...);
 
 #endif //TSMS_PRINTER_H

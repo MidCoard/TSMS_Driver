@@ -1,0 +1,68 @@
+#ifndef TSMS_LONG_MAP_H
+#define TSMS_LONG_MAP_H
+
+#include "tsms.h"
+
+struct TSMS_LONG_MAP_NODE_HANDLER;
+
+typedef struct TSMS_LONG_MAP_NODE_HANDLER * TSMS_LONG_MAP_NODE_HANDLER_POINTER;
+
+typedef TSMS_LONG_MAP_NODE_HANDLER_POINTER TSMS_LMNHP;
+
+struct TSMS_LONG_MAP_NODE_HANDLER {
+	long key;
+	void* value;
+	TSMS_LMNHP next;
+};
+
+struct TSMS_LONG_MAP_HANDLER {
+	TSMS_LMNHP* base;
+	TSMS_SIZE diffusion;
+	TSMS_SIZE size;
+};
+
+typedef struct TSMS_LONG_MAP_HANDLER * TSMS_LONG_MAP_HANDLER_POINTER;
+
+typedef TSMS_LONG_MAP_HANDLER_POINTER TSMS_LMHP;
+
+struct TSMS_LONG_MAP_ITERATOR_HANDLER {
+	TSMS_LMHP map;
+	TSMS_POS current;
+	TSMS_LMNHP next;
+};
+
+typedef struct TSMS_LONG_MAP_ITERATOR_HANDLER TSMS_LMIH;
+
+typedef TSMS_LMIH * TSMS_LMIHP;
+
+struct TSMS_LONG_MAP_ENTRY_HANDLER {
+	long key;
+	void* value;
+};
+
+typedef struct TSMS_LONG_MAP_ENTRY_HANDLER TSMS_LMEH;
+
+
+extern TSMS_LMIH TSMS_EMPTY_LONG_MAP_ITERATOR;
+
+extern TSMS_LMEH TSMS_EMPTY_LONG_MAP_ENTRY;
+
+TSMS_LMHP TSMS_LONG_MAP_create(TSMS_SIZE diffusion);
+
+TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMHP map, long key, void* value);
+
+void* TSMS_LONG_MAP_get(TSMS_LMHP map, long key);
+
+TSMS_RESULT TSMS_LONG_MAP_remove(TSMS_LMHP map, long key);
+
+TSMS_RESULT TSMS_LONG_MAP_release(TSMS_LMHP map);
+
+TSMS_LMIH TSMS_LONG_MAP_iterator(TSMS_LMHP map);
+
+bool TSMS_LONG_MAP_hasNext(TSMS_LMIHP iter);
+
+TSMS_LMEH TSMS_LONG_MAP_next(TSMS_LMIHP iter);
+
+TSMS_RESULT TSMS_LONG_MAP_clear(TSMS_LMHP map);
+
+#endif //TSMS_LONG_MAP_H

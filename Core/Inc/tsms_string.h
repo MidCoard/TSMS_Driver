@@ -9,6 +9,7 @@ typedef tString *pString;
 #include <math.h>
 #include "tsms.h"
 #include "tsms_list.h"
+#include "tsms_char_list.h"
 #include "tsms_map.h"
 
 struct TSMS_STRING_HANDLER {
@@ -39,7 +40,7 @@ float TSMS_STRING_toFloat(pString str);
 
 int TSMS_STRING_toInt(pString str);
 
-TSMS_RESULT TSMS_STRING_getString(TSMS_LCLP list, pString buffer);
+TSMS_RESULT TSMS_STRING_getString(TSMS_CLP list, pString buffer);
 
 TSMS_RESULT TSMS_STRING_copy(pString str1, pString str2);
 
