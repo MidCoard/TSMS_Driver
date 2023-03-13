@@ -222,3 +222,7 @@ tString TSMS_STRING_temp(const char* str) {
 	tString tStr = {str, strlen(str), false};
 	return tStr;
 }
+
+pString TSMS_STRING_empty() {
+	return TSMS_STRING_createAndInit("");
+}

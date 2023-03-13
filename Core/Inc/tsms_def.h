@@ -7,6 +7,8 @@ typedef uint32_t TSMS_SIZE;
 
 typedef long TSMS_POS;
 
+typedef long TSMS_LSIZE;
+
 typedef enum {
 	TSMS_TRANSFER_MSB = 0U, TSMS_TRANSFER_LSB
 } TSMS_TRANSFER_TYPE;
