@@ -4,8 +4,8 @@ TSMS_LLP gpioList = TSMS_NULL;
 TSMS_LLP printerList = TSMS_NULL;
 
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
-	gpioList = TSMS_LIST_createList(10);
-	printerList = TSMS_LIST_createList(10);
+	gpioList = TSMS_LIST_create(10);
+	printerList = TSMS_LIST_create(10);
 	return TSMS_SUCCESS;
 }
 
@@ -39,7 +39,7 @@ TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_
 	igp->type = type;
 	igp->callback = callback;
 	igp->handler = handler;
-	TSMS_LIST_addList(gpioList, igp);
+	TSMS_LIST_add(gpioList, igp);
 	return TSMS_SUCCESS;
 }
 
@@ -52,6 +52,6 @@ TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, 
 	ipp->printer = php;
 	ipp->callback = callback;
 	ipp->handler = handler;
-	TSMS_LIST_addList(printerList, ipp);
+	TSMS_LIST_add(printerList, ipp);
 	return TSMS_SUCCESS;
 }

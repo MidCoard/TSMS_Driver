@@ -19,7 +19,7 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 	handler->scl = TSMS_NULL_GHP;
 	handler->delay = __tsms_internal_custom_delay;
 	handler->customDelay = TSMS_NULL;
-	handler->list = TSMS_LIST_createList(10);
+	handler->list = TSMS_LIST_create(10);
 	if (handler->list == TSMS_NULL) {
 		free(handler);
 		va_end(args);
@@ -28,7 +28,7 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 		return TSMS_NULL;
 	}
 	for (int i = 0; i < n; i++) {
-		TSMS_RESULT result = TSMS_LIST_addList(handler->list, va_arg(args, TSMS_GHP));
+		TSMS_RESULT result = TSMS_LIST_add(handler->list, va_arg(args, TSMS_GHP));
 		if (result != TSMS_SUCCESS) {
 			TSMS_CUSTOM_release(handler);
 			va_end(args);
@@ -146,7 +146,7 @@ TSMS_RESULT TSMS_CUSTOM_delay(TSMS_CHP handler, TSMS_DELAY_TIME time) {
 TSMS_RESULT TSMS_CUSTOM_release(TSMS_CHP handler) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_LIST_releaseList(handler->list);
+	TSMS_LIST_release(handler->list);
 	free(handler->sda);
 	free(handler->scl);
 	free(handler);

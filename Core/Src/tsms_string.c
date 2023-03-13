@@ -114,17 +114,17 @@ pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end) {
 TSMS_LLP TSMS_STRING_split(pString str, char spilt) {
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
-	TSMS_LLP ulp = TSMS_LIST_createList(10);
+	TSMS_LLP ulp = TSMS_LIST_create(10);
 	if (ulp == TSMS_NULL)
 		return TSMS_NULL;
 	int pos = 0;
 	for (int i = 0; i < str->length; i++)
 		if (str->cStr[i] == spilt) {
-			TSMS_LIST_addList(ulp, TSMS_STRING_subString(str, pos, i));
+			TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, i));
 			pos = i + 1;
 		}
 	if (pos < str->length)
-		TSMS_LIST_addList(ulp, TSMS_STRING_subString(str, pos, str->length));
+		TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, str->length));
 	return ulp;
 }
 
