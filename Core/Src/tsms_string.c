@@ -2,7 +2,7 @@
 
 pString TSMS_EMPTY_STRING;
 
-TSMS_MHP STATIC_MAP;
+TSMS_MP STATIC_MAP;
 
 TSMS_INLINE long __internal_tsms_hash(void* p) {
 	char* str = p;
@@ -111,10 +111,10 @@ pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end) {
 	return sub;
 }
 
-TSMS_LLP TSMS_STRING_split(pString str, char spilt) {
+TSMS_LP TSMS_STRING_split(pString str, char spilt) {
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
-	TSMS_LLP ulp = TSMS_LIST_create(10);
+	TSMS_LP ulp = TSMS_LIST_create(10);
 	if (ulp == TSMS_NULL)
 		return TSMS_NULL;
 	int pos = 0;

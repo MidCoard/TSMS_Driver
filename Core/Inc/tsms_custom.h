@@ -14,7 +14,7 @@ struct TSMS_CUSTOM_HANDLER {
 	TSMS_GHP scl;
 	TSMS_DELAY_FUNCTION delay;
 	TSMS_CUSTOM_DELAY_FUNCTION customDelay;
-	TSMS_LLP list;
+	TSMS_LP list;
 	TSMS_TRANSFER_TYPE transferType;
 };
 

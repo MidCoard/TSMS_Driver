@@ -4,10 +4,10 @@
 #include "tsms_long_list.h"
 
 
-TSMS_LLP TSMS_LIST_create(TSMS_SIZE initSize) {
-	TSMS_LLP list = malloc(sizeof(struct TSMS_LIST_LIST));
+TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
+	TSMS_LP list = malloc(sizeof(struct TSMS_LIST));
 	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_LLP");
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_LP");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
@@ -24,7 +24,7 @@ TSMS_LLP TSMS_LIST_create(TSMS_SIZE initSize) {
 	return list;
 }
 
-TSMS_RESULT TSMS_LIST_add(TSMS_LLP list, void *element) {
+TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
@@ -41,7 +41,7 @@ TSMS_RESULT TSMS_LIST_add(TSMS_LLP list, void *element) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LIST_remove(TSMS_LLP list, TSMS_POS index) {
+TSMS_RESULT TSMS_LIST_remove(TSMS_LP list, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index >= list->length || index < 0)
@@ -62,7 +62,7 @@ TSMS_RESULT TSMS_LIST_remove(TSMS_LLP list, TSMS_POS index) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_POS TSMS_LIST_removeElement(TSMS_LLP list, void *element) {
+TSMS_POS TSMS_LIST_removeElement(TSMS_LP list, void *element) {
 	if (list == TSMS_NULL)
 		return -1;
 	for (TSMS_POS i = 0; i < list->length; i++)
@@ -74,14 +74,14 @@ TSMS_POS TSMS_LIST_removeElement(TSMS_LLP list, void *element) {
 	return -1;
 }
 
-TSMS_RESULT TSMS_LIST_clear(TSMS_LLP list) {
+TSMS_RESULT TSMS_LIST_clear(TSMS_LP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	list->length = 0;
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LIST_release(TSMS_LLP list) {
+TSMS_RESULT TSMS_LIST_release(TSMS_LP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	free(list->list);

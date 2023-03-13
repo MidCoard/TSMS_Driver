@@ -1,7 +1,7 @@
 #include "tsms_it.h"
 
-TSMS_LLP gpioList = TSMS_NULL;
-TSMS_LLP printerList = TSMS_NULL;
+TSMS_LP gpioList = TSMS_NULL;
+TSMS_LP printerList = TSMS_NULL;
 
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
 	gpioList = TSMS_LIST_create(10);

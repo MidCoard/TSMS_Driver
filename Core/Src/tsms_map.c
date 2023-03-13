@@ -1,48 +1,48 @@
 #include "tsms_map.h"
 #include "tsms_long_map.h"
 
-TSMS_MEH TSMS_EMPTY_MAP_ENTRY = {TSMS_NULL, TSMS_NULL};
+TSMS_ME TSMS_EMPTY_MAP_ENTRY = {TSMS_NULL, TSMS_NULL};
 
-TSMS_LMEH TSMS_EMPTY_LONG_MAP_ENTRY = {0, TSMS_NULL};
+TSMS_LME TSMS_EMPTY_LONG_MAP_ENTRY = {0, TSMS_NULL};
 
-TSMS_MIH TSMS_EMPTY_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
+TSMS_MI TSMS_EMPTY_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
-TSMS_LMIH TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
+TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
-TSMS_INLINE TSMS_MNHP __internal_tsms_create_node(void * key, void * value) {
-	TSMS_MNHP node = malloc(sizeof (struct TSMS_MAP_NODE_HANDLER));
+TSMS_INLINE TSMS_MNP __internal_tsms_create_node(void * key, void * value) {
+	TSMS_MNP node = malloc(sizeof (struct TSMS_MAP_NODE));
 	node->key = key;
 	node->value = value;
 	return node;
 }
 
-TSMS_INLINE TSMS_LMNHP __internal_tsms_create_long_node(long key, void * value) {
-	TSMS_LMNHP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE_HANDLER));
+TSMS_INLINE TSMS_LMNP __internal_tsms_create_long_node(long key, void * value) {
+	TSMS_LMNP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE));
 	node->key = key;
 	node->value = value;
 	return node;
 }
 
-TSMS_MHP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
-	TSMS_MHP map = malloc(sizeof(struct TSMS_MAP_HANDLER));
+TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
+	TSMS_MP map = malloc(sizeof(struct TSMS_MAP));
 	if (map == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for map");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	map->base = malloc(sizeof( TSMS_MNHP) * diffusion);
+	map->base = malloc(sizeof( TSMS_MNP) * diffusion);
 	map->hash = hash;
 	map->diffusion = diffusion;
 	map->size = 0;
 	return map;
 }
 
-TSMS_RESULT TSMS_MAP_put(TSMS_MHP map, void * key, void * value) {
+TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
 	long hash = map->hash(key);
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_MNHP cur = map->base[offset];
+	TSMS_MNP cur = map->base[offset];
 	// first if not exist
 	if (cur == TSMS_NULL)
 		map->base[offset] = __internal_tsms_create_node(key, value);
@@ -71,12 +71,12 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MHP map, void * key, void * value) {
 	return TSMS_SUCCESS;
 }
 
-void * TSMS_MAP_get(TSMS_MHP map, void * key) {
+void * TSMS_MAP_get(TSMS_MP map, void * key) {
 	if (map == TSMS_NULL)
 		return TSMS_NULL;
 	long hash = map->hash(key);
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_MNHP cur = map->base[offset];
+	TSMS_MNP cur = map->base[offset];
 	while (cur != TSMS_NULL) {
 		if (cur->key == key)
 			return cur->value;
@@ -85,12 +85,12 @@ void * TSMS_MAP_get(TSMS_MHP map, void * key) {
 	return TSMS_NULL;
 }
 
-TSMS_RESULT TSMS_MAP_remove(TSMS_MHP map, void * key) {
+TSMS_RESULT TSMS_MAP_remove(TSMS_MP map, void * key) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
 	long hash = map->hash(key);
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_MNHP cur = map->base[offset];
+	TSMS_MNP cur = map->base[offset];
 	if (cur == TSMS_NULL)
 		return TSMS_FAIL;
 	if (cur->key == key) {
@@ -101,7 +101,7 @@ TSMS_RESULT TSMS_MAP_remove(TSMS_MHP map, void * key) {
 	}
 	while (cur->next != TSMS_NULL) {
 		if (cur->next->key == key) {
-			TSMS_MNHP tmp = cur->next;
+			TSMS_MNP tmp = cur->next;
 			cur->next = cur->next->next;
 			free(tmp);
 			map->size--;
@@ -111,10 +111,10 @@ TSMS_RESULT TSMS_MAP_remove(TSMS_MHP map, void * key) {
 	return TSMS_FAIL;
 }
 
-TSMS_RESULT TSMS_MAP_release(TSMS_MHP map) {
+TSMS_RESULT TSMS_MAP_release(TSMS_MP map) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_MNHP cur, tmp;
+	TSMS_MNP cur, tmp;
 	for (TSMS_POS i = 0; i < map->diffusion; i++) {
 		cur = map->base[i];
 		while (cur != TSMS_NULL) {
@@ -128,14 +128,14 @@ TSMS_RESULT TSMS_MAP_release(TSMS_MHP map) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_MIH TSMS_MAP_iterator(TSMS_MHP map) {
+TSMS_MI TSMS_MAP_iterator(TSMS_MP map) {
 	if (map == TSMS_NULL)
 		return TSMS_EMPTY_MAP_ITERATOR;
-	TSMS_MIH iter = {map, 0, map->base[0]};
+	TSMS_MI iter = {map, 0, map->base[0]};
 	return iter;
 }
 
-bool TSMS_MAP_hasNext(TSMS_MIHP iter) {
+bool TSMS_MAP_hasNext(TSMS_MIP iter) {
 	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_MAP_ITERATOR)
 		return false;
 	if (iter->next == TSMS_NULL) {
@@ -148,7 +148,7 @@ bool TSMS_MAP_hasNext(TSMS_MIHP iter) {
 	return true;
 }
 
-TSMS_MEH TSMS_MAP_next(TSMS_MIHP iter) {
+TSMS_ME TSMS_MAP_next(TSMS_MIP iter) {
 	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_MAP_ITERATOR)
 		return TSMS_EMPTY_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
@@ -157,7 +157,7 @@ TSMS_MEH TSMS_MAP_next(TSMS_MIHP iter) {
 			if (iter->map->base[i] != TSMS_NULL) {
 				iter->current = i;
 				iter->next = iter->map->base[i];
-				TSMS_MEH entry;
+				TSMS_ME entry;
 				entry.key = iter->next->key;
 				entry.value = iter->next->value;
 				iter->next = iter->next->next;
@@ -165,17 +165,17 @@ TSMS_MEH TSMS_MAP_next(TSMS_MIHP iter) {
 			}
 		return TSMS_EMPTY_MAP_ENTRY;
 	}
-	TSMS_MEH entry;
+	TSMS_ME entry;
 	entry.key = iter->next->key;
 	entry.value = iter->next->value;
 	iter->next = iter->next->next;
 	return entry;
 }
 
-TSMS_RESULT TSMS_MAP_clear(TSMS_MHP map) {
+TSMS_RESULT TSMS_MAP_clear(TSMS_MP map) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_MNHP cur, tmp;
+	TSMS_MNP cur, tmp;
 	for (TSMS_POS i = 0; i < map->diffusion; i++) {
 		cur = map->base[i];
 		while (cur != TSMS_NULL) {
@@ -191,24 +191,24 @@ TSMS_RESULT TSMS_MAP_clear(TSMS_MHP map) {
 
 
 
-TSMS_LMHP TSMS_LONG_MAP_create(TSMS_SIZE diffusion) {
-	TSMS_LMHP map = malloc(sizeof(struct TSMS_LONG_MAP_HANDLER));
+TSMS_LMP TSMS_LONG_MAP_create(TSMS_SIZE diffusion) {
+	TSMS_LMP map = malloc(sizeof(struct TSMS_LONG_MAP));
 	if (map == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for map");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	map->base = malloc(sizeof( TSMS_LMNHP) * diffusion);
+	map->base = malloc(sizeof( TSMS_LMNP) * diffusion);
 	map->diffusion = diffusion;
 	map->size = 0;
 	return map;
 }
 
-TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMHP map, long key, void * value) {
+TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMP map, long key, void * value) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_POS offset = (key % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_LMNHP cur = map->base[offset];
+	TSMS_LMNP cur = map->base[offset];
 	// first if not exist
 	if (cur == TSMS_NULL)
 		map->base[offset] = __internal_tsms_create_long_node(key, value);
@@ -237,11 +237,11 @@ TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMHP map, long key, void * value) {
 	return TSMS_SUCCESS;
 }
 
-void* TSMS_LONG_MAP_get(TSMS_LMHP map, long key) {
+void* TSMS_LONG_MAP_get(TSMS_LMP map, long key) {
 	if (map == TSMS_NULL)
 		return TSMS_NULL;
 	TSMS_POS offset = (key % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_LMNHP cur = map->base[offset];
+	TSMS_LMNP cur = map->base[offset];
 	while (cur != TSMS_NULL) {
 		if (cur->key == key)
 			return cur->value;
@@ -250,11 +250,11 @@ void* TSMS_LONG_MAP_get(TSMS_LMHP map, long key) {
 	return TSMS_NULL;
 }
 
-TSMS_RESULT TSMS_LONG_MAP_remove(TSMS_LMHP map, long key) {
+TSMS_RESULT TSMS_LONG_MAP_remove(TSMS_LMP map, long key) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_POS offset = (key % map->diffusion + map->diffusion) % map->diffusion;
-	TSMS_LMNHP cur = map->base[offset];
+	TSMS_LMNP cur = map->base[offset];
 	if (cur == TSMS_NULL)
 		return TSMS_FAIL;
 	if (cur->key == key) {
@@ -265,7 +265,7 @@ TSMS_RESULT TSMS_LONG_MAP_remove(TSMS_LMHP map, long key) {
 	}
 	while (cur->next != TSMS_NULL) {
 		if (cur->next->key == key) {
-			TSMS_LMNHP tmp = cur->next;
+			TSMS_LMNP tmp = cur->next;
 			cur->next = cur->next->next;
 			free(tmp);
 			map->size--;
@@ -275,10 +275,10 @@ TSMS_RESULT TSMS_LONG_MAP_remove(TSMS_LMHP map, long key) {
 	return TSMS_FAIL;
 }
 
-TSMS_RESULT TSMS_LONG_MAP_release(TSMS_LMHP map) {
+TSMS_RESULT TSMS_LONG_MAP_release(TSMS_LMP map) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_LMNHP cur, tmp;
+	TSMS_LMNP cur, tmp;
 	for (TSMS_POS i = 0; i < map->diffusion; i++) {
 		cur = map->base[i];
 		while (cur != TSMS_NULL) {
@@ -292,14 +292,14 @@ TSMS_RESULT TSMS_LONG_MAP_release(TSMS_LMHP map) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_LMIH TSMS_LONG_MAP_iterator(TSMS_LMHP map) {
+TSMS_LMI TSMS_LONG_MAP_iterator(TSMS_LMP map) {
 	if (map == TSMS_NULL)
 		return TSMS_EMPTY_LONG_MAP_ITERATOR;
-	TSMS_LMIH iter = {map, 0, map->base[0]};
+	TSMS_LMI iter = {map, 0, map->base[0]};
 	return iter;
 }
 
-bool TSMS_LONG_MAP_hasNext(TSMS_LMIHP iter) {
+bool TSMS_LONG_MAP_hasNext(TSMS_LMIP iter) {
 	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_LONG_MAP_ITERATOR)
 		return false;
 	if (iter->next == TSMS_NULL) {
@@ -312,7 +312,7 @@ bool TSMS_LONG_MAP_hasNext(TSMS_LMIHP iter) {
 	return true;
 }
 
-TSMS_LMEH TSMS_LONG_MAP_next(TSMS_LMIHP iter) {
+TSMS_LME TSMS_LONG_MAP_next(TSMS_LMIP iter) {
 	if (iter == TSMS_NULL || iter == &TSMS_EMPTY_LONG_MAP_ITERATOR)
 		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	if (iter->next == TSMS_NULL) {
@@ -321,7 +321,7 @@ TSMS_LMEH TSMS_LONG_MAP_next(TSMS_LMIHP iter) {
 			if (iter->map->base[i] != TSMS_NULL) {
 				iter->current = i;
 				iter->next = iter->map->base[i];
-				TSMS_LMEH entry;
+				TSMS_LME entry;
 				entry.key = iter->next->key;
 				entry.value = iter->next->value;
 				iter->next = iter->next->next;
@@ -329,17 +329,17 @@ TSMS_LMEH TSMS_LONG_MAP_next(TSMS_LMIHP iter) {
 			}
 		return TSMS_EMPTY_LONG_MAP_ENTRY;
 	}
-	TSMS_LMEH entry;
+	TSMS_LME entry;
 	entry.key = iter->next->key;
 	entry.value = iter->next->value;
 	iter->next = iter->next->next;
 	return entry;
 }
 
-TSMS_RESULT TSMS_LONG_MAP_clear(TSMS_LMHP map) {
+TSMS_RESULT TSMS_LONG_MAP_clear(TSMS_LMP map) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_LMNHP cur, tmp;
+	TSMS_LMNP cur, tmp;
 	for (TSMS_POS i = 0; i < map->diffusion; i++) {
 		cur = map->base[i];
 		while (cur != TSMS_NULL) {

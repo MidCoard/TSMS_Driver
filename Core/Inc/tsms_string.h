@@ -34,7 +34,7 @@ TSMS_RESULT TSMS_STRING_release(pString str);
 
 pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end);
 
-TSMS_LLP TSMS_STRING_split(pString str, char spilt);
+TSMS_LP TSMS_STRING_split(pString str, char spilt);
 
 float TSMS_STRING_toFloat(pString str);
 
