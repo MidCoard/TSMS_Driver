@@ -23,4 +23,6 @@ TSMS_RESULT TSMS_LONG_LIST_clear(TSMS_LLLP list);
 
 TSMS_RESULT TSMS_LONG_LIST_release(TSMS_LLLP list);
 
+TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLLP list, long element, TSMS_POS index);
+
 #endif //TSMS_LONG_LIST_H

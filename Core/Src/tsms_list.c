@@ -28,7 +28,6 @@ TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
-		list->actualLength *= 2;
 		void * tmp = realloc(list->list, list->actualLength * sizeof(void *));
 		if (tmp == TSMS_NULL) {
 			tString temp = TSMS_STRING_temp("realloc failed for list");
@@ -36,6 +35,7 @@ TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
 			return TSMS_ERROR;
 		}
 		list->list = tmp;
+		list->actualLength *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -115,7 +115,6 @@ TSMS_RESULT TSMS_CHAR_LIST_add(TSMS_CLP list, char element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
-		list->actualLength *= 2;
 		void* tmp = realloc(list->list, list->actualLength * sizeof(char));
 		if (tmp == TSMS_NULL) {
 			tString temp = TSMS_STRING_temp("realloc failed for list");
@@ -123,6 +122,7 @@ TSMS_RESULT TSMS_CHAR_LIST_add(TSMS_CLP list, char element) {
 			return TSMS_ERROR;
 		}
 		list->list = tmp;
+		list->actualLength *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -202,7 +202,6 @@ TSMS_RESULT TSMS_INT_LIST_add(TSMS_ILP list, int element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
-		list->actualLength *= 2;
 		void* tmp = realloc(list->list, list->actualLength * sizeof(int));
 		if (tmp == TSMS_NULL) {
 			tString temp = TSMS_STRING_temp("realloc failed for list");
@@ -210,6 +209,7 @@ TSMS_RESULT TSMS_INT_LIST_add(TSMS_ILP list, int element) {
 			return TSMS_ERROR;
 		}
 		list->list = tmp;
+		list->actualLength *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -289,7 +289,6 @@ TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLLP list, long element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
-		list->actualLength *= 2;
 		void * tmp = realloc(list->list, list->actualLength * sizeof(long));
 		if (tmp == TSMS_NULL) {
 			tString temp = TSMS_STRING_temp("realloc failed for list");
@@ -297,6 +296,7 @@ TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLLP list, long element) {
 			return TSMS_ERROR;
 		}
 		list->list = tmp;
+		list->actualLength *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -347,5 +347,28 @@ TSMS_RESULT TSMS_LONG_LIST_release(TSMS_LLLP list) {
 		return TSMS_ERROR;
 	free(list->list);
 	free(list);
+	return TSMS_SUCCESS;
+}
+
+
+TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLLP list, long element, TSMS_POS index) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if (index > list->length || index < 0)
+		return TSMS_FAIL;
+	if (list->actualLength <= list->length) {
+		void * tmp = realloc(list->list, list->actualLength * sizeof(long));
+		if (tmp == TSMS_NULL) {
+			tString temp = TSMS_STRING_temp("realloc failed for list");
+			TSMS_ERR_report(TSMS_ERR_REALLOC_FAILED, &temp);
+			return TSMS_ERROR;
+		}
+		list->list = tmp;
+		list->actualLength *= 2;
+	}
+	for (TSMS_POS i = list->length; i > index; i--)
+		list->list[i] = list->list[i - 1];
+	list->list[index] = element;
+	list->length++;
 	return TSMS_SUCCESS;
 }
