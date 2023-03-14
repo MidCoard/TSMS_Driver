@@ -48,6 +48,8 @@ long TSMS_STRING_indexOf(pString str, char c);
 
 pString TSMS_STRING_createAndInitChar(char c);
 
+pString TSMS_STRING_createAndInitBytes(const uint8_t * bytes);
+
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
 tString TSMS_STRING_temp(const char *cStr);

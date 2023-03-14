@@ -204,6 +204,26 @@ pString TSMS_STRING_createAndInitChar(char c) {
 	return str;
 }
 
+pString TSMS_STRING_createAndInitBytes(const uint8_t * bytes) {
+	pString str = TSMS_STRING_create();
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	for (int i = 0; bytes[i] != 0; i++)
+		str->length++;
+	str->cStr = malloc(sizeof (char) * (str->length + 1));
+	if (str->cStr == TSMS_NULL) {
+		TSMS_STRING_release(str);
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_NULL;
+	}
+	for (int i = 0; i < str->length; i++)
+		str->cStr[i] = bytes[i];
+	str->cStr[str->length] = '\0';
+	str->staticString = false;
+	return str;
+}
+
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2) {
 	if (str1 == TSMS_NULL || str2 == TSMS_NULL)
 		return TSMS_ERROR;
