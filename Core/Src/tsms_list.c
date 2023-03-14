@@ -3,6 +3,7 @@
 #include "tsms_int_list.h"
 #include "tsms_long_list.h"
 
+TSMS_LP TSMS_EMPTY_LIST;
 
 TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 	TSMS_LP list = malloc(sizeof(struct TSMS_LIST));
@@ -11,13 +12,15 @@ TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	list->list = malloc(initSize * sizeof(void *));
-	if (list->list == TSMS_NULL) {
-		free(list);
-		tString temp = TSMS_STRING_temp("malloc failed for list");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
-		return TSMS_NULL;
-	}
+	if (initSize != 0) {
+		list->list = malloc(initSize * sizeof(void *));
+		if (list->list == TSMS_NULL) {
+			free(list);
+			tString temp = TSMS_STRING_temp("malloc failed for list");
+			TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+			return TSMS_NULL;
+		}
+	} else list->list = TSMS_NULL;
 	list->actualLength = initSize;
 	list->length = 0;
 	list->initLength = initSize;
@@ -25,7 +28,7 @@ TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 }
 
 TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
 		void * tmp = realloc(list->list, list->actualLength * 2 * sizeof(void *));
@@ -42,7 +45,7 @@ TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
 }
 
 TSMS_RESULT TSMS_LIST_remove(TSMS_LP list, TSMS_POS index) {
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
 		return TSMS_ERROR;
 	if (index >= list->length || index < 0)
 		return TSMS_FAIL;
@@ -63,7 +66,7 @@ TSMS_RESULT TSMS_LIST_remove(TSMS_LP list, TSMS_POS index) {
 }
 
 TSMS_POS TSMS_LIST_removeElement(TSMS_LP list, void *element) {
-	if (list == TSMS_NULL)
+	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
 		return -1;
 	for (TSMS_POS i = 0; i < list->length; i++)
 		if (list->list[i] == element) {
@@ -84,8 +87,17 @@ TSMS_RESULT TSMS_LIST_clear(TSMS_LP list) {
 TSMS_RESULT TSMS_LIST_release(TSMS_LP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
+	if (list == TSMS_EMPTY_LIST)
+		return TSMS_SUCCESS;
 	free(list->list);
 	free(list);
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_LIST_init() {
+	TSMS_EMPTY_LIST = TSMS_LIST_create(0);
+	if (TSMS_EMPTY_LIST == TSMS_NULL)
+		return TSMS_ERROR;
 	return TSMS_SUCCESS;
 }
 

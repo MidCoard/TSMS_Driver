@@ -15,6 +15,8 @@ struct TSMS_LIST {
 	TSMS_SIZE initLength;
 };
 
+extern TSMS_LP TSMS_EMPTY_LIST;
+
 TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize);
 
 TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element);

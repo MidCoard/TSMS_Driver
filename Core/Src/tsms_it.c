@@ -6,6 +6,8 @@ TSMS_LP printerList = TSMS_NULL;
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
 	gpioList = TSMS_LIST_create(10);
 	printerList = TSMS_LIST_create(10);
+	if (gpioList == TSMS_NULL || printerList == TSMS_NULL)
+		return TSMS_ERROR;
 	return TSMS_SUCCESS;
 }
 

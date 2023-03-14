@@ -2,7 +2,7 @@
 
 pString TSMS_EMPTY_STRING;
 
-TSMS_MP STATIC_MAP;
+TSMS_MP staticMap;
 
 TSMS_INLINE long __internal_tsms_hash(void* p) {
 	char* str = p;
@@ -68,7 +68,7 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 }
 
 pString TSMS_STRING_static(const char *cStr) {
-	pString tmp = TSMS_MAP_get(STATIC_MAP, cStr);
+	pString tmp = TSMS_MAP_get(staticMap, cStr);
 	if (tmp != TSMS_NULL)
 		return tmp;
 	pString str = TSMS_STRING_create();
@@ -77,7 +77,7 @@ pString TSMS_STRING_static(const char *cStr) {
 	str->staticString = true;
 	str->cStr = cStr;
 	str->length = strlen(cStr);
-	TSMS_MAP_put(STATIC_MAP, cStr, str);
+	TSMS_MAP_put(staticMap, cStr, str);
 	return str;
 }
 
@@ -113,10 +113,10 @@ pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end) {
 
 TSMS_LP TSMS_STRING_split(pString str, char spilt) {
 	if (str == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_EMPTY_LIST;
 	TSMS_LP ulp = TSMS_LIST_create(10);
 	if (ulp == TSMS_NULL)
-		return TSMS_NULL;
+		return TSMS_EMPTY_LIST;
 	int pos = 0;
 	for (int i = 0; i < str->length; i++)
 		if (str->cStr[i] == spilt) {
@@ -179,8 +179,10 @@ long TSMS_STRING_indexOf(pString str, char c) {
 }
 
 TSMS_RESULT TSMS_STRING_init() {
-	STATIC_MAP = TSMS_MAP_create(256, __internal_tsms_hash);
+	staticMap = TSMS_MAP_create(256, __internal_tsms_hash);
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
+	if (staticMap == TSMS_NULL || TSMS_EMPTY_STRING == TSMS_NULL)
+		return TSMS_ERROR;
 	return TSMS_SUCCESS;
 }
 
