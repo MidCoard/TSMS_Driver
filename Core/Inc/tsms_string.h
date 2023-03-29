@@ -22,6 +22,8 @@ extern pString TSMS_EMPTY_STRING;
 
 bool TSMS_STRING_equals(pString str1, pString str2);
 
+long TSMS_STRING_compare(pString str1, pString str2);
+
 bool TSMS_STRING_startsWith(pString str, pString prefix);
 
 pString TSMS_STRING_create();

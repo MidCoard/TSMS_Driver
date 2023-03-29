@@ -38,7 +38,7 @@ TSMS_INLINE TSMS_SMNP __internal_tsms_create_string_node(pString key, void * val
 TSMS_INLINE bool __internal_tsms_compare(TSMS_MP map, void * key1, void * key2) {
 	if (map->compare == TSMS_NULL)
 		return key1 == key2;
-	return map->compare(key1, key2);
+	return map->compare(key1, key2) == 0;
 }
 
 TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare) {

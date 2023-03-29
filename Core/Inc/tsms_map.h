@@ -17,7 +17,7 @@ struct TSMS_MAP_NODE {
 
 typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
 
-typedef bool (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
+typedef long (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
 
 struct TSMS_MAP {
 	TSMS_MNP* base;
