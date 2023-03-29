@@ -56,4 +56,6 @@ tString TSMS_STRING_temp(const char *cStr);
 
 pString TSMS_STRING_empty();
 
+long TSMS_STRING_hash(pString str);
+
 #endif //TSMS_STRING_H

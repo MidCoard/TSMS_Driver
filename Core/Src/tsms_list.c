@@ -277,10 +277,10 @@ TSMS_RESULT TSMS_INT_LIST_release(TSMS_ILP list) {
 
 
 
-TSMS_LLLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
-	TSMS_LLLP list = malloc(sizeof(struct TSMS_LIST_LONG_LIST));
+TSMS_LLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
+	TSMS_LLP list = malloc(sizeof(struct TSMS_LONG_LIST));
 	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_LLLP");
+		tString temp = TSMS_STRING_temp("malloc failed for TSMS_LLP");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
@@ -297,7 +297,7 @@ TSMS_LLLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
 	return list;
 }
 
-TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLLP list, long element) {
+TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLP list, long element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (list->actualLength <= list->length) {
@@ -314,7 +314,7 @@ TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLLP list, long element) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LONG_LIST_remove(TSMS_LLLP list, TSMS_POS index) {
+TSMS_RESULT TSMS_LONG_LIST_remove(TSMS_LLP list, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index >= list->length || index < 0)
@@ -335,7 +335,7 @@ TSMS_RESULT TSMS_LONG_LIST_remove(TSMS_LLLP list, TSMS_POS index) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_POS TSMS_LONG_LIST_removeElement(TSMS_LLLP list, long element) {
+TSMS_POS TSMS_LONG_LIST_removeElement(TSMS_LLP list, long element) {
 	if (list == TSMS_NULL)
 		return -1;
 	for (TSMS_POS i = 0; i < list->length; i++)
@@ -347,14 +347,14 @@ TSMS_POS TSMS_LONG_LIST_removeElement(TSMS_LLLP list, long element) {
 	return -1;
 }
 
-TSMS_RESULT TSMS_LONG_LIST_clear(TSMS_LLLP list) {
+TSMS_RESULT TSMS_LONG_LIST_clear(TSMS_LLP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	list->length = 0;
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LONG_LIST_release(TSMS_LLLP list) {
+TSMS_RESULT TSMS_LONG_LIST_release(TSMS_LLP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	free(list->list);
@@ -363,7 +363,7 @@ TSMS_RESULT TSMS_LONG_LIST_release(TSMS_LLLP list) {
 }
 
 
-TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLLP list, long element, TSMS_POS index) {
+TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLP list, long element, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index > list->length || index < 0)
@@ -385,7 +385,7 @@ TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLLP list, long element, TSMS_POS index) 
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LONG_LIST_truncate(TSMS_LLLP list, TSMS_POS index) {
+TSMS_RESULT TSMS_LONG_LIST_truncate(TSMS_LLP list, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index > list->length || index < 0)

@@ -260,3 +260,7 @@ tString TSMS_STRING_temp(const char* str) {
 pString TSMS_STRING_empty() {
 	return TSMS_STRING_createAndInit("");
 }
+
+long TSMS_STRING_hash(pString str) {
+	return __internal_tsms_hash(str->cStr);
+}

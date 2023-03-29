@@ -1,0 +1,66 @@
+#ifndef TSMS_STRING_MAP_H
+#define TSMS_STRING_MAP_H
+
+#include "tsms.h"
+
+struct TSMS_STRING_MAP_NODE;
+
+typedef struct TSMS_STRING_MAP_NODE * TSMS_STRING_MAP_NODE_POINTER;
+
+typedef TSMS_STRING_MAP_NODE_POINTER TSMS_SMNP;
+
+struct TSMS_STRING_MAP_NODE {
+	pString key;
+	void* value;
+	TSMS_SMNP next;
+};
+
+struct TSMS_STRING_MAP {
+	TSMS_SMNP* base;
+	TSMS_SIZE diffusion;
+	TSMS_SIZE size;
+};
+
+typedef struct TSMS_STRING_MAP * TSMS_STRING_MAP_POINTER;
+
+typedef TSMS_STRING_MAP_POINTER TSMS_SMP;
+
+struct TSMS_STRING_MAP_ITERATOR {
+	TSMS_SMP map;
+	TSMS_POS current;
+	TSMS_SMNP next;
+};
+
+typedef struct TSMS_STRING_MAP_ITERATOR TSMS_SMI;
+
+typedef TSMS_SMI * TSMS_SMIP;
+
+struct TSMS_STRING_MAP_ENTRY {
+	pString key;
+	void* value;
+};
+
+typedef struct TSMS_STRING_MAP_ENTRY TSMS_SME;
+
+extern TSMS_SMI TSMS_EMPTY_STRING_MAP_ITERATOR;
+extern TSMS_SME TSMS_EMPTY_STRING_MAP_ENTRY;
+
+TSMS_SMP TSMS_STRING_MAP_create(TSMS_SIZE diffusion);
+
+TSMS_RESULT TSMS_STRING_MAP_put(TSMS_SMP map, pString key, void * value);
+
+void* TSMS_STRING_MAP_get(TSMS_SMP map, pString key);
+
+TSMS_RESULT TSMS_STRING_MAP_remove(TSMS_SMP map, pString key);
+
+TSMS_RESULT TSMS_STRING_MAP_release(TSMS_SMP map);
+
+TSMS_SMI TSMS_STRING_MAP_iterator(TSMS_SMP map);
+
+bool TSMS_STRING_MAP_hasNext(TSMS_SMIP iter);
+
+TSMS_SME TSMS_STRING_MAP_next(TSMS_SMIP iter);
+
+TSMS_RESULT TSMS_STRING_MAP_clear(TSMS_SMP map);
+
+#endif //TSMS_STRING_MAP_H
