@@ -1,13 +1,21 @@
 #ifndef TSMS_LONG_MAP_H
 #define TSMS_LONG_MAP_H
 
-#include "tsms.h"
-
-struct TSMS_LONG_MAP_NODE;
-
 typedef struct TSMS_LONG_MAP_NODE * TSMS_LONG_MAP_NODE_POINTER;
-
 typedef TSMS_LONG_MAP_NODE_POINTER TSMS_LMNP;
+
+typedef struct TSMS_LONG_MAP * TSMS_LONG_MAP_POINTER;
+typedef TSMS_LONG_MAP_POINTER TSMS_LMP;
+
+typedef struct TSMS_LONG_MAP_ITERATOR TSMS_LMI;
+typedef TSMS_LMI * TSMS_LMIP;
+
+typedef struct TSMS_LONG_MAP_ENTRY TSMS_LME;
+
+extern TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR;
+extern TSMS_LME TSMS_EMPTY_LONG_MAP_ENTRY;
+
+#include "tsms.h"
 
 struct TSMS_LONG_MAP_NODE {
 	long key;
@@ -21,31 +29,16 @@ struct TSMS_LONG_MAP {
 	TSMS_SIZE size;
 };
 
-typedef struct TSMS_LONG_MAP * TSMS_LONG_MAP_POINTER;
-
-typedef TSMS_LONG_MAP_POINTER TSMS_LMP;
-
 struct TSMS_LONG_MAP_ITERATOR {
 	TSMS_LMP map;
 	TSMS_POS current;
 	TSMS_LMNP next;
 };
 
-typedef struct TSMS_LONG_MAP_ITERATOR TSMS_LMI;
-
-typedef TSMS_LMI * TSMS_LMIP;
-
 struct TSMS_LONG_MAP_ENTRY {
 	long key;
 	void* value;
 };
-
-typedef struct TSMS_LONG_MAP_ENTRY TSMS_LME;
-
-
-extern TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR;
-
-extern TSMS_LME TSMS_EMPTY_LONG_MAP_ENTRY;
 
 TSMS_LMP TSMS_LONG_MAP_create(TSMS_SIZE diffusion);
 

@@ -1,16 +1,14 @@
 #ifndef TSMS_STRING_H
 #define TSMS_STRING_H
 
-struct TSMS_STRING_HANDLER;
-
 typedef struct TSMS_STRING_HANDLER tString;
 typedef tString *pString;
 
-#include <math.h>
+#include "tsms_math.h"
 #include "tsms.h"
 #include "tsms_list.h"
 #include "tsms_char_list.h"
-#include "tsms_set.h"
+#include "tsms_map.h"
 
 struct TSMS_STRING_HANDLER {
 	char *cStr;

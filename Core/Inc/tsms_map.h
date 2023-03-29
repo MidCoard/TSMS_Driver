@@ -1,23 +1,33 @@
 #ifndef TSMS_MAP_H
 #define TSMS_MAP_H
 
-#include "tsms.h"
-
-struct TSMS_MAP_NODE;
+#include "tsms_def.h"
 
 typedef struct TSMS_MAP_NODE * TSMS_MAP_NODE_POINTER;
-
 typedef TSMS_MAP_NODE_POINTER TSMS_MNP;
 
-struct TSMS_MAP_NODE {
-	void* key;
-	void* value;
+typedef struct TSMS_MAP * TSMS_MAP_POINTER;
+typedef TSMS_MAP_POINTER TSMS_MP;
+
+typedef struct TSMS_MAP_ITERATOR TSMS_MI;
+typedef TSMS_MI * TSMS_MIP;
+
+struct TSMS_MAP_ITERATOR {
+	TSMS_MP map;
+	TSMS_POS current;
 	TSMS_MNP next;
 };
 
 typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
 
 typedef long (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
+
+
+struct TSMS_MAP_NODE {
+	void* key;
+	void* value;
+	TSMS_MNP next;
+};
 
 struct TSMS_MAP {
 	TSMS_MNP* base;
@@ -27,24 +37,12 @@ struct TSMS_MAP {
 	TSMS_MAP_COMPARE_FUNCTION compare;
 };
 
-typedef struct TSMS_MAP * TSMS_MAP_POINTER;
-
-typedef TSMS_MAP_POINTER TSMS_MP;
-
-struct TSMS_MAP_ITERATOR {
-	TSMS_MP map;
-	TSMS_POS current;
-	TSMS_MNP next;
-};
-
-typedef struct TSMS_MAP_ITERATOR TSMS_MI;
-
-typedef TSMS_MI * TSMS_MIP;
-
 struct TSMS_MAP_ENTRY {
 	void* key;
 	void* value;
 };
+
+#include "tsms.h"
 
 typedef struct TSMS_MAP_ENTRY TSMS_ME;
 

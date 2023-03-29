@@ -1,6 +1,8 @@
 #ifndef TSMS_DEF_H
 #define TSMS_DEF_H
 
+#include "stdint.h"
+
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
 typedef uint32_t TSMS_SIZE;
