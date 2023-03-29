@@ -11,7 +11,7 @@ TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_M
 	}
 	set->map = TSMS_MAP_create(diffusion, hash, compare);
 	if (set->map == NULL) {
-		free(set);
+		TSMS_SET_release(set);
 		return TSMS_NULL;
 	}
 	return set;

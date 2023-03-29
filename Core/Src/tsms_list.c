@@ -15,7 +15,7 @@ TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 	if (initSize != 0) {
 		list->list = malloc(initSize * sizeof(void *));
 		if (list->list == TSMS_NULL) {
-			free(list);
+			TSMS_LIST_release(list);
 			tString temp = TSMS_STRING_temp("malloc failed for list");
 			TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 			return TSMS_NULL;
@@ -112,7 +112,7 @@ TSMS_CLP TSMS_CHAR_LIST_create(TSMS_SIZE initSize) {
 	}
 	list->list = malloc(initSize * sizeof(char));
 	if (list->list == TSMS_NULL) {
-		free(list);
+		TSMS_CHAR_LIST_release(list);
 		tString temp = TSMS_STRING_temp("malloc failed for list");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
@@ -199,7 +199,7 @@ TSMS_ILP TSMS_INT_LIST_create(TSMS_SIZE initSize) {
 	}
 	list->list = malloc(initSize * sizeof(int));
 	if (list->list == TSMS_NULL) {
-		free(list);
+		TSMS_INT_LIST_release(list);
 		tString temp = TSMS_STRING_temp("malloc failed for list");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
@@ -286,7 +286,7 @@ TSMS_LLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
 	}
 	list->list = malloc(initSize * sizeof(long));
 	if (list->list == TSMS_NULL) {
-		free(list);
+		TSMS_LONG_LIST_release(list);
 		tString temp = TSMS_STRING_temp("malloc failed for list");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;

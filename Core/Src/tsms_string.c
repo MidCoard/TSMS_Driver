@@ -60,7 +60,8 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 		return TSMS_NULL;
 	if (cStr == TSMS_NULL)
 		return str;
-	str->cStr = realloc(str->cStr, strlen(cStr) + 1);
+	str->length = strlen(cStr);
+	str->cStr = realloc(str->cStr, str->length + 1);
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("realloc failed for cStr");
@@ -68,7 +69,6 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 		return TSMS_NULL;
 	}
 	strcpy(str->cStr, cStr);
-	str->length = strlen(cStr);
 	str->staticString = false;
 	return str;
 }

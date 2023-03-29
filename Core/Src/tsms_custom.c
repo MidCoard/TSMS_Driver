@@ -21,7 +21,7 @@ TSMS_CHP TSMS_CUSTOM_createHandler(uint32_t n, ...) {
 	handler->customDelay = TSMS_NULL;
 	handler->list = TSMS_LIST_create(10);
 	if (handler->list == TSMS_NULL) {
-		free(handler);
+		TSMS_CUSTOM_release(handler);
 		va_end(args);
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_CHP list");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
