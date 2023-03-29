@@ -17,11 +17,14 @@ struct TSMS_MAP_NODE {
 
 typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
 
+typedef bool (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
+
 struct TSMS_MAP {
 	TSMS_MNP* base;
 	TSMS_MAP_HASH_FUNCTION hash;
 	TSMS_SIZE diffusion;
 	TSMS_SIZE size;
+	TSMS_MAP_COMPARE_FUNCTION compare;
 };
 
 typedef struct TSMS_MAP * TSMS_MAP_POINTER;
@@ -49,7 +52,7 @@ extern TSMS_ME TSMS_EMPTY_MAP_ENTRY;
 
 extern TSMS_MI TSMS_EMPTY_MAP_ITERATOR;
 
-TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash);
+TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare);
 
 TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void* key, void* value);
 

@@ -35,7 +35,13 @@ TSMS_INLINE TSMS_SMNP __internal_tsms_create_string_node(pString key, void * val
 	return node;
 }
 
-TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
+TSMS_INLINE bool __internal_tsms_compare(TSMS_MP map, void * key1, void * key2) {
+	if (map->compare == TSMS_NULL)
+		return key1 == key2;
+	return map->compare(key1, key2);
+}
+
+TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare) {
 	TSMS_MP map = malloc(sizeof(struct TSMS_MAP));
 	if (map == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for map");
@@ -44,6 +50,7 @@ TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
 	}
 	map->base = malloc(sizeof( TSMS_MNP) * diffusion);
 	map->hash = hash;
+	map->compare = compare;
 	map->diffusion = diffusion;
 	map->size = 0;
 	return map;
@@ -52,6 +59,8 @@ TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash) {
 TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 	if (map == TSMS_NULL)
 		return TSMS_ERROR;
+	if (value == TSMS_NULL)
+		return TSMS_MAP_remove(map, key);
 	long hash = map->hash(key);
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
 	TSMS_MNP cur = map->base[offset];
@@ -60,7 +69,7 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 		map->base[offset] = __internal_tsms_create_node(key, value);
 	else {
 		// if existed, judge it!
-		if (cur->key == key) {
+		if (__internal_tsms_compare(map, cur->key, key)) {
 			if (cur->value == value)
 				return TSMS_FAIL;
 			cur->value = value;
@@ -68,7 +77,7 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 		}
 
 		while (cur->next != TSMS_NULL) {
-			if (cur->next->key == key) {
+			if (__internal_tsms_compare(map, cur->next->key, key)) {
 				if (cur->next->value == value)
 					return TSMS_FAIL;
 				cur->next->value = value;
@@ -90,7 +99,7 @@ void * TSMS_MAP_get(TSMS_MP map, void * key) {
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
 	TSMS_MNP cur = map->base[offset];
 	while (cur != TSMS_NULL) {
-		if (cur->key == key)
+		if (__internal_tsms_compare(map, cur->key, key))
 			return cur->value;
 		cur = cur->next;
 	}
@@ -105,14 +114,14 @@ TSMS_RESULT TSMS_MAP_remove(TSMS_MP map, void * key) {
 	TSMS_MNP cur = map->base[offset];
 	if (cur == TSMS_NULL)
 		return TSMS_FAIL;
-	if (cur->key == key) {
+	if (__internal_tsms_compare(map, cur->key, key)) {
 		map->base[offset] = cur->next;
 		free(cur);
 		map->size--;
 		return TSMS_SUCCESS;
 	}
 	while (cur->next != TSMS_NULL) {
-		if (cur->next->key == key) {
+		if (__internal_tsms_compare(map, cur->next->key, key)) {
 			TSMS_MNP tmp = cur->next;
 			cur->next = cur->next->next;
 			free(tmp);

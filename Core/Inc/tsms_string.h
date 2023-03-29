@@ -10,7 +10,7 @@ typedef tString *pString;
 #include "tsms.h"
 #include "tsms_list.h"
 #include "tsms_char_list.h"
-#include "tsms_map.h"
+#include "tsms_set.h"
 
 struct TSMS_STRING_HANDLER {
 	char *cStr;

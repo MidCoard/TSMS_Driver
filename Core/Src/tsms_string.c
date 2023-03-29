@@ -5,12 +5,11 @@ pString TSMS_EMPTY_STRING;
 TSMS_MP staticMap;
 
 TSMS_INLINE long __internal_tsms_hash(void* p) {
-	char* str = p;
-	size_t len = strlen(str);
-	long hash = 0;
-	for (size_t i = 0; i < len; i++)
-		hash = hash * 31 + str[i];
-	return hash;
+	return TSMS_STRING_hash(p);
+}
+
+TSMS_INLINE bool __internal_tsms_compare(void * key1, void * key2) {
+	return TSMS_STRING_equals(key1, key2);
 }
 
 bool TSMS_STRING_equals(pString str1, pString str2) {
@@ -189,7 +188,7 @@ long TSMS_STRING_indexOf(pString str, char c) {
 }
 
 TSMS_RESULT TSMS_STRING_init() {
-	staticMap = TSMS_MAP_create(256, __internal_tsms_hash);
+	staticMap = TSMS_MAP_create(256, __internal_tsms_hash, __internal_tsms_compare);
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
 	if (staticMap == TSMS_NULL || TSMS_EMPTY_STRING == TSMS_NULL)
 		return TSMS_ERROR;
@@ -262,5 +261,12 @@ pString TSMS_STRING_empty() {
 }
 
 long TSMS_STRING_hash(pString str) {
-	return __internal_tsms_hash(str->cStr);
+	if (str == TSMS_NULL)
+		return 0;
+	char* cStr = str->cStr;
+	size_t len = strlen(cStr);
+	long hash = 0;
+	for (size_t i = 0; i < len; i++)
+		hash = hash * 31 + cStr[i];
+	return hash;
 }
