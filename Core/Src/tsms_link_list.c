@@ -16,22 +16,7 @@ TSMS_LKLP TSMS_LINK_LIST_create() {
 TSMS_RESULT TSMS_LINK_LIST_add(TSMS_LKLP list, void *element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_LKNP node = (TSMS_LKNP) malloc(sizeof(struct TSMS_LINK_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for link node");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
-		return TSMS_ERROR;
-	}
-	node->element = element;
-	node->next = TSMS_NULL;
-	node->prev = list->tail;
-	if (list->length == 0)
-		list->head = node;
-	else if (list->tail != TSMS_NULL)
-		list->tail->next = node;
-	list->tail = node;
-	list->length++;
-	return TSMS_SUCCESS;
+	return TSMS_LINK_LIST_insert(list, element, list->length);
 }
 
 TSMS_RESULT TSMS_LINK_LIST_remove(TSMS_LKLP list, TSMS_POS index) {
@@ -105,4 +90,46 @@ TSMS_RESULT TSMS_LINK_LIST_deleteNode(TSMS_LKLP list, TSMS_LKNP node) {
 	list->length--;
 	free(node);
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if (index < 0 || index > list->length)
+		return TSMS_ERROR;
+	TSMS_LKNP node = (TSMS_LKNP) malloc(sizeof(struct TSMS_LINK_NODE));
+	if (node == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for link node");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_ERROR;
+	}
+	node->element = element;
+	if (index == 0) {
+		node->next = list->head;
+		node->prev = TSMS_NULL;
+		if (list->head != TSMS_NULL)
+			list->head->prev = node;
+		list->head = node;
+	} else if (index == list->length) {
+		node->next = TSMS_NULL;
+		node->prev = list->tail;
+		if (list->tail != TSMS_NULL)
+			list->tail->next = node;
+		list->tail = node;
+	} else {
+		TSMS_LKNP temp;
+		if (index < list->length / 2) {
+			temp = list->head;
+			for (TSMS_POS i = 0; i < index; i++)
+				temp = temp->next;
+		} else {
+			temp = list->tail;
+			for (TSMS_POS i = list->length - 1; i > index; i--)
+				temp = temp->prev;
+		}
+		node->next = temp;
+		node->prev = temp->prev;
+		temp->prev->next = node;
+		temp->prev = node;
+	}
 }

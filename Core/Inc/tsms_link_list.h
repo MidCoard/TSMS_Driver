@@ -38,4 +38,5 @@ TSMS_RESULT TSMS_LINK_LIST_clear(TSMS_LKLP list);
 TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index);
 
 TSMS_RESULT TSMS_LINK_LIST_deleteNode(TSMS_LKLP list, TSMS_LKNP node);
+
 #endif //TSMS_LINK_LIST_H
