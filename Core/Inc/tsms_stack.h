@@ -11,7 +11,7 @@ struct TSMS_STACK {
 	TSMS_LKLP list;
 };
 
-TSMS_STP TSMS_STACK_create(TSMS_SIZE initSize);
+TSMS_STP TSMS_STACK_create();
 
 TSMS_RESULT TSMS_STACK_push(TSMS_STP stack, void* element);
 

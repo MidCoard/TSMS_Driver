@@ -1,6 +1,6 @@
 #include "tsms_stack.h"
 
-TSMS_STP TSMS_STACK_create(TSMS_SIZE initSize) {
+TSMS_STP TSMS_STACK_create() {
 	TSMS_STP stack = (TSMS_STP) malloc(sizeof(struct TSMS_STACK));
 	if (stack == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for stack");
