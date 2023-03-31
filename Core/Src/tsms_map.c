@@ -11,6 +11,11 @@ TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
 TSMS_INLINE TSMS_MNP __internal_tsms_create_node(void * key, void * value) {
 	TSMS_MNP node = malloc(sizeof (struct TSMS_MAP_NODE));
+	if (node == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for map node");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_NULL;
+	}
 	node->key = key;
 	node->value = value;
 	return node;
@@ -18,6 +23,11 @@ TSMS_INLINE TSMS_MNP __internal_tsms_create_node(void * key, void * value) {
 
 TSMS_INLINE TSMS_LMNP __internal_tsms_create_long_node(long key, void * value) {
 	TSMS_LMNP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE));
+	if (node == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for long map node");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_NULL;
+	}
 	node->key = key;
 	node->value = value;
 	return node;
