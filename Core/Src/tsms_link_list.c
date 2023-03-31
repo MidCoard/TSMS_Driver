@@ -132,4 +132,5 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		temp->prev->next = node;
 		temp->prev = node;
 	}
+	return TSMS_SUCCESS;
 }
