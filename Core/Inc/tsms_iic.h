@@ -33,7 +33,7 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * csPort, uint16_t csPin,
 #else
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type);
 #endif
-TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, TSMS_TRANSFER_TYPE type);
+TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type);
 #else
 
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type);
