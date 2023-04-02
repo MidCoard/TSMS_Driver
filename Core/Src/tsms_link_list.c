@@ -110,12 +110,16 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		if (list->head != TSMS_NULL)
 			list->head->prev = node;
 		list->head = node;
+		if (list->tail == TSMS_NULL)
+			list->tail = node;
 	} else if (index == list->length) {
 		node->next = TSMS_NULL;
 		node->prev = list->tail;
 		if (list->tail != TSMS_NULL)
 			list->tail->next = node;
 		list->tail = node;
+		if (list->head == TSMS_NULL)
+			list->head = node;
 	} else {
 		TSMS_LKNP temp;
 		if (index < list->length / 2) {
@@ -132,5 +136,6 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		temp->prev->next = node;
 		temp->prev = node;
 	}
+	list->length++;
 	return TSMS_SUCCESS;
 }
