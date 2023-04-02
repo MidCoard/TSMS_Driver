@@ -13,7 +13,7 @@ TSMS_INLINE long __internal_tsms_hash(void * p) {
 	return hash;
 }
 
-TSMS_INLINE int __internal_tsms_compare(void * p1, void * p2) {
+TSMS_INLINE long __internal_tsms_compare(void * p1, void * p2) {
 	if (p1 == TSMS_NULL && p2 == TSMS_NULL)
 		return 0;
 	if (p1 == TSMS_NULL)
@@ -210,7 +210,7 @@ long TSMS_STRING_indexOf(pString str, char c) {
 
 TSMS_RESULT TSMS_STRING_init() {
 	staticMap = TSMS_MAP_create(256, __internal_tsms_hash,
-	                            (TSMS_MAP_COMPARE_FUNCTION) TSMS_STRING_compare);
+	                             __internal_tsms_compare);
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
 	if (staticMap == TSMS_NULL || TSMS_EMPTY_STRING == TSMS_NULL)
 		return TSMS_ERROR;
