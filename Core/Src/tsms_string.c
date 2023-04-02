@@ -13,6 +13,25 @@ TSMS_INLINE long __internal_tsms_hash(void * p) {
 	return hash;
 }
 
+TSMS_INLINE int __internal_tsms_compare(void * p1, void * p2) {
+	if (p1 == TSMS_NULL && p2 == TSMS_NULL)
+		return 0;
+	if (p1 == TSMS_NULL)
+		return -1;
+	if (p2 == TSMS_NULL)
+		return 1;
+	char * str1 = p1;
+	char * str2 = p2;
+	size_t length1 = strlen(str1);
+	size_t length2 = strlen(str2);
+	if (length1 != length2)
+		return length1 - length2;
+	for (TSMS_POS i = 0; i< length1;i++)
+		if (str1[i] != str2[i])
+			return str1[i] - str2[i];
+	return 0;
+}
+
 bool TSMS_STRING_equals(pString str1, pString str2) {
 	return TSMS_STRING_compare(str1, str2) == 0;
 }
@@ -24,12 +43,7 @@ long TSMS_STRING_compare(pString str1, pString str2) {
 		return -1;
 	if (str2 == TSMS_NULL)
 		return 1;
-	if (str1->length != str2->length)
-		return str1->length - str2->length;
-	for (TSMS_POS i = 0; i < str1->length; i++)
-		if (str1->cStr[i] != str2->cStr[i])
-			return str1->cStr[i] - str2->cStr[i];
-	return 0;
+	return __internal_tsms_compare(str1->cStr, str2->cStr);
 }
 
 bool TSMS_STRING_startsWith(pString str, pString prefix) {
