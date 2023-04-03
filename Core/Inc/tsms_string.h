@@ -58,4 +58,6 @@ pString TSMS_STRING_empty();
 
 long TSMS_STRING_hash(pString str);
 
+pString TSMS_STRING_createAndInitInt(int i);
+
 #endif //TSMS_STRING_H

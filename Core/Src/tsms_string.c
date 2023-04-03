@@ -4,6 +4,8 @@ pString TSMS_EMPTY_STRING;
 
 TSMS_MP staticMap;
 
+char intBuffer[13];
+
 TSMS_INLINE long __internal_tsms_hash(void * p) {
 	char * cStr = p;
 	size_t len = strlen(cStr);
@@ -286,4 +288,22 @@ long TSMS_STRING_hash(pString str) {
 	if (str == TSMS_NULL)
 		return 0;
 	return __internal_tsms_hash(str->cStr);
+}
+
+pString TSMS_STRING_createAndInitInt(int i) {
+	pString str = TSMS_STRING_create();
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	sprintf(intBuffer, "%d", i);
+	str->length = strlen(intBuffer);
+	str->cStr = realloc(str->cStr, sizeof (char) * (str->length + 1));
+	if (str->cStr == TSMS_NULL) {
+		TSMS_STRING_release(str);
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_NULL;
+	}
+	str->staticString = false;
+	strcpy(str->cStr, intBuffer);
+	return str;
 }
