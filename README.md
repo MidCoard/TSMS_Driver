@@ -1,4 +1,4 @@
-# TSMS -Typical Modern SPI, IIC and other custom digital interface driver library
+# TSMS -Typical Modern SPI, IIC and Other Custom Digital Interface Driver Library
 
 ## Description
 
