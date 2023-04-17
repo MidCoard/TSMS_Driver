@@ -21,6 +21,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	}
 }
 
+#ifdef HAL_UART_MODULE_ENABLED
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	for (int i = 0; i < printerList->length; i++) {
 		TSMS_IPP printer = printerList->list[i];
@@ -28,6 +30,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			printer->callback(printer->handler, printer->printer);
 	}
 }
+#endif
 
 #endif
 
