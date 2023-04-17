@@ -21,6 +21,34 @@ This library contains following examples:
 - ADS1115 16-bit ADC
 - AD7190 24-bit ADC
 
+## Usage
+
+### 1. Clone this repository
+
+```bash
+git clone https://github.com/MidCoard/TSMS_Driver.git
+```
+
+### 2. Copy the library to your project
+
+Copy the `Tsms` folder in the `TSMS_Driver` folder to your project.
+
+### 3. Add the library to your project
+
+Add the following code to your `CMakeLists.txt` file:
+
+```cmake
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Tsms/Inc)
+```
+Add `Tsms/*.*` to the `file(GLOB_RECURSE SOURCES ...)` function.
+
+### 4. Add the header file to your source file
+
+Just include the header file you need.
+
+### Note
+
+If you want to use the example driver code, just add `example` folder to your project as `Tsms` folder.
 
 
 ## License
