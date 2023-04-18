@@ -1,7 +1,8 @@
 #include "DAC8831.h"
 
 static void DAC8831_writeData(struct DAC8831_Handler *handler, uint16_t data) {
-	handler->handler->spiWrite(handler->handler->spi, &data, 16, 1);
+	uint32_t value = data;
+	handler->handler->spiWrite(handler->handler->spi, &value, 16, 1);
 }
 
 void DAC8831_setAnalogOutput(struct DAC8831_Handler *handler, float out) {

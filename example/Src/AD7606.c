@@ -63,7 +63,8 @@ AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO
 }
 
 void AD7606_setOverSampleRate(struct AD7606_Handler *handler, AD7606_OS_RATE overSampleRate) {
-	TSMS_CUSTOM_parallelWrite(handler->overSample, &overSampleRate, 1);
+	uint32_t value = overSampleRate;
+	TSMS_CUSTOM_parallelWrite(handler->overSample, &value, 1);
 }
 
 void AD7606_setRange(struct AD7606_Handler *handler, AD7606_RANGE range) {
@@ -77,7 +78,8 @@ void AD7606_setReferenceMode(struct AD7606_Handler *handler, AD7606_REFERENCE_MO
 
 // set range after setting the mode
 void AD7606_setMode(struct AD7606_Handler *handler, AD7606_MODE mode) {
-	TSMS_CUSTOM_parallelWrite(handler->mode, &mode, 1);
+	uint32_t value = mode;
+	TSMS_CUSTOM_parallelWrite(handler->mode, &value, 1);
 }
 
 static uint32_t AD7606_DATA[8];
