@@ -10,6 +10,7 @@ This library contains following parts:
 - IIC driver (Both hardware and software IIC, only support master mode)
 - Custom digital interface (parallel-write, parallel-read, etc.)
 - Printer driver (Used to connect UART, Bluetooth, etc.)
+- Display driver (Used to connect LCD, OLED, etc.)
 - GPIO driver (Interrupted is supported)
 - Utility functions (list, etc.)
 

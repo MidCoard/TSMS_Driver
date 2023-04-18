@@ -1,0 +1,39 @@
+#ifndef TSMS_DISPLAY_H
+#define TSMS_DISPLAY_H
+
+struct TSMS_DRIVER_HANDLER;
+typedef struct TSMS_DRIVER_HANDLER *TSMS_DRIVER_HANDLER_POINTER;
+typedef TSMS_DRIVER_HANDLER_POINTER TSMS_DHP;
+
+#include "tsms_iic.h"
+
+typedef struct TSMS_DISPLAY_HANDLER * TSMS_DISPLAY_HANDLER_POINTER;
+typedef TSMS_DISPLAY_HANDLER_POINTER TSMS_DPHP;
+typedef TSMS_RESULT(*TSMS_RESET_FUNCTION)(TSMS_DPHP);
+typedef TSMS_RESULT(*TSMS_READ_REGISTER_FUNCTION)(TSMS_DPHP, uint8_t, uint32_t *, TSMS_BITS);
+
+struct TSMS_DISPLAY_HANDLER {
+	void* custom;
+	TSMS_RESET_FUNCTION  reset;
+	TSMS_READ_REGISTER_FUNCTION readRegister;
+};
+
+typedef struct TSMS_GT9147_HANDLER * TSMS_GT9147_HANDLER_POINTER;
+typedef TSMS_GT9147_HANDLER_POINTER TSMS_GT9147;
+
+struct TSMS_GT9147_HANDLER {
+	TSMS_IHP iic;
+	TSMS_GHP reset;
+	TSMS_GHP interrupt;
+};
+
+#include "tsms_driver.h"
+#include "tsms_gpio.h"
+
+TSMS_DHP TSMS_DISPLAY_initGT9147(TSMS_IHP iic, TSMS_GHP reset, TSMS_GHP interrupt);
+
+TSMS_RESULT TSMS_DISPLAY_reset(TSMS_DHP display);
+
+TSMS_RESULT TSMS_DISPLAY_readRegister(TSMS_DHP display, uint8_t reg, uint32_t * data, TSMS_BITS bits);
+
+#endif //TSMS_DISPLAY_H

@@ -280,25 +280,36 @@ TSMS_RESULT TSMS_IIC_readBytes(TSMS_IHP handler, uint8_t *data, uint16_t length)
 	}
 }
 
-TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t data, TSMS_BITS bits) {
+TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint8_t reg, TSMS_BITS regBits, uint32_t data, TSMS_BITS bits) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	uint8_t buffer[5];
-	buffer[0] = reg;
-	if (handler->type == TSMS_TRANSFER_LSB)
+	static uint8_t buffer[8];
+	if (handler->type == TSMS_TRANSFER_LSB) {
+		for (int i = 0; i < regBits + 1; i++)
+			buffer[i] = TSMS_UTIL_reverseByte((reg >> (i * 8)) & 0xff);
 		for (int i = 0; i < bits + 1; i++)
-			buffer[i + 1] = TSMS_UTIL_reverseByte((data >> (i * 8)) & 0xff);
-	else
+			buffer[i + regBits + 1] = TSMS_UTIL_reverseByte((data >> (i * 8)) & 0xff);
+	}
+	else {
+		for (int i = regBits; i >= 0; i--)
+			buffer[regBits - i] = (reg >> (i * 8)) & 0xff;
 		for (int i = bits; i >= 0; i--)
-			buffer[bits - i + 1] = (data >> (i * 8)) & 0xff;
-	return TSMS_IIC_writeBytes(handler, buffer, bits + 2);
+			buffer[bits - i + regBits + 1] = (data >> (i * 8)) & 0xff;
+	}
+	return TSMS_IIC_writeBytes(handler, buffer, regBits + bits + 2);
 }
 
-TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, uint32_t *data, TSMS_BITS bits) {
+TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, TSMS_BITS regBits, uint32_t *data, TSMS_BITS bits) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	uint8_t buffer[4];
-	TSMS_RESULT result = TSMS_IIC_writeBytes(handler, &reg, 1);
+	static uint8_t buffer[4];
+	if (handler->type == TSMS_TRANSFER_LSB)
+		for (int i = 0; i < regBits + 1; i++)
+			buffer[i] = TSMS_UTIL_reverseByte((reg >> (i * 8)) & 0xff);
+	else
+		for (int i = regBits; i >= 0; i--)
+			buffer[regBits - i] = (reg >> (i * 8)) & 0xff;
+	TSMS_RESULT result = TSMS_IIC_writeBytes(handler, buffer, regBits + 1);
 	if (result != TSMS_SUCCESS)
 		return result;
 	result = TSMS_IIC_readBytes(handler, buffer, bits + 1);

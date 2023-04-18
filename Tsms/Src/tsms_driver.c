@@ -13,21 +13,22 @@ TSMS_INLINE void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
 	__tsms_internal_add_and_remove(reg, 0, mask);
 }
 
-TSMS_RHP TSMS_REG_Register(uint8_t bits) {
+TSMS_RHP TSMS_REG_Register(uint32_t address, uint8_t bits) {
 	TSMS_RHP reg = malloc(sizeof(struct TSMS_REGISTER_HANDLER));
 	if (reg == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHP");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
+	reg->address = address;
 	reg->bits = bits;
 	reg->value = 0;
 	reg->positions = TSMS_NULL;
 	return reg;
 }
 
-TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
-	TSMS_RHP reg = TSMS_REG_Register(8);
+TSMS_RHP TSMS_REG_8BitRegister(uint32_t address, TSMS_REGISTER_8BIT) {
+	TSMS_RHP reg = TSMS_REG_Register(address, 8);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->positions = malloc(sizeof(uint8_t) * 8);
@@ -44,8 +45,8 @@ TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT) {
 }
 
 
-TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
-	TSMS_RHP reg = TSMS_REG_Register(16);
+TSMS_RHP TSMS_REG_16BitRegister(uint32_t address, TSMS_REGISTER_16BIT) {
+	TSMS_RHP reg = TSMS_REG_Register(address, 16);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->positions = malloc(sizeof(uint8_t) * 16);
@@ -70,8 +71,8 @@ TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT) {
 	return reg;
 }
 
-TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
-	TSMS_RHP reg = TSMS_REG_Register(24);
+TSMS_RHP TSMS_REG_24BitRegister(uint32_t address, TSMS_REGISTER_24BIT) {
+	TSMS_RHP reg = TSMS_REG_Register(address, 24);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->positions = malloc(sizeof(uint8_t) * 24);
@@ -103,8 +104,8 @@ TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT) {
 	return reg;
 }
 
-TSMS_RHP TSMS_REG_32bitRegister(TSMS_REGISTER_32BIT) {
-	TSMS_RHP reg = TSMS_REG_Register(32);
+TSMS_RHP TSMS_REG_32BitRegister(uint32_t address, TSMS_REGISTER_32BIT) {
+	TSMS_RHP reg = TSMS_REG_Register(address, 32);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
 	reg->positions = malloc(sizeof(uint8_t) * 32);

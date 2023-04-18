@@ -4,7 +4,7 @@ TSMS_PHP defaultPrinter = TSMS_NULL;
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
 
-static void __tsms_internal_callback(void * handler, TSMS_PHP php) {
+TSMS_INLINE void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 	if (php->buffer != 0) {
 		if (php->buffer == '\n') {
 			if (php->customBuffer != TSMS_NULL)
@@ -12,12 +12,12 @@ static void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 			else
 				TSMS_STRING_getString(php->str, php->strBuffer);
 			php->customBuffer = TSMS_NULL;
-			TSMS_UTIL_clearCharList(php->str);
+			TSMS_CHAR_LIST_clear(php->str);
 			if (php->callback != TSMS_NULL)
 				php->callback(php->callbackData, php);
 			else
 				php->hasData = true;
-		} else TSMS_UTIL_addCharList(php->str, php->buffer);
+		} else TSMS_CHAR_LIST_add(php->str, php->buffer);
 	}
 	HAL_UART_Receive_IT(php->handler,  &php->buffer, 1);
 }
@@ -26,7 +26,7 @@ TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler) {
 	TSMS_PHP printer = malloc(sizeof(struct TSMS_PRINTER_HANDLER));
 	printer->handler = handler;
 	printer->hasData = false;
-	printer->str = TSMS_UTIL_createCharList(1024);
+	printer->str = TSMS_CHAR_LIST_create(1024);
 	printer->callback = TSMS_NULL;
 	printer->strBuffer = TSMS_STRING_create();
 	printer->customBuffer = TSMS_NULL;

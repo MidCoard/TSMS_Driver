@@ -29,31 +29,31 @@ ADS1115_initHardware(GPIO_TypeDef *sda, uint16_t sdaPin, GPIO_TypeDef *scl, uint
 			address,
 			TSMS_TRANSFER_MSB
 	), TSMS_REG_createList(5,
-	                       TSMS_REG_8BitRegister(ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_RESERVE,
+	                       TSMS_REG_8BitRegister(ADS1115_REG_ADDRESS_POINTER, ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_RESERVE,
 	                                             ADS1115_RESERVE, ADS1115_RESERVE, ADS1115_RESERVE),
-	                       TSMS_REG_16BitRegister(ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D,
+	                       TSMS_REG_16BitRegister(ADS1115_REG_CONVERSION, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D,
 	                                              ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D,
 	                                              ADS1115_D, ADS1115_D, ADS1115_D, ADS1115_D),
-	                       TSMS_REG_16BitRegister(ADS1115_COMP_QUE, ADS1115_COMP_QUE, ADS1115_COMP_LAT,
+	                       TSMS_REG_16BitRegister(ADS1115_REG_CONFIG, ADS1115_COMP_QUE, ADS1115_COMP_QUE, ADS1115_COMP_LAT,
 	                                              ADS1115_COMP_POL, ADS1115_COMP_MODE, ADS1115_DR, ADS1115_DR,
 	                                              ADS1115_DR, ADS1115_M, ADS1115_PGA, ADS1115_PGA, ADS1115_PGA,
 	                                              ADS1115_MUX, ADS1115_MUX, ADS1115_MUX, ADS1115_OS),
-	                       TSMS_REG_16BitRegister(ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
+	                       TSMS_REG_16BitRegister(ADS1115_REG_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
 	                                              ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
 	                                              ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
 	                                              ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
 	                                              ADS1115_LO_THRESH, ADS1115_LO_THRESH, ADS1115_LO_THRESH,
 	                                              ADS1115_LO_THRESH),
-	                       TSMS_REG_16BitRegister(ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
+	                       TSMS_REG_16BitRegister(ADS1115_REG_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
 	                                              ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
 	                                              ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
 	                                              ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
 	                                              ADS1115_HI_THRESH, ADS1115_HI_THRESH, ADS1115_HI_THRESH,
 	                                              ADS1115_HI_THRESH)
 	));
-	TSMS_REG_setRegister(handler->handler->regs->regs[ADS1115_REG_CONFIG], 0x8583);
-	TSMS_REG_setRegister(handler->handler->regs->regs[ADS1115_REG_LO_THRESH], 0x8000);
-	TSMS_REG_setRegister(handler->handler->regs->regs[ADS1115_REG_HI_THRESH], 0x7FFF);
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_CONFIG, 0x8583);
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_LO_THRESH, 0x8000);
+	TSMS_REG_setRegisterByList(handler->handler->regs, ADS1115_REG_HI_THRESH, 0x7FFF);
 	handler->gain = 2.048 / 32768;
 	return handler;
 }

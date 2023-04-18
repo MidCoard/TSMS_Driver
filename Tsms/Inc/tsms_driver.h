@@ -4,8 +4,10 @@
 #include "tsms_spi.h"
 #include "tsms_iic.h"
 #include "tsms_custom.h"
+#include "tsms_display.h"
 
 struct TSMS_REGISTER_HANDLER {
+	uint32_t address;
 	uint8_t bits;
 	uint32_t value;
 	uint8_t *positions;
@@ -17,7 +19,7 @@ typedef struct TSMS_REGISTER_HANDLER_LIST *TSMS_REGISTER_HANDLER_LIST_POINTER;
 typedef TSMS_REGISTER_HANDLER_LIST_POINTER TSMS_RHLP;
 
 typedef enum {
-	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM
+	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM, TSMS_DRIVER_DISPLAY
 } TSMS_DRIVER_TYPE;
 
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t *, uint8_t, uint32_t);
@@ -28,15 +30,16 @@ typedef TSMS_RESULT(*TSMS_DRIVER_SPI_TRANSFORM)(TSMS_SHP, uint32_t *, uint8_t, u
 
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM)(TSMS_SHP, uint32_t, ...);
 
-typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t, uint32_t, TSMS_BITS);
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t, TSMS_BITS, uint32_t, TSMS_BITS);
 
-typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t, uint32_t *, TSMS_BITS);
+typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t, TSMS_BITS, uint32_t *, TSMS_BITS);
 
 struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_TYPE type;
 	TSMS_SHP spi;
 	TSMS_IHP iic;
 	TSMS_CHP custom;
+	TSMS_DPHP display;
 	TSMS_RHLP regs;
 	TSMS_DRIVER_SPI_WRITER spiWrite;
 	TSMS_DRIVER_SPI_READER spiRead;
@@ -73,15 +76,15 @@ TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs);
 
 TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs);
 
-TSMS_RHP TSMS_REG_Register(uint8_t bits);
+TSMS_RHP TSMS_REG_Register(uint32_t address, uint8_t bits);
 
-TSMS_RHP TSMS_REG_8BitRegister(TSMS_REGISTER_8BIT);
+TSMS_RHP TSMS_REG_8BitRegister(uint32_t address, TSMS_REGISTER_8BIT);
 
-TSMS_RHP TSMS_REG_16BitRegister(TSMS_REGISTER_16BIT);
+TSMS_RHP TSMS_REG_16BitRegister(uint32_t address, TSMS_REGISTER_16BIT);
 
-TSMS_RHP TSMS_REG_24BitRegister(TSMS_REGISTER_24BIT);
+TSMS_RHP TSMS_REG_24BitRegister(uint32_t address, TSMS_REGISTER_24BIT);
 
-TSMS_RHP TSMS_REG_32BitRegister(TSMS_REGISTER_32BIT);
+TSMS_RHP TSMS_REG_32BitRegister(uint32_t address, TSMS_REGISTER_32BIT);
 
 TSMS_RESULT TSMS_REG_writeAt(TSMS_RHP reg, uint8_t start, uint8_t bits, uint32_t value);
 

@@ -3,11 +3,13 @@
 static uint32_t AD7190_TRANSFORM_DATA[2];
 
 static uint32_t AD7190_readRegister(struct AD7190_Handler *handler, AD7190_REGISTER reg) {
+	// todo reg could be TSMS_REG
 	uint32_t command = TSMS_REG_getRegisterByList(handler->handler->regs, AD7190_REG_COMM) | AD7190_CMD_READ |
 	                   AD7190_REG_ADDRESS(reg - 1);
 	AD7190_TRANSFORM_DATA[0] = command;
 	uint8_t bits = 24;
 	if (reg == AD7190_REG_STATUS || reg == AD7190_REG_ID || reg == AD7190_REG_GPOCON)
+		// todo can be auto detect
 		bits = 8;
 	uint32_t value = 0;
 	TSMS_REG_readRegisterByList(handler->handler->regs, AD7190_DAT_STA, &value);
@@ -46,18 +48,18 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                               TSMS_SPI_MODE_3, false,
 	                                                                               TSMS_TRANSFER_MSB),
 	                                                TSMS_REG_createList(9,
-	                                                                    TSMS_REG_8BitRegister(AD7190_RESERVE,
+	                                                                    TSMS_REG_8BitRegister(AD7190_REG_COMM, AD7190_RESERVE,
 	                                                                                          AD7190_RESERVE,
 	                                                                                          AD7190_CREAD, AD7190_RS,
 	                                                                                          AD7190_RS, AD7190_RS,
 	                                                                                          AD7190_RW, AD7190_WEN),
-	                                                                    TSMS_REG_8BitRegister(AD7190_CHD, AD7190_CHD,
+	                                                                    TSMS_REG_8BitRegister(AD7190_REG_STATUS,AD7190_CHD, AD7190_CHD,
 	                                                                                          AD7190_CHD,
 	                                                                                          AD7190_RESERVE,
 	                                                                                          AD7190_PARITY,
 	                                                                                          AD7190_NOREF, AD7190_ERR,
 	                                                                                          AD7190_RDY),
-	                                                                    TSMS_REG_24BitRegister(AD7190_FS, AD7190_FS,
+	                                                                    TSMS_REG_24BitRegister(AD7190_REG_MODE,AD7190_FS, AD7190_FS,
 	                                                                                           AD7190_FS, AD7190_FS,
 	                                                                                           AD7190_FS, AD7190_FS,
 	                                                                                           AD7190_FS, AD7190_FS,
@@ -74,7 +76,7 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                                           AD7190_DAT_STA,
 	                                                                                           AD7190_MD, AD7190_MD,
 	                                                                                           AD7190_MD),
-	                                                                    TSMS_REG_24BitRegister(AD7190_G, AD7190_G,
+	                                                                    TSMS_REG_24BitRegister(AD7190_REG_CONF,AD7190_G, AD7190_G,
 	                                                                                           AD7190_G, AD7190_UB,
 	                                                                                           AD7190_BUF,
 	                                                                                           AD7190_RESERVE,
@@ -92,7 +94,7 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                                           AD7190_RESERVE,
 	                                                                                           AD7190_RESERVE,
 	                                                                                           AD7190_CHOP),
-	                                                                    TSMS_REG_24BitRegister(AD7190_DATA, AD7190_DATA,
+	                                                                    TSMS_REG_24BitRegister(AD7190_REG_DATA,AD7190_DATA, AD7190_DATA,
 	                                                                                           AD7190_DATA, AD7190_DATA,
 	                                                                                           AD7190_DATA, AD7190_DATA,
 	                                                                                           AD7190_DATA, AD7190_DATA,
@@ -105,11 +107,11 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                                           AD7190_DATA, AD7190_DATA,
 	                                                                                           AD7190_DATA,
 	                                                                                           AD7190_DATA),
-	                                                                    TSMS_REG_8BitRegister(AD7190_ID, AD7190_ID,
+	                                                                    TSMS_REG_8BitRegister(AD7190_REG_ID, AD7190_ID, AD7190_ID,
 	                                                                                          AD7190_ID, AD7190_ID,
 	                                                                                          AD7190_ID, AD7190_ID,
 	                                                                                          AD7190_ID, AD7190_ID),
-	                                                                    TSMS_REG_8BitRegister(AD7190_P0DAT,
+	                                                                    TSMS_REG_8BitRegister(AD7190_REG_GPOCON, AD7190_P0DAT,
 	                                                                                          AD7190_P1DAT,
 	                                                                                          AD7190_P2DAT,
 	                                                                                          AD7190_P3DAT,
@@ -117,7 +119,7 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                                          AD7190_GP32EN,
 	                                                                                          AD7190_BPDSW,
 	                                                                                          AD7190_RESERVE),
-	                                                                    TSMS_REG_24BitRegister(AD7190_OFFSET,
+	                                                                    TSMS_REG_24BitRegister(AD7190_REG_OFFSET, AD7190_OFFSET,
 	                                                                                           AD7190_OFFSET,
 	                                                                                           AD7190_OFFSET,
 	                                                                                           AD7190_OFFSET,
@@ -141,7 +143,7 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                                           AD7190_OFFSET,
 	                                                                                           AD7190_OFFSET,
 	                                                                                           AD7190_OFFSET),
-	                                                                    TSMS_REG_24BitRegister(AD7190_FULL_SCALE,
+	                                                                    TSMS_REG_24BitRegister(AD7190_REG_FULL_SCALE, AD7190_FULL_SCALE,
 	                                                                                           AD7190_FULL_SCALE,
 	                                                                                           AD7190_FULL_SCALE,
 	                                                                                           AD7190_FULL_SCALE,
@@ -250,13 +252,11 @@ void AD7190_disable60HzRejection(struct AD7190_Handler *handler) {
 }
 
 void AD7190_enableSingleCycleConversion(struct AD7190_Handler *handler) {
-	TSMS_REG_tempWriteRegisterByList(handler->handler->regs, AD7190_SINGLE, 1);
-	AD7190_writeRegister(handler, AD7190_REG_MODE, TSMS_REG_getRegisterByList(handler->handler->regs, AD7190_REG_MODE));
+	AD7190_writeRegister(handler, AD7190_REG_MODE, TSMS_REG_tempWriteRegisterByList(handler->handler->regs, AD7190_SINGLE, 1));
 }
 
 void AD7190_disableSingleCycleConversion(struct AD7190_Handler *handler) {
-	TSMS_REG_tempWriteRegisterByList(handler->handler->regs, AD7190_SINGLE, 0);
-	AD7190_writeRegister(handler, AD7190_REG_MODE, TSMS_REG_getRegisterByList(handler->handler->regs, AD7190_REG_MODE));
+	AD7190_writeRegister(handler, AD7190_REG_MODE, TSMS_REG_tempWriteRegisterByList(handler->handler->regs, AD7190_SINGLE, 0));
 }
 
 void AD7190_enableParityCheck(struct AD7190_Handler *handler) {
