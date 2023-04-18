@@ -1,12 +1,12 @@
 #ifndef TSMS_PRINTER_H
 #define TSMS_PRINTER_H
 
+typedef struct TSMS_PRINTER_HANDLER *TSMS_PRINTER_HANDLER_POINTER;
+typedef TSMS_PRINTER_HANDLER_POINTER TSMS_PHP;
+
 #include "tsms.h"
 #include "tsms_util.h"
 #include "tsms_string.h"
-
-typedef struct TSMS_PRINTER_HANDLER *TSMS_PRINTER_HANDLER_POINTER;
-typedef TSMS_PRINTER_HANDLER_POINTER TSMS_PHP;
 
 typedef void (*TSMS_PRINTER_CALLBACK)(void *handler, TSMS_PHP printer);
 

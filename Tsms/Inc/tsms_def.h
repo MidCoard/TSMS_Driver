@@ -24,10 +24,10 @@ typedef enum {
 } TSMS_BITS;
 
 typedef enum {
-	TSMS_SUCCESS, // a successful operation
-	TSMS_ERROR,  // an error occurred ( one specific case of failure )
-	TSMS_TIMEOUT, // a timeout occurred ( one specific case of failure )
-	TSMS_FAIL // a failed operation
+	TSMS_SUCCESS = 0, // a successful operation
+	TSMS_ERROR = 1,  // an error occurred ( one specific case of failure )
+	TSMS_TIMEOUT = 2, // a timeout occurred ( one specific case of failure )
+	TSMS_FAIL = 4 // a failed operation
 } TSMS_RESULT;
 
 #define TSMS_MASK(x) ((1<<x)-1)

@@ -10,7 +10,7 @@ TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency) {
 	return result;
 }
 
-void TSMS_Delay(uint32_t ms) {
+void TSMS_delay(uint32_t ms) {
 #ifdef TSMS_STM32
 	HAL_Delay(ms);
 #endif

@@ -1,6 +1,4 @@
 #include "tsms_spi.h"
-#include "tsms_driver.h"
-#include "tsms_printer.h"
 
 TSMS_INLINE void __tsms_internal_spi_delay() {
 //	volatile uint8_t c = 1;

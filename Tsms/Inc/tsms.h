@@ -82,7 +82,7 @@ TSMS_RESULT TSMS_LIST_init();
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
 
-void TSMS_Delay(uint32_t ms);
+void TSMS_delay(uint32_t ms);
 
 TSMS_BITS TSMS_bits(uint8_t bits);
 

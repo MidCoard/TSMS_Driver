@@ -47,6 +47,13 @@ TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_M
 		return TSMS_NULL;
 	}
 	map->base = malloc(sizeof( TSMS_MNP) * diffusion);
+	if (map->base == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for map base");
+		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		return TSMS_NULL;
+	}
+	for (TSMS_SIZE i = 0; i < diffusion; i++)
+		map->base[i] = TSMS_NULL;
 	map->hash = hash;
 	map->compare = compare;
 	map->diffusion = diffusion;
