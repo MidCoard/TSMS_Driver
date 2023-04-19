@@ -14,5 +14,6 @@ TSMS_RESULT TSMS_NT5510_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIREC
 
 TSMS_RESULT TSMS_NT5510_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
 
+TSMS_RESULT TSMS_NT5510_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 #endif //TSMS_NT5510_H

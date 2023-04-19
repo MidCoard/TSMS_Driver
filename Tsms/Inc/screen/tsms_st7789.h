@@ -12,5 +12,6 @@ TSMS_RESULT TSMS_ST7789_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIREC
 
 TSMS_RESULT TSMS_ST7789_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
 
+TSMS_RESULT TSMS_ST7789_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 #endif //TSMS_ST7789_H

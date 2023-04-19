@@ -203,5 +203,11 @@ TSMS_RESULT TSMS_ILI9341_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION 
 }
 
 TSMS_RESULT TSMS_ILI9341_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
-	
+	TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
+	TSMS_SCREEN_writeData(screen, x >> 8);
+	TSMS_SCREEN_writeData(screen, x & 0XFF);
+	TSMS_SCREEN_writeCommand(screen, screen->setYCommand);
+	TSMS_SCREEN_writeData(screen, y >> 8);
+	TSMS_SCREEN_writeData(screen, y & 0XFF);
+	return TSMS_SUCCESS;
 }

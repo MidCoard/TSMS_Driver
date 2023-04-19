@@ -61,6 +61,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 			screen->init = TSMS_ST7789_init;
 			screen->setDisplayDirection = TSMS_ST7789_setDisplayDirection;
 			screen->setScanDirection = TSMS_ST7789_setScanDirection;
+			screen->setCursor = TSMS_ST7789_setCursor;
 		}
 	}
 	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT35310) {
@@ -70,6 +71,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 			screen->init = TSMS_NT35310_init;
 			screen->setDisplayDirection = TSMS_NT35310_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT35310_setScanDirection;
+			screen->setCursor = TSMS_NT35310_setCursor;
 		}
 	}
 	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT35510) {
@@ -79,6 +81,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 			screen->init = TSMS_NT5510_init;
 			screen->setDisplayDirection = TSMS_NT5510_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT5510_setScanDirection;
+			screen->setCursor = TSMS_NT5510_setCursor;
 		}
 	}
 	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT5510) {
@@ -88,6 +91,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 			screen->init = TSMS_NT5510_init;
 			screen->setDisplayDirection = TSMS_NT5510_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT5510_setScanDirection;
+			screen->setCursor = TSMS_NT5510_setCursor;
 		}
 	}
 	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_SSD1963) {
@@ -97,6 +101,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 			screen->init = TSMS_SSD1963_init;
 			screen->setDisplayDirection = TSMS_SSD1963_setDisplayDirection;
 			screen->setScanDirection = TSMS_SSD1963_setScanDirection;
+			screen->setCursor = TSMS_SSD1963_setCursor;
 		}
 	}
 	if (screen->type != TSMS_SCREEN_AUTO_DETECT) {
@@ -188,45 +193,7 @@ TSMS_RESULT TSMS_SCREEN_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION d
 TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-	if (screen->type == TSMS_SCREEN_ILI9341 || screen->type == TSMS_SCREEN_ST7789 ||
-	    screen->type == TSMS_SCREEN_NT35310) {
-		TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
-		TSMS_SCREEN_writeData(screen, x >> 8);
-		TSMS_SCREEN_writeData(screen, x & 0XFF);
-		TSMS_SCREEN_writeCommand(screen, screen->setYCommand);
-		TSMS_SCREEN_writeData(screen, y >> 8);
-		TSMS_SCREEN_writeData(screen, y & 0XFF);
-	} else if (screen->type == TSMS_SCREEN_SSD1963) {
-		if (screen->displayDirection == TSMS_DISPLAY_VERTICAL) {
-			x = screen->width - x - 1;
-			TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
-			TSMS_SCREEN_writeData(screen, 0);
-			TSMS_SCREEN_writeData(screen, 0);
-			TSMS_SCREEN_writeData(screen, x >> 8);
-			TSMS_SCREEN_writeData(screen, x & 0XFF);
-		} else {
-			TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
-			TSMS_SCREEN_writeData(screen, x >> 8);
-			TSMS_SCREEN_writeData(screen, x & 0XFF);
-			TSMS_SCREEN_writeData(screen, (screen->width - 1) >> 8);
-			TSMS_SCREEN_writeData(screen, (screen->width - 1) & 0XFF);
-		}
-		TSMS_SCREEN_writeCommand(screen, screen->setYCommand);
-		TSMS_SCREEN_writeData(screen, y >> 8);
-		TSMS_SCREEN_writeData(screen, y & 0XFF);
-		TSMS_SCREEN_writeData(screen, (screen->height - 1) >> 8);
-		TSMS_SCREEN_writeData(screen, (screen->height - 1) & 0XFF);
-	} else if (screen->type == TSMS_SCREEN_NT5510 || screen->type == TSMS_NT35510_ID) {
-		TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
-		TSMS_SCREEN_writeData(screen, x >> 8);
-		TSMS_SCREEN_writeCommand(screen, screen->setXCommand + 1);
-		TSMS_SCREEN_writeData(screen, x & 0XFF);
-		TSMS_SCREEN_writeCommand(screen, screen->setYCommand);
-		TSMS_SCREEN_writeData(screen, y >> 8);
-		TSMS_SCREEN_writeCommand(screen, screen->setYCommand + 1);
-		TSMS_SCREEN_writeData(screen, y & 0XFF);
-	}
-	return TSMS_SUCCESS;
+	return screen->setCursor(screen, x, y);
 }
 
 TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {

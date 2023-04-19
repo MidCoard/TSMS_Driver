@@ -774,3 +774,7 @@ TSMS_RESULT TSMS_NT35310_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION 
 	screen->scanDirection = direction;
 	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT TSMS_NT35310_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
+	return TSMS_ILI9341_setCursor(screen, x, y);
+}

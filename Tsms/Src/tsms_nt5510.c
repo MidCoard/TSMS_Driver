@@ -524,4 +524,19 @@ TSMS_RESULT TSMS_NT5510_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION d
 	TSMS_SCREEN_writeData(screen, (screen->height - 1) >> 8);
 	TSMS_SCREEN_writeCommand(screen, screen->setYCommand + 3);
 	TSMS_SCREEN_writeData(screen, (screen->height - 1) & 0XFF);
+	screen->scanDirection = direction;
+	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT TSMS_NT5510_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
+	TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
+	TSMS_SCREEN_writeData(screen, x >> 8);
+	TSMS_SCREEN_writeCommand(screen, screen->setXCommand + 1);
+	TSMS_SCREEN_writeData(screen, x & 0XFF);
+	TSMS_SCREEN_writeCommand(screen, screen->setYCommand);
+	TSMS_SCREEN_writeData(screen, y >> 8);
+	TSMS_SCREEN_writeCommand(screen, screen->setYCommand + 1);
+	TSMS_SCREEN_writeData(screen, y & 0XFF);
+	return TSMS_SUCCESS;
+}
+
