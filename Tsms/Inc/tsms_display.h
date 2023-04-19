@@ -17,12 +17,6 @@ typedef TSMS_SCREEN_HANDLER_POINTER TSMS_SCHP;
 typedef struct TSMS_DISPLAY_HANDLER * TSMS_DISPLAY_HANDLER_POINTER;
 typedef TSMS_DISPLAY_HANDLER_POINTER TSMS_DPHP;
 
-#include "tsms_def.h"
-
-typedef TSMS_RESULT(*TSMS_RESET_TOUCH_FUNCTION)(TSMS_THP);
-typedef TSMS_RESULT(*TSMS_SCREEN_FUNCTION)(TSMS_SCHP);
-typedef TSMS_RESULT(*TSMS_INIT_SCREEN_FUNCTION)(TSMS_SCHP screen, void* option);
-
 typedef enum {
 	TSMS_SCREEN_AUTO_DETECT, TSMS_SCREEN_ILI9341, TSMS_SCREEN_ST7789, // default width 240 height 320
 	TSMS_SCREEN_NT35310, // default width 320 height 480
@@ -38,6 +32,15 @@ typedef enum {
 	TSMS_SCAN_L2R_U2D = 0, TSMS_SCAN_L2R_D2U, TSMS_SCAN_R2L_U2D, TSMS_SCAN_R2L_D2U,
 	TSMS_SCAN_U2D_L2R, TSMS_SCAN_U2D_R2L, TSMS_SCAN_D2U_L2R, TSMS_SCAN_D2U_R2L,
 }TSMS_SCAN_DIRECTION;
+
+#include "tsms_def.h"
+
+typedef TSMS_RESULT(*TSMS_RESET_TOUCH_FUNCTION)(TSMS_THP);
+typedef TSMS_RESULT(*TSMS_SCREEN_FUNCTION)(TSMS_SCHP);
+typedef TSMS_RESULT(*TSMS_INIT_SCREEN_FUNCTION)(TSMS_SCHP screen, void* option);
+typedef TSMS_RESULT(*TSMS_DISPLAY_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
+typedef TSMS_RESULT(*TSMS_SCAN_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
+typedef TSMS_RESULT(*TSMS_CURSOR_FUNCTION)(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 #include "tsms_iic.h"
 
@@ -66,11 +69,13 @@ struct TSMS_SCREEN_HANDLER {
 	uint16_t writeCommand;
 	uint16_t setXCommand;
 	uint16_t setYCommand;
-	TSMS_DISPLAY_DIRECTION direction;
-	TSMS_SCAN_DIRECTION scan;
+	TSMS_DISPLAY_DIRECTION displayDirection;
+	TSMS_SCAN_DIRECTION scanDirection;
 	uint16_t *swapBuffer;
 	TSMS_INIT_SCREEN_FUNCTION init;
-	TSMS_SCREEN_FUNCTION getId;
+	TSMS_DISPLAY_DIRECTION_FUNCTION setDisplayDirection;
+	TSMS_SCAN_DIRECTION_FUNCTION setScanDirection;
+	TSMS_CURSOR_FUNCTION setCursor;
 };
 
 struct TSMS_TOUCH_HANDLER {
@@ -81,13 +86,13 @@ struct TSMS_TOUCH_HANDLER {
 #include "tsms_driver.h"
 #include "tsms_gpio.h"
 
-void __internal_tsms_lcd_write_register(TSMS_SCHP screen, uint16_t reg, uint16_t value);
+void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);
 
-void __internal_tsms_lcd_write_command(TSMS_SCHP screen, volatile uint16_t command);
+void TSMS_SCREEN_writeCommand(TSMS_SCHP screen, volatile uint16_t command);
 
-volatile uint16_t __internal_tsms_lcd_read_data(TSMS_SCHP screen);
+volatile uint16_t TSMS_SCREEN_readData(TSMS_SCHP screen);
 
-void __internal_tsms_lcd_write_data(TSMS_SCHP screen, volatile uint16_t data);
+void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data);
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,

@@ -10,5 +10,9 @@ uint16_t TSMS_NT5510_readId(TSMS_SCHP screen);
 
 TSMS_RESULT TSMS_NT5510_init(TSMS_SCHP screen, void* option);
 
+TSMS_RESULT TSMS_NT5510_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
+
+TSMS_RESULT TSMS_NT5510_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
+
 
 #endif //TSMS_NT5510_H

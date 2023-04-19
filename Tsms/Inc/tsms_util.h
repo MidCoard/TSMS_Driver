@@ -34,4 +34,6 @@ uint16_t TSMS_UTIL_color565(TSMS_CP color);
 
 uint32_t TSMS_UTIL_color888(TSMS_CP color);
 
+void TSMS_UTIL_swap(uint16_t* a, uint16_t* b);
+
 #endif //TSMS_UTIL_H

@@ -59,3 +59,9 @@ uint16_t TSMS_UTIL_color565(TSMS_CP color) {
 uint32_t TSMS_UTIL_color888(TSMS_CP color) {
 	return (color.red & 0xFF) << 16 | (color.green & 0xFF) << 8 | (color.blue & 0xFF);
 }
+
+void TSMS_UTIL_swap(uint16_t* a, uint16_t* b) {
+	uint16_t t = *a;
+	*a = *b;
+	*b = t;
+}

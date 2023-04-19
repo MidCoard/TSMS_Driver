@@ -34,4 +34,8 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void* option);
 
 uint16_t TSMS_SSD1963_readId(TSMS_SCHP screen);
 
+TSMS_RESULT TSMS_SSD1963_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
+
+TSMS_RESULT TSMS_SSD1963_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
+
 #endif //TSMS_SSD1963_H
