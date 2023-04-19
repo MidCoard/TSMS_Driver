@@ -72,3 +72,14 @@ TSMS_RESULT W9825G6KH_readBuffer(struct W9825G6KH_Handler *handler, uint32_t off
 	}
 	return TSMS_SUCCESS;
 }
+
+TSMS_RESULT W9825G6KH_clear(struct W9825G6KH_Handler *handler) {
+	if (handler == TSMS_NULL)
+		return TSMS_ERROR;
+	uint16_t * address = (uint16_t*)handler->address;
+	for (uint32_t i = 0; i < 0x80000; i++) {
+		*address = 0;
+		address++;
+	}
+	return TSMS_SUCCESS;
+}

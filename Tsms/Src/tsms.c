@@ -15,18 +15,3 @@ void TSMS_delay(uint32_t ms) {
 	HAL_Delay(ms);
 #endif
 }
-
-TSMS_BITS TSMS_bits(uint8_t bits) {
-	switch (bits) {
-		case 8:
-			return TSMS_8BIT;
-		case 16:
-			return TSMS_16BIT;
-		case 24:
-			return TSMS_24BIT;
-		case 32:
-			return TSMS_32BIT;
-		default:
-			return TSMS_8BIT;
-	}
-}

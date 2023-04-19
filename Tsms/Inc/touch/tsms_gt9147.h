@@ -31,7 +31,16 @@
 #define GT9147_REG_TOUCH_2_X_H 13
 #define GT9147_REG_TOUCH_2_X_H_ADDRESS 0x8157
 
-#include "tsms_def.h"
+#include "tsms_driver.h"
+
+typedef struct TSMS_GT9147_HANDLER * TSMS_GT9147_HANDLER_POINTER;
+typedef TSMS_GT9147_HANDLER_POINTER TSMS_GT9147;
+
+struct TSMS_GT9147_HANDLER {
+	TSMS_IHP iic;
+	TSMS_GHP reset;
+	TSMS_GHP interrupt;
+};
 
 extern uint8_t GT9147_CFG_TBL[];
 

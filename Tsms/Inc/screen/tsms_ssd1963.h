@@ -2,6 +2,7 @@
 #define TSMS_SSD1963_H
 
 #include "tsms_def.h"
+#define TSMS_SSD1963_ID 0x5761
 
 typedef struct TSMS_SSD1963_OPTION * TSMS_SSD1963_OPTION_POINTER;
 typedef TSMS_SSD1963_OPTION_POINTER TSMS_SSD1963_OP;
@@ -19,6 +20,8 @@ struct TSMS_SSD1963_OPTION {
 
 extern struct TSMS_SSD1963_OPTION defaultSSD1963Option;
 
+#include "tsms_display.h"
+
 uint16_t TSMS_SSD1963_horizontalTotal(TSMS_SSD1963_OP option);
 
 uint16_t TSMS_SSD1963_horizontalPulseStart(TSMS_SSD1963_OP option);
@@ -26,5 +29,9 @@ uint16_t TSMS_SSD1963_horizontalPulseStart(TSMS_SSD1963_OP option);
 uint16_t TSMS_SSD1963_verticalTotal(TSMS_SSD1963_OP option);
 
 uint16_t TSMS_SSD1963_verticalPulseStart(TSMS_SSD1963_OP option);
+
+TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void* option);
+
+uint16_t TSMS_SSD1963_readId(TSMS_SCHP screen);
 
 #endif //TSMS_SSD1963_H

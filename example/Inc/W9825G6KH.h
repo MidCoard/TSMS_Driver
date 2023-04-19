@@ -33,4 +33,5 @@ TSMS_RESULT W9825G6KH_writeBuffer(struct W9825G6KH_Handler *handler, uint32_t of
 
 TSMS_RESULT W9825G6KH_readBuffer(struct W9825G6KH_Handler *handler, uint32_t offset, uint16_t * data, uint32_t size);
 
+TSMS_RESULT W9825G6KH_clear(struct W9825G6KH_Handler *handler);
 #endif //TSMS_W9825G6KH_H

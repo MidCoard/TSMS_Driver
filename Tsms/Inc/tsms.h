@@ -88,6 +88,4 @@ TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
 
 void TSMS_delay(uint32_t ms);
 
-TSMS_BITS TSMS_bits(uint8_t bits);
-
 #endif //TSMS_H

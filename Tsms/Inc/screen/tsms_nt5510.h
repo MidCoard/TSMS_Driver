@@ -1,0 +1,14 @@
+#ifndef TSMS_NT5510_H
+#define TSMS_NT5510_H
+
+#define TSMS_NT35510_ID 0x8000
+#define TSMS_NT5510_ID 0x5510
+
+#include "tsms_display.h"
+
+uint16_t TSMS_NT5510_readId(TSMS_SCHP screen);
+
+TSMS_RESULT TSMS_NT5510_init(TSMS_SCHP screen, void* option);
+
+
+#endif //TSMS_NT5510_H
