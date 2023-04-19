@@ -9,7 +9,7 @@ TSMS_MI TSMS_EMPTY_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
 TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
-TSMS_INLINE TSMS_MNP __internal_tsms_create_node(void * key, void * value) {
+TSMS_INLINE TSMS_MNP __tsms_internal_create_node(void * key, void * value) {
 	TSMS_MNP node = malloc(sizeof (struct TSMS_MAP_NODE));
 	if (node == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for map node");
@@ -21,7 +21,7 @@ TSMS_INLINE TSMS_MNP __internal_tsms_create_node(void * key, void * value) {
 	return node;
 }
 
-TSMS_INLINE TSMS_LMNP __internal_tsms_create_long_node(long key, void * value) {
+TSMS_INLINE TSMS_LMNP __tsms_internal_create_long_node(long key, void * value) {
 	TSMS_LMNP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE));
 	if (node == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for long map node");
@@ -33,7 +33,7 @@ TSMS_INLINE TSMS_LMNP __internal_tsms_create_long_node(long key, void * value) {
 	return node;
 }
 
-TSMS_INLINE bool __internal_tsms_compare(TSMS_MP map, void * key1, void * key2) {
+TSMS_INLINE bool __tsms_internal_compare(TSMS_MP map, void * key1, void * key2) {
 	if (map->compare == TSMS_NULL)
 		return key1 == key2;
 	return map->compare(key1, key2) == 0;
@@ -71,10 +71,10 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 	TSMS_MNP cur = map->base[offset];
 	// first if not exist
 	if (cur == TSMS_NULL)
-		map->base[offset] = __internal_tsms_create_node(key, value);
+		map->base[offset] = __tsms_internal_create_node(key, value);
 	else {
 		// if existed, judge it!
-		if (__internal_tsms_compare(map, cur->key, key)) {
+		if (__tsms_internal_compare(map, cur->key, key)) {
 			if (cur->value == value)
 				return TSMS_FAIL;
 			cur->value = value;
@@ -82,7 +82,7 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 		}
 
 		while (cur->next != TSMS_NULL) {
-			if (__internal_tsms_compare(map, cur->next->key, key)) {
+			if (__tsms_internal_compare(map, cur->next->key, key)) {
 				if (cur->next->value == value)
 					return TSMS_FAIL;
 				cur->next->value = value;
@@ -91,7 +91,7 @@ TSMS_RESULT TSMS_MAP_put(TSMS_MP map, void * key, void * value) {
 		}
 
 		if (cur->next == TSMS_NULL)
-			cur->next = __internal_tsms_create_node(key, value);
+			cur->next = __tsms_internal_create_node(key, value);
 	}
 	map->size++;
 	return TSMS_SUCCESS;
@@ -104,7 +104,7 @@ void * TSMS_MAP_get(TSMS_MP map, void * key) {
 	TSMS_POS offset = (hash % map->diffusion + map->diffusion) % map->diffusion;
 	TSMS_MNP cur = map->base[offset];
 	while (cur != TSMS_NULL) {
-		if (__internal_tsms_compare(map, cur->key, key))
+		if (__tsms_internal_compare(map, cur->key, key))
 			return cur->value;
 		cur = cur->next;
 	}
@@ -119,14 +119,14 @@ TSMS_RESULT TSMS_MAP_remove(TSMS_MP map, void * key) {
 	TSMS_MNP cur = map->base[offset];
 	if (cur == TSMS_NULL)
 		return TSMS_FAIL;
-	if (__internal_tsms_compare(map, cur->key, key)) {
+	if (__tsms_internal_compare(map, cur->key, key)) {
 		map->base[offset] = cur->next;
 		free(cur);
 		map->size--;
 		return TSMS_SUCCESS;
 	}
 	while (cur->next != TSMS_NULL) {
-		if (__internal_tsms_compare(map, cur->next->key, key)) {
+		if (__tsms_internal_compare(map, cur->next->key, key)) {
 			TSMS_MNP tmp = cur->next;
 			cur->next = cur->next->next;
 			free(tmp);
@@ -237,7 +237,7 @@ TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMP map, long key, void * value) {
 	TSMS_LMNP cur = map->base[offset];
 	// first if not exist
 	if (cur == TSMS_NULL)
-		map->base[offset] = __internal_tsms_create_long_node(key, value);
+		map->base[offset] = __tsms_internal_create_long_node(key, value);
 	else {
 		// if existed, judge it!
 		if (cur->key == key) {
@@ -257,7 +257,7 @@ TSMS_RESULT TSMS_LONG_MAP_put(TSMS_LMP map, long key, void * value) {
 		}
 
 		if (cur->next == TSMS_NULL)
-			cur->next = __internal_tsms_create_long_node(key, value);
+			cur->next = __tsms_internal_create_long_node(key, value);
 	}
 	map->size++;
 	return TSMS_SUCCESS;

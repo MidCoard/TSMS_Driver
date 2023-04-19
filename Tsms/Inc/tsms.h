@@ -67,9 +67,15 @@
 #ifdef HAL_I2C_MODULE_ENABLED
 #define TSMS_STM32_IIC
 #endif
-
 #ifdef HAL_SDRAM_MODULE_ENABLED
 #define TSMS_STM32_SDRAM
+#endif
+#ifdef HAL_TIM_MODULE_ENABLED
+#define TSMS_STM32_TIMER
+#endif
+
+#ifdef HAL_UART_MODULE_ENABLED
+#define TSMS_STM32_UART
 #endif
 
 #endif
@@ -84,7 +90,9 @@ TSMS_RESULT TSMS_STRING_init();
 
 TSMS_RESULT TSMS_LIST_init();
 
-TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency);
+TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timerFrequency);
+
+TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency);
 
 void TSMS_delay(uint32_t ms);
 

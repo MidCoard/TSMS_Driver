@@ -1,6 +1,6 @@
 #include "screen/tsms_ssd1963.h"
 
-TSMS_INLINE void __internal_tsms_set_ssd1963_light(TSMS_SCHP screen, uint8_t light) {
+TSMS_INLINE void __tsms_internal_set_ssd1963_light(TSMS_SCHP screen, uint8_t light) {
 	TSMS_SCREEN_writeCommand(screen, 0xBE);
 	TSMS_SCREEN_writeData(screen, 0x05);
 	TSMS_SCREEN_writeData(screen, light);
@@ -114,7 +114,7 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
 	TSMS_SCREEN_writeCommand(screen, 0xBA);
 	TSMS_SCREEN_writeData(screen, 0X01);    //GPIO[1:0]=01,控制LCD方向0X1963
 
-	__internal_tsms_set_ssd1963_light(screen, 255);//背光设置为最亮
+	__tsms_internal_set_ssd1963_light(screen, 255);//背光设置为最亮
 	return TSMS_SUCCESS;
 }
 

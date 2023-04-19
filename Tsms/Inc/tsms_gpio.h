@@ -1,17 +1,7 @@
 #ifndef TSMS_GPIO_H
 #define TSMS_GPIO_H
 
-#include "tsms.h"
-
-struct TSMS_GPIO_HANDLER {
-#ifdef TSMS_STM32_GPIO
-	GPIO_TypeDef * port;
-	uint16_t pin;
-#endif
-};
-
-typedef struct TSMS_GPIO_HANDLER *TSMS_GPIO_HANDLER_POINTER;
-typedef TSMS_GPIO_HANDLER_POINTER TSMS_GHP;
+#define TSMS_NULL_GHP (TSMS_GHP)TSMS_NULL
 
 typedef enum {
 	TSMS_GPIO_LOW = 0, TSMS_GPIO_HIGH, TSMS_GPIO_ERROR
@@ -25,7 +15,22 @@ typedef enum {
 	TSMS_GPIO_PULL_UP, TSMS_GPIO_PULL_DOWN, TSMS_GPIO_NO_PULL
 } TSMS_GPIO_PULL;
 
-#define TSMS_NULL_GHP (TSMS_GHP)TSMS_NULL
+typedef struct TSMS_GPIO_HANDLER *TSMS_GPIO_HANDLER_POINTER;
+typedef TSMS_GPIO_HANDLER_POINTER TSMS_GHP;
+
+typedef void(*TSMS_IT_GPIO_CALLBACK)(void *, TSMS_GHP);
+
+#include "tsms.h"
+#include "tsms_it.h"
+
+TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_CALLBACK callback, void *);
+
+struct TSMS_GPIO_HANDLER {
+#ifdef TSMS_STM32_GPIO
+	GPIO_TypeDef * port;
+	uint16_t pin;
+#endif
+};
 
 #ifdef TSMS_STM32_GPIO
 
