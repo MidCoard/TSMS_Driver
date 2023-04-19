@@ -21,6 +21,7 @@ This library contains following examples:
 - DAC8831 16-bit DAC
 - ADS1115 16-bit ADC
 - AD7190 24-bit ADC
+- W9825G6KH 4M-4Bank-16Bit SDRAM
 
 ## Usage
 
