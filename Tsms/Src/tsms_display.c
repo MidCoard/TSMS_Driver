@@ -107,7 +107,7 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_reset_gt9147(TSMS_THP touch) {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, TSMS_SSD1963_OP option) {
+                               uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OP option) {
 	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
 	if (screen == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
@@ -121,6 +121,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->type = TSMS_SCREEN_AUTO_DETECT;
 	screen->defaultWidth = width;
 	screen->defaultHeight = height;
+	screen->swapBuffer = swapBuffer;
 	TSMS_delay(50);
 	uint16_t id;
 	if (type == TSMS_SCREEN_AUTO_DETECT) {
@@ -1740,5 +1741,58 @@ TSMS_RESULT TSMS_SCREEN_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION d
 		__internal_tsms_lcd_write_data(screen, (screen->height - 1) & 0XFF);
 	}
 	screen->scan = direction;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	if (screen->type == TSMS_SCREEN_ILI9341 || screen->type == TSMS_SCREEN_ST7789 || screen->type == TSMS_SCREEN_NT35310) {
+		__internal_tsms_lcd_write_command(screen, screen->setXCommand);
+		__internal_tsms_lcd_write_data(screen, x >> 8);
+		__internal_tsms_lcd_write_data(screen, x & 0XFF);
+		__internal_tsms_lcd_write_command(screen, screen->setYCommand);
+		__internal_tsms_lcd_write_data(screen, y >> 8);
+		__internal_tsms_lcd_write_data(screen, y & 0XFF);
+	} else if (screen->type == TSMS_SCREEN_SSD1963) {
+		if (screen->direction == TSMS_DISPLAY_VERTICAL) {
+			x = screen->width - x - 1;
+			__internal_tsms_lcd_write_command(screen, screen->setXCommand);
+			__internal_tsms_lcd_write_data(screen, 0);
+			__internal_tsms_lcd_write_data(screen, 0);
+			__internal_tsms_lcd_write_data(screen, x >> 8);
+			__internal_tsms_lcd_write_data(screen, x & 0XFF);
+		} else {
+			__internal_tsms_lcd_write_command(screen, screen->setXCommand);
+			__internal_tsms_lcd_write_data(screen, x >> 8);
+			__internal_tsms_lcd_write_data(screen, x & 0XFF);
+			__internal_tsms_lcd_write_data(screen, (screen->width - 1) >> 8);
+			__internal_tsms_lcd_write_data(screen, (screen->width - 1) & 0XFF);
+		}
+		__internal_tsms_lcd_write_command(screen, screen->setYCommand);
+		__internal_tsms_lcd_write_data(screen, y >> 8);
+		__internal_tsms_lcd_write_data(screen, y & 0XFF);
+		__internal_tsms_lcd_write_data(screen, (screen->height - 1) >> 8);
+		__internal_tsms_lcd_write_data(screen, (screen->height - 1) & 0XFF);
+	} else if (screen->type == TSMS_SCREEN_NT5510 || screen->type == TSMS_NT35510_ID) {
+		__internal_tsms_lcd_write_command(screen, screen->setXCommand);
+		__internal_tsms_lcd_write_data(screen, x >> 8);
+		__internal_tsms_lcd_write_command(screen, screen->setXCommand + 1);
+		__internal_tsms_lcd_write_data(screen, x & 0XFF);
+		__internal_tsms_lcd_write_command(screen, screen->setYCommand);
+		__internal_tsms_lcd_write_data(screen, y >> 8);
+		__internal_tsms_lcd_write_command(screen, screen->setYCommand + 1);
+		__internal_tsms_lcd_write_data(screen, y & 0XFF);
+	}
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_SCREEN_setCursor(screen, 0 ,0);
+	__internal_tsms_lcd_write_command(screen, screen->writeCommand);
+	for (uint32_t i = 0; i < screen->width * screen->height; i++)
+		__internal_tsms_lcd_write_data(screen, screen->swapBuffer[i]); // one row by one row
 	return TSMS_SUCCESS;
 }

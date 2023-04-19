@@ -35,10 +35,13 @@ struct SN74HC595_Handler {
 	TSMS_DHP handler;
 };
 
+#ifdef TSMS_STM32_GPIO
+
 struct SN74HC595_Handler *SN74HC595_initHardware(GPIO_TypeDef *srclr, uint16_t srclrPin,
                                                  GPIO_TypeDef *srclk, uint16_t srclkPin,
                                                  GPIO_TypeDef *rclk, uint16_t rclkPin,
                                                  GPIO_TypeDef *data, uint16_t dataPin);
+#endif
 
 void SN74HC595_clearStorageRegister(struct SN74HC595_Handler *handler);
 

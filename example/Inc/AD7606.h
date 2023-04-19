@@ -47,6 +47,8 @@ typedef uint8_t AD7606_RANGE;
 typedef uint8_t AD7606_REFERENCE_MODE;
 typedef uint8_t AD7606_MODE;
 
+#ifdef TSMS_STM32_GPIO
+
 struct AD7606_Handler *
 AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO_TypeDef *db15, uint16_t db15Pin,
                           GPIO_TypeDef *standBy, uint16_t standByPin, GPIO_TypeDef *range, uint16_t rangePin,
@@ -57,6 +59,7 @@ AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO
                           uint16_t sclkPin, GPIO_TypeDef *busy, uint16_t busyPin, GPIO_TypeDef *firstData,
                           uint16_t firstDataPin, GPIO_TypeDef *doutA, uint16_t doutAPin, GPIO_TypeDef *doutB,
                           uint16_t doutBPin, float referenceVoltage);
+#endif
 
 
 void AD7606_setOverSampleRate(struct AD7606_Handler *handler, AD7606_OS_RATE overSampleRate);

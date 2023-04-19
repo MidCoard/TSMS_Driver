@@ -66,6 +66,7 @@ struct TSMS_SCREEN_HANDLER {
 	uint16_t setYCommand;
 	TSMS_DISPLAY_DIRECTION direction;
 	TSMS_SCAN_DIRECTION scan;
+	uint16_t *swapBuffer;
 };
 
 struct TSMS_TOUCH_HANDLER {
@@ -87,7 +88,7 @@ struct TSMS_GT9147_HANDLER {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, TSMS_SSD1963_OP option);
+                               uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OP option);
 
 TSMS_THP TSMS_TOUCH_createGT9147Handler(TSMS_IHP iic, TSMS_GHP reset, TSMS_GHP interrupt);
 
@@ -102,5 +103,9 @@ TSMS_RESULT TSMS_SCREEN_disableBackgroudLight(TSMS_SCHP screen);
 TSMS_RESULT TSMS_SCREEN_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
 
 TSMS_RESULT TSMS_SCREEN_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
+
+TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen);
+
+TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 #endif //TSMS_DISPLAY_H

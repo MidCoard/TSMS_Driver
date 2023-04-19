@@ -128,11 +128,11 @@ struct AD7190_Handler {
 	float reference;
 	float gain;
 };
-
+#ifdef TSMS_STM32_GPIO
 struct AD7190_Handler *
 AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, uint16_t mosiPin, GPIO_TypeDef *miso,
                     uint16_t misoPin, GPIO_TypeDef *cs, uint16_t csPin, float reference);
-
+#endif
 void AD7190_enableContinuousMode(struct AD7190_Handler *handler);
 
 void AD7190_disableContinuousMode(struct AD7190_Handler *handler);

@@ -62,10 +62,14 @@
 
 #include "main.h" // for stm32 hal driver, this can directly access the whole stm32 hardware interface
 #ifdef HAL_SPI_MODULE_ENABLED
-#define TSMS_STM32_SPI // for no external hardware please use TSMS_STM32_NO_SPI
+#define TSMS_STM32_SPI
 #endif
 #ifdef HAL_I2C_MODULE_ENABLED
-#define TSMS_STM32_IIC // for no external hardware please use TSMS_STM32_NO_IIC
+#define TSMS_STM32_IIC
+#endif
+
+#ifdef HAL_SDRAM_MODULE_ENABLED
+#define TSMS_STM32_SDRAM
 #endif
 
 #endif

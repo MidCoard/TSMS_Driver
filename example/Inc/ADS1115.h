@@ -75,9 +75,10 @@ struct ADS1115_Handler {
 	TSMS_DHP handler;
 	float gain;
 };
-
+#ifdef TSMS_STM32_GPIO
 struct ADS1115_Handler *
 ADS1115_initHardware(GPIO_TypeDef *sda, uint16_t sdaPin, GPIO_TypeDef *scl, uint16_t sclPin, uint8_t address);
+#endif
 
 uint16_t ADS1115_readRegister(struct ADS1115_Handler *handler, uint8_t reg);
 
