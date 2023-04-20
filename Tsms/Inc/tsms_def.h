@@ -1,7 +1,12 @@
 #ifndef TSMS_DEF_H
 #define TSMS_DEF_H
 
+#include "memory.h"
+#include "stdio.h"
+#include "stdlib.h"
 #include "stdint.h"
+#include "stdarg.h"
+#include "stdbool.h"
 
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 

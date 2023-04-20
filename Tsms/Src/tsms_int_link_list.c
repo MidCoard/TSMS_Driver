@@ -1,9 +1,9 @@
-#include "tsms_link_list.h"
+#include "tsms_int_link_list.h"
 
-TSMS_LKLP TSMS_LINK_LIST_create() {
-	TSMS_LKLP list = (TSMS_LKLP) malloc(sizeof(struct TSMS_LINK_LIST));
+TSMS_INT_LKLP TSMS_INT_LINK_LIST_create() {
+	TSMS_INT_LKLP list = (TSMS_INT_LKLP) malloc(sizeof(struct TSMS_INT_LINK_LIST));
 	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for link list");
+		tString temp = TSMS_STRING_temp("malloc failed for int link list");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
@@ -13,18 +13,18 @@ TSMS_LKLP TSMS_LINK_LIST_create() {
 	return list;
 }
 
-TSMS_RESULT TSMS_LINK_LIST_add(TSMS_LKLP list, void *element) {
+TSMS_RESULT TSMS_INT_LINK_LIST_add(TSMS_INT_LKLP list, int element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	return TSMS_LINK_LIST_insert(list, element, list->length);
+	return TSMS_INT_LINK_LIST_insert(list, element, list->length);
 }
 
-TSMS_RESULT TSMS_LINK_LIST_remove(TSMS_LKLP list, TSMS_POS index) {
+TSMS_RESULT TSMS_INT_LINK_LIST_remove(TSMS_INT_LKLP list, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index < 0 || index >= list->length)
 		return TSMS_ERROR;
-	TSMS_LKNP node;
+	TSMS_INT_LKNP node;
 	if (index < list->length / 2) {
 		node = list->head;
 		for (TSMS_POS i = 0; i < index; i++)
@@ -34,17 +34,17 @@ TSMS_RESULT TSMS_LINK_LIST_remove(TSMS_LKLP list, TSMS_POS index) {
 		for (TSMS_POS i = list->length - 1; i > index; i--)
 			node = node->prev;
 	}
-	return TSMS_LINK_LIST_deleteNode(list, node);
+	return TSMS_INT_LINK_LIST_deleteNode(list, node);
 }
 
-TSMS_POS TSMS_LINK_LIST_removeElement(TSMS_LKLP list, void *element) {
+TSMS_POS TSMS_INT_LINK_LIST_removeElement(TSMS_INT_LKLP list, int element) {
 	if (list == TSMS_NULL)
 		return -1;
-	TSMS_LKNP node = list->head;
+	TSMS_INT_LKNP node = list->head;
 	TSMS_POS index = 0;
 	while (node != TSMS_NULL) {
 		if (node->element == element) {
-			TSMS_LINK_LIST_deleteNode(list, node);
+			TSMS_INT_LINK_LIST_deleteNode(list, node);
 			return index;
 		}
 		node = node->next;
@@ -53,20 +53,20 @@ TSMS_POS TSMS_LINK_LIST_removeElement(TSMS_LKLP list, void *element) {
 	return -1;
 }
 
-TSMS_RESULT TSMS_LINK_LIST_release(TSMS_LKLP list) {
+TSMS_RESULT TSMS_INT_LINK_LIST_release(TSMS_INT_LKLP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_RESULT result = TSMS_LINK_LIST_clear(list);
+	TSMS_RESULT result = TSMS_INT_LINK_LIST_clear(list);
 	free(list);
 	return result;
 }
 
-TSMS_RESULT TSMS_LINK_LIST_clear(TSMS_LKLP list) {
+TSMS_RESULT TSMS_INT_LINK_LIST_clear(TSMS_INT_LKLP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_LKNP node = list->head;
+	TSMS_INT_LKNP node = list->head;
 	while (node != TSMS_NULL) {
-		TSMS_LKNP temp = node;
+		TSMS_INT_LKNP temp = node;
 		node = node->next;
 		free(temp);
 	}
@@ -76,32 +76,14 @@ TSMS_RESULT TSMS_LINK_LIST_clear(TSMS_LKLP list) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_LINK_LIST_deleteNode(TSMS_LKLP list, TSMS_LKNP node) {
-	if (list == TSMS_NULL)
-		return TSMS_ERROR;
-	if (node == TSMS_NULL)
-		return TSMS_ERROR;
-	if (node->prev != TSMS_NULL)
-		node->prev->next = node->next;
-	if (node->next != TSMS_NULL)
-		node->next->prev = node->prev;
-	if (node == list->head)
-		list->head = node->next;
-	if (node == list->tail)
-		list->tail = node->prev;
-	list->length--;
-	free(node);
-	return TSMS_SUCCESS;
-}
-
-TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index) {
+TSMS_RESULT TSMS_INT_LINK_LIST_insert(TSMS_INT_LKLP list, int element, TSMS_POS index) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
 	if (index < 0 || index > list->length)
 		return TSMS_ERROR;
-	TSMS_LKNP node = (TSMS_LKNP) malloc(sizeof(struct TSMS_LINK_NODE));
+	TSMS_INT_LKNP node = (TSMS_INT_LKNP) malloc(sizeof(struct TSMS_INT_LINK_NODE));
 	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for link node");
+		tString temp = TSMS_STRING_temp("malloc failed for int link node");
 		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
 		return TSMS_ERROR;
 	}
@@ -123,7 +105,7 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		if (list->head == TSMS_NULL)
 			list->head = node;
 	} else {
-		TSMS_LKNP temp;
+		TSMS_INT_LKNP temp;
 		if (index < list->length / 2) {
 			temp = list->head;
 			for (TSMS_POS i = 0; i < index; i++)
@@ -139,5 +121,23 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		temp->prev = node;
 	}
 	list->length++;
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_INT_LINK_LIST_deleteNode(TSMS_INT_LKLP list, TSMS_INT_LKNP node) {
+	if (list == TSMS_NULL)
+		return TSMS_ERROR;
+	if (node == TSMS_NULL)
+		return TSMS_ERROR;
+	if (node->prev != TSMS_NULL)
+		node->prev->next = node->next;
+	if (node->next != TSMS_NULL)
+		node->next->prev = node->prev;
+	if (node == list->head)
+		list->head = node->next;
+	if (node == list->tail)
+		list->tail = node->prev;
+	free(node);
+	list->length--;
 	return TSMS_SUCCESS;
 }

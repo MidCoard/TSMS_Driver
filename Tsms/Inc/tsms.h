@@ -1,11 +1,6 @@
 #ifndef TSMS_H
 #define TSMS_H
 
-#include "memory.h"
-#include "stdarg.h"
-#include "stdbool.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include "tsms_def.h"
 #include "tsms_delay.h"
 #include "tsms_err.h"

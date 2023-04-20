@@ -43,6 +43,7 @@ typedef TSMS_RESULT(*TSMS_SCAN_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_SCAN_D
 typedef TSMS_RESULT(*TSMS_CURSOR_FUNCTION)(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 #include "tsms_iic.h"
+#include "tsms_lock.h"
 
 #include "touch/tsms_gt9147.h"
 #include "screen/tsms_ili9341.h"
@@ -76,6 +77,12 @@ struct TSMS_SCREEN_HANDLER {
 	TSMS_DISPLAY_DIRECTION_FUNCTION setDisplayDirection;
 	TSMS_SCAN_DIRECTION_FUNCTION setScanDirection;
 	TSMS_CURSOR_FUNCTION setCursor;
+
+	uint16_t swapY;
+	uint16_t swapStep;
+
+	bool lazySwapLabels[100];
+	pSequencePriorityLock lock;
 };
 
 struct TSMS_TOUCH_HANDLER {
@@ -116,6 +123,18 @@ TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen);
 
 TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
-TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CP color);
+TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_enableAutoSwap(TSMS_SCHP screen, pTimer timer);
+
+TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR from, TSMS_CR to, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t thickness, TSMS_CR color, pLock preLock);
 
 #endif //TSMS_DISPLAY_H
