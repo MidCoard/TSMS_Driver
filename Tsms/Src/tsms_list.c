@@ -2,6 +2,7 @@
 #include "tsms_char_list.h"
 #include "tsms_int_list.h"
 #include "tsms_long_list.h"
+#include "tsms_string.h"
 
 TSMS_LP TSMS_EMPTY_LIST;
 

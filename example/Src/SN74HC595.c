@@ -1,4 +1,7 @@
 #include "SN74HC595.h"
+#include "tsms_custom.h"
+#include "tsms_gpio.h"
+#include "tsms_driver.h"
 
 void SN74HC595_clearStorageRegister(struct SN74HC595_Handler *handler) {
 	TSMS_GPIO_write(TSMS_CUSTOM_getGPIO(handler->handler->custom, SN74HC595_SRCLR), TSMS_GPIO_LOW);

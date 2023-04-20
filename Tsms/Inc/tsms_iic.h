@@ -1,13 +1,10 @@
 #ifndef TSMS_IIC_H
 #define TSMS_IIC_H
 
-#include "tsms_gpio.h"
-
 #define TSMS_IIC_WRITE 0
 #define TSMS_IIC_READ 1
 
-typedef struct TSMS_IIC_HANDLER *TSMS_IIC_HANDLER_POINTER;
-typedef TSMS_IIC_HANDLER_POINTER TSMS_IHP;
+#include "tsms.h"
 
 typedef void(*TSMS_IIC_RELEASE_FUNCTION)(TSMS_IHP);
 

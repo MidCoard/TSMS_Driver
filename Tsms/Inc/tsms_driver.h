@@ -1,13 +1,11 @@
 #ifndef TSMS_DRIVER_H
 #define TSMS_DRIVER_H
 
-#include "tsms_spi.h"
-#include "tsms_iic.h"
-#include "tsms_custom.h"
-#include "tsms_display.h"
+typedef enum {
+	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM
+} TSMS_DRIVER_TYPE;
 
-typedef struct TSMS_REGISTER_HANDLER *TSMS_REGISTER_HANDLER_POINTER;
-typedef TSMS_REGISTER_HANDLER_POINTER TSMS_RHP;
+#include "tsms_def.h"
 
 struct TSMS_REGISTER_HANDLER {
 	uint32_t address;
@@ -16,22 +14,12 @@ struct TSMS_REGISTER_HANDLER {
 	uint8_t *positions;
 };
 
-typedef struct TSMS_REGISTER_HANDLER_LIST *TSMS_REGISTER_HANDLER_LIST_POINTER;
-typedef TSMS_REGISTER_HANDLER_LIST_POINTER TSMS_RHLP;
-
-typedef enum {
-	TSMS_DRIVER_SPI, TSMS_DRIVER_IIC, TSMS_DRIVER_CUSTOM
-} TSMS_DRIVER_TYPE;
-
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_WRITER)(TSMS_SHP, uint32_t *, uint8_t, uint32_t);
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_READER)(TSMS_SHP, uint32_t *, uint8_t, uint32_t);
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_TRANSFORM)(TSMS_SHP, uint32_t *, uint8_t, uint8_t, uint32_t, uint32_t);
 typedef TSMS_RESULT(*TSMS_DRIVER_SPI_SEQUENCE_TRANSFORM)(TSMS_SHP, uint32_t, ...);
 typedef TSMS_RESULT(*TSMS_DRIVER_IIC_WRITER)(TSMS_IHP, uint8_t, TSMS_BITS, uint32_t, TSMS_BITS);
 typedef TSMS_RESULT(*TSMS_DRIVER_IIC_READER)(TSMS_IHP, uint8_t, TSMS_BITS, uint32_t *, TSMS_BITS);
-
-typedef struct TSMS_DRIVER_HANDLER *TSMS_DRIVER_HANDLER_POINTER;
-typedef TSMS_DRIVER_HANDLER_POINTER TSMS_DHP;
 
 struct TSMS_DRIVER_HANDLER {
 	TSMS_DRIVER_TYPE type;

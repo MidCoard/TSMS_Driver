@@ -1,9 +1,6 @@
 #ifndef TSMS_SYNC_H
 #define TSMS_SYNC_H
 
-typedef struct TSMS_SYNC_STACK *TSMS_SYNC_STACK_POINTER;
-typedef TSMS_SYNC_STACK_POINTER TSMS_SYNC_STP;
-
 #include "tsms_lock.h"
 
 struct TSMS_SYNC_STACK {

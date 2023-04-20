@@ -18,10 +18,8 @@ typedef enum {
 typedef struct TSMS_GPIO_HANDLER *TSMS_GPIO_HANDLER_POINTER;
 typedef TSMS_GPIO_HANDLER_POINTER TSMS_GHP;
 
-typedef void(*TSMS_IT_GPIO_CALLBACK)(void *, TSMS_GHP);
 
 #include "tsms.h"
-#include "tsms_it.h"
 
 TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_CALLBACK callback, void *);
 

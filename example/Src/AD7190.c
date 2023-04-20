@@ -1,4 +1,6 @@
 #include "ad7190.h"
+#include "tsms_driver.h"
+#include "tsms_spi.h"
 
 static uint32_t AD7190_TRANSFORM_DATA[2];
 

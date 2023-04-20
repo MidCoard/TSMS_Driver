@@ -3,14 +3,9 @@
 
 #include "tsms_link_list.h"
 
-typedef struct TSMS_DEQUE *TSMS_DEQUE_POINTER;
-typedef TSMS_DEQUE_POINTER TSMS_DP;
-
 struct TSMS_DEQUE {
 	TSMS_LKLP list;
 };
-
-#include "tsms.h"
 
 TSMS_DP TSMS_DEQUE_create();
 

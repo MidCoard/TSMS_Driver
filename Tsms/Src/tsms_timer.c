@@ -1,11 +1,12 @@
 #include "tsms_timer.h"
+#include "tsms_it.h"
 
 double TSMS_DELAY_UNIT_TO_SECOND[4] = {1, 0.001, 0.000001, 0.000000001};
 
 TSMS_INLINE void __tsms_internal_period_callback(void * handler, pTimer timer) {
-	if (timer->option->enableDelay)
+	if (timer->option.enableDelay)
 		timer->periods++;
-	if (timer->option->enableCallbackInterrupt)
+	if (timer->option.enableCallbackInterrupt)
 		if (timer->callback != TSMS_NULL)
 			timer->callback(timer->handler, timer);
 }
@@ -19,7 +20,7 @@ TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency) {
 
 #ifdef TSMS_STM32_TIMER
 
-pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OP option) {
+pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option) {
 	pTimer timer = (pTimer) malloc(sizeof(tTimer));
 	if (timer == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for pTimer");
@@ -30,19 +31,18 @@ pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OP option) {
 	timer->option = option;
 	timer->periods = 0;
 	timer->callback = TSMS_NULL;
-	if (option->enablePeriodInterrupt)
+	if (option.enablePeriodInterrupt)
 		TSMS_IT_addTimer(timer, TSMS_IT_TIMER_PERIOD_ELAPSED, __tsms_internal_period_callback, TSMS_NULL);
-	if (option->enableDelay)
-		if (!option->enablePeriodInterrupt)
+	if (option.enableDelay)
+		if (!option.enablePeriodInterrupt)
 			TSMS_IT_addTimer(timer, TSMS_IT_TIMER_PERIOD_ELAPSED, __tsms_internal_period_callback, TSMS_NULL);
-
 	return timer;
 }
 
 TSMS_RESULT TSMS_TIMER_start(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (timer->option->enablePeriodInterrupt)
+	if (timer->option.enablePeriodInterrupt)
 		return HAL_TIM_Base_Start_IT(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
 	else
 		return HAL_TIM_Base_Start(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
@@ -51,7 +51,7 @@ TSMS_RESULT TSMS_TIMER_start(pTimer timer) {
 TSMS_RESULT TSMS_TIMER_stop(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (timer->option->enablePeriodInterrupt)
+	if (timer->option.enablePeriodInterrupt)
 		return HAL_TIM_Base_Stop_IT(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
 	else
 		return HAL_TIM_Base_Stop(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
@@ -60,10 +60,10 @@ TSMS_RESULT TSMS_TIMER_stop(pTimer timer) {
 TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (!timer->option->enableDelay)
+	if (!timer->option.enableDelay)
 		return TSMS_ERROR;
 	volatile uint64_t now = TSMS_TIMER_nowRaw(timer);
-	volatile uint64_t target = now + delay * (defaultTimerClock * TSMS_DELAY_UNIT_TO_SECOND[timer->option->delayUnit]) / (timer->timer->Init.Prescaler + 1);
+	volatile uint64_t target = now + delay * (defaultTimerClock * TSMS_DELAY_UNIT_TO_SECOND[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
 	while (now < target)
 		now = TSMS_TIMER_nowRaw(timer);
 	return TSMS_SUCCESS;

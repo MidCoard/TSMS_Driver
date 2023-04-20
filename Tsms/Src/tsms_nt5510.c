@@ -1,4 +1,5 @@
 #include "screen/tsms_nt5510.h"
+#include "tsms_util.h"
 
 // 0x8000 or 0x5510
 uint16_t TSMS_NT5510_readId(TSMS_SCHP screen) {

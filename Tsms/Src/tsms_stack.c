@@ -1,4 +1,5 @@
 #include "tsms_stack.h"
+#include "tsms_link_list.h"
 
 TSMS_STP TSMS_STACK_create() {
 	TSMS_STP stack = (TSMS_STP) malloc(sizeof(struct TSMS_STACK));

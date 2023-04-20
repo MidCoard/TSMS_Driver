@@ -1,4 +1,9 @@
 #include "tsms_it.h"
+#include "tsms_list.h"
+#include "tsms.h"
+#include "tsms_gpio.h"
+#include "tsms_timer.h"
+#include "tsms_printer.h"
 
 TSMS_LP gpioList = TSMS_NULL;
 TSMS_LP printerList = TSMS_NULL;

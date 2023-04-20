@@ -1,4 +1,6 @@
 #include "DAC8831.h"
+#include "tsms_spi.h"
+#include "tsms_driver.h"
 
 static void DAC8831_writeData(struct DAC8831_Handler *handler, uint16_t data) {
 	uint32_t value = data;

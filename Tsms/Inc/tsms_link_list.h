@@ -1,15 +1,7 @@
 #ifndef TSMS_LINK_LIST_H
 #define TSMS_LINK_LIST_H
 
-typedef struct TSMS_LINK_LIST *TSMS_LINK_LIST_POINTER;
-typedef TSMS_LINK_LIST_POINTER TSMS_LKLP;
-
-typedef struct TSMS_LINK_NODE TSMS_LKN;
-typedef TSMS_LKN *TSMS_LINK_NODE_POINTER;
-typedef TSMS_LINK_NODE_POINTER TSMS_LKNP;
-
-#include "tsms.h"
-
+#include "tsms_def.h"
 
 struct TSMS_LINK_NODE {
 	void *element;

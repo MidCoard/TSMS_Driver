@@ -1,4 +1,6 @@
 #include "screen/tsms_ili9341.h"
+#include "tsms_delay.h"
+#include "tsms_util.h"
 
 // 0x9341
 uint16_t TSMS_ILI9341_readId(TSMS_SCHP screen) {

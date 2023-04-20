@@ -1,19 +1,7 @@
 #ifndef TSMS_LOCK_H
 #define TSMS_LOCK_H
 
-typedef struct TSMS_LOCK_HANDLER tLock;
-typedef tLock *pLock;
-
-typedef struct TSMS_SEQUENCE_LOCK_HANDLER tSequenceLock;
-typedef tSequenceLock *pSequenceLock;
-
-typedef struct TSMS_SEQUENCE_PRIORITY_LOCK_HANDLER tSequencePriorityLock;
-typedef tSequencePriorityLock *pSequencePriorityLock;
-
 #include "tsms_def.h"
-#include "tsms_stack.h"
-#include "tsms_int_stack.h"
-#include "tsms_sync.h"
 
 struct TSMS_LOCK_HANDLER {
 	bool locked;

@@ -3,25 +3,17 @@
 
 #include "tsms_def.h"
 
-typedef struct TSMS_MAP_NODE * TSMS_MAP_NODE_POINTER;
-typedef TSMS_MAP_NODE_POINTER TSMS_MNP;
+typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
+typedef long (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
 
-typedef struct TSMS_MAP * TSMS_MAP_POINTER;
-typedef TSMS_MAP_POINTER TSMS_MP;
-
-typedef struct TSMS_MAP_ITERATOR TSMS_MI;
-typedef TSMS_MI * TSMS_MIP;
+extern TSMS_ME TSMS_EMPTY_MAP_ENTRY;
+extern TSMS_MI TSMS_EMPTY_MAP_ITERATOR;
 
 struct TSMS_MAP_ITERATOR {
 	TSMS_MP map;
 	TSMS_POS current;
 	TSMS_MNP next;
 };
-
-typedef long (*TSMS_MAP_HASH_FUNCTION)(void* key);
-
-typedef long (*TSMS_MAP_COMPARE_FUNCTION)(void* key1, void* key2);
-
 
 struct TSMS_MAP_NODE {
 	void* key;
@@ -41,14 +33,6 @@ struct TSMS_MAP_ENTRY {
 	void* key;
 	void* value;
 };
-
-#include "tsms.h"
-
-typedef struct TSMS_MAP_ENTRY TSMS_ME;
-
-extern TSMS_ME TSMS_EMPTY_MAP_ENTRY;
-
-extern TSMS_MI TSMS_EMPTY_MAP_ITERATOR;
 
 TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare);
 

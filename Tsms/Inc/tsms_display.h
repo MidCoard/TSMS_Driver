@@ -1,22 +1,6 @@
 #ifndef TSMS_DISPLAY_H
 #define TSMS_DISPLAY_H
 
-
-typedef struct TSMS_DRIVER_HANDLER *TSMS_DRIVER_HANDLER_POINTER;
-typedef TSMS_DRIVER_HANDLER_POINTER TSMS_DHP;
-
-typedef struct TSMS_REGISTER_HANDLER *TSMS_REGISTER_HANDLER_POINTER;
-typedef TSMS_REGISTER_HANDLER_POINTER TSMS_RHP;
-
-typedef struct TSMS_TOUCH_HANDLER *TSMS_TOUCH_HANDLER_POINTER;
-typedef TSMS_TOUCH_HANDLER_POINTER TSMS_THP;
-
-typedef struct TSMS_SCREEN_HANDLER *TSMS_SCREEN_HANDLER_POINTER;
-typedef TSMS_SCREEN_HANDLER_POINTER TSMS_SCHP;
-
-typedef struct TSMS_DISPLAY_HANDLER * TSMS_DISPLAY_HANDLER_POINTER;
-typedef TSMS_DISPLAY_HANDLER_POINTER TSMS_DPHP;
-
 typedef enum {
 	TSMS_SCREEN_AUTO_DETECT, TSMS_SCREEN_ILI9341, TSMS_SCREEN_ST7789, // default width 240 height 320
 	TSMS_SCREEN_NT35310, // default width 320 height 480
@@ -41,16 +25,6 @@ typedef TSMS_RESULT(*TSMS_INIT_SCREEN_FUNCTION)(TSMS_SCHP screen, void* option);
 typedef TSMS_RESULT(*TSMS_DISPLAY_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
 typedef TSMS_RESULT(*TSMS_SCAN_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction);
 typedef TSMS_RESULT(*TSMS_CURSOR_FUNCTION)(TSMS_SCHP screen, uint16_t x, uint16_t y);
-
-#include "tsms_iic.h"
-#include "tsms_lock.h"
-
-#include "touch/tsms_gt9147.h"
-#include "screen/tsms_ili9341.h"
-#include "screen/tsms_st7789.h"
-#include "screen/tsms_nt35310.h"
-#include "screen/tsms_nt5510.h"
-#include "screen/tsms_ssd1963.h"
 
 struct TSMS_DISPLAY_HANDLER {
 	TSMS_THP touch;
@@ -90,9 +64,6 @@ struct TSMS_TOUCH_HANDLER {
 	TSMS_RESET_TOUCH_FUNCTION reset;
 };
 
-#include "tsms_driver.h"
-#include "tsms_gpio.h"
-
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);
 
 void TSMS_SCREEN_writeCommand(TSMS_SCHP screen, volatile uint16_t command);
@@ -103,7 +74,7 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data);
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OP option);
+                               uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OPTION* option);
 
 TSMS_THP TSMS_TOUCH_createGT9147Handler(TSMS_IHP iic, TSMS_GHP reset, TSMS_GHP interrupt);
 

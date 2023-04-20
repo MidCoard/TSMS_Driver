@@ -1,4 +1,5 @@
 #include "tsms_printer.h"
+#include "tsms_char_list.h"
 
 TSMS_PHP defaultPrinter = TSMS_NULL;
 

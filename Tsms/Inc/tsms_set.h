@@ -1,15 +1,9 @@
 #ifndef TSMS_SET_H
 #define TSMS_SET_H
 
-typedef struct TSMS_SET * TSMS_SET_POINTER;
-typedef TSMS_SET_POINTER TSMS_SP;
-
-typedef struct TSMS_SET_ITERATOR TSMS_SI;
-typedef TSMS_SI * TSMS_SIP;
+#include "tsms_map.h"
 
 extern TSMS_SI TSMS_EMPTY_SET_ITERATOR;
-
-#include "tsms_map.h"
 
 struct TSMS_SET {
 	TSMS_MP map;

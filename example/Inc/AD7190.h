@@ -44,6 +44,9 @@
 
 #define AD7190_REG_ADDRESS(x) ((x)<<3)
 
+#define AD7190_UNIPOLAR_MASK 0x01000000
+#define AD7190_BIPOLAR_MASK 0x00800000
+
 typedef enum {
 	AD7190_CURRENT_CHANNEL_0,
 	AD7190_CURRENT_CHANNEL_1,
@@ -68,12 +71,6 @@ typedef enum {
 	AD7190_CHANNEL_TEMP = AD7190_CHANNEL_2
 } AD7190_CHANNELS;
 
-#define AD7190_UNIPOLAR_MASK 0x01000000
-#define AD7190_BIPOLAR_MASK 0x00800000
-
-#include "tsms_driver.h"
-#include "tsms_it.h"
-
 typedef enum {
 	AD7190_REG_COMM,
 	AD7190_REG_STATUS,
@@ -85,7 +82,6 @@ typedef enum {
 	AD7190_REG_OFFSET,
 	AD7190_REG_FULL_SCALE
 } AD7190_REGISTER;
-typedef uint8_t AD7190_CLOCK_MODE;
 typedef enum {
 	AD7190_MODE_CONTINUOUS_CONV,
 	AD7190_MODE_SINGLE_CONV,
@@ -120,6 +116,13 @@ typedef enum {
 	AD7190_CLOCK_MODE_INT_CLK,
 	AD7190_CLOCK_MODE_INT_CLK_MCLK2
 } AD7190_CHANNEL;
+
+#include "tsms_def.h"
+
+typedef uint8_t AD7190_CLOCK_MODE;
+
+#include "tsms_gpio.h"
+
 typedef TSMS_GPIO_STATUS AD7190_GPIO_STATUS;
 
 struct AD7190_Handler {

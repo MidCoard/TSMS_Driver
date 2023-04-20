@@ -1,12 +1,7 @@
 #ifndef TSMS_LIST_H
 #define TSMS_LIST_H
 
-struct TSMS_LIST;
-
-typedef struct TSMS_LIST *TSMS_LIST_POINTER;
-typedef TSMS_LIST_POINTER TSMS_LP;
-
-#include "tsms.h"
+#include "tsms_def.h"
 
 struct TSMS_LIST {
 	void **list;

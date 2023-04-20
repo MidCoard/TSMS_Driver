@@ -1,16 +1,6 @@
 #ifndef TSMS_H
 #define TSMS_H
 
-#include "tsms_def.h"
-#include "tsms_delay.h"
-#include "tsms_err.h"
-
-#ifdef TSMS_OPTIMIZATION
-#define TSMS_INLINE inline static
-#else
-#define TSMS_INLINE static
-#endif
-
 #ifndef TSMS_DRIVER
 // for internal use
 #define TSMS_DRIVER
@@ -75,6 +65,8 @@
 
 #endif
 
+#include "tsms_def.h"
+
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency);
 
 TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency);
@@ -88,7 +80,5 @@ TSMS_RESULT TSMS_LIST_init();
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timerFrequency);
 
 TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency);
-
-void TSMS_delay(uint32_t ms);
 
 #endif //TSMS_H

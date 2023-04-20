@@ -1,4 +1,6 @@
 #include "screen/tsms_st7789.h"
+#include "tsms_util.h"
+#include "screen/tsms_ili9341.h"
 
 // 0x8552
 uint16_t TSMS_ST7789_readId(TSMS_SCHP screen) {

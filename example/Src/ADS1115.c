@@ -1,4 +1,6 @@
 #include "ADS1115.h"
+#include "tsms_driver.h"
+#include "tsms_iic.h"
 
 static uint8_t ADS1115_BUFFER[3];
 

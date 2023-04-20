@@ -10,24 +10,24 @@ TSMS_INLINE void __tsms_internal_set_ssd1963_light(TSMS_SCHP screen, uint8_t lig
 	TSMS_SCREEN_writeData(screen, 0x00);
 }
 
-struct TSMS_SSD1963_OPTION defaultSSD1963Option = {
+TSMS_SSD1963_OPTION defaultSSD1963Option = {
 		800, 400, 1, 46, 210, 1, 23, 22
 };
 
-uint16_t TSMS_SSD1963_horizontalTotal(TSMS_SSD1963_OP option) {
-	return option->horizontalResolution + option->horizontalBackPorch + option->horizontalFrontPorch;
+uint16_t TSMS_SSD1963_horizontalTotal(TSMS_SSD1963_OPTION option) {
+	return option.horizontalResolution + option.horizontalBackPorch + option.horizontalFrontPorch;
 }
 
-uint16_t TSMS_SSD1963_horizontalPulseStart(TSMS_SSD1963_OP option) {
-	return option->horizontalBackPorch;
+uint16_t TSMS_SSD1963_horizontalPulseStart(TSMS_SSD1963_OPTION option) {
+	return option.horizontalBackPorch;
 }
 
-uint16_t TSMS_SSD1963_verticalTotal(TSMS_SSD1963_OP option) {
-	return option->verticalResolution + option->verticalBackPorch + option->verticalFrontPorch;
+uint16_t TSMS_SSD1963_verticalTotal(TSMS_SSD1963_OPTION option) {
+	return option.verticalResolution + option.verticalBackPorch + option.verticalFrontPorch;
 }
 
-uint16_t TSMS_SSD1963_verticalPulseStart(TSMS_SSD1963_OP option) {
-	return option->verticalBackPorch;
+uint16_t TSMS_SSD1963_verticalPulseStart(TSMS_SSD1963_OPTION option) {
+	return option.verticalBackPorch;
 }
 
 //0X5761
@@ -43,7 +43,7 @@ uint16_t TSMS_SSD1963_readId(TSMS_SCHP screen) {
 }
 
 TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
-	TSMS_SSD1963_OP option = op;
+	TSMS_SSD1963_OPTION option = op == TSMS_NULL ? defaultSSD1963Option : *(TSMS_SSD1963_OPTION*) op;
 	TSMS_SCREEN_writeCommand(screen,
 	                         0xE2);        //Set PLL with OSC = 10MHz (hardware),	Multiplier N = 35, 250MHz < VCO < 800MHz = OSC*(N+1), VCO = 300MHz
 	TSMS_SCREEN_writeData(screen, 0x1D);        //参数1
@@ -79,7 +79,7 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_horizontalTotal(option) - 1);
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_horizontalPulseStart(option) >> 8);
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_horizontalPulseStart(option));
-	TSMS_SCREEN_writeData(screen, option->horizontalPulseWidth - 1);
+	TSMS_SCREEN_writeData(screen, option.horizontalPulseWidth - 1);
 	TSMS_SCREEN_writeData(screen, 0x00);
 	TSMS_SCREEN_writeData(screen, 0x00);
 	TSMS_SCREEN_writeData(screen, 0x00);
@@ -88,7 +88,7 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_verticalTotal(option) - 1);
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_verticalPulseStart(option) >> 8);
 	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_verticalPulseStart(option));
-	TSMS_SCREEN_writeData(screen, option->verticalPulseWidth - 1);
+	TSMS_SCREEN_writeData(screen, option.verticalPulseWidth - 1);
 	TSMS_SCREEN_writeData(screen, 0x00);
 	TSMS_SCREEN_writeData(screen, 0x00);
 

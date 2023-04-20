@@ -1,4 +1,6 @@
 #include "screen/tsms_nt35310.h"
+#include "screen/tsms_ili9341.h"
+#include "tsms_util.h"
 
 // 0X5310
 uint16_t TSMS_NT35310_readId(TSMS_SCHP screen) {

@@ -1,11 +1,7 @@
 #ifndef TSMS_STACK_H
 #define TSMS_STACK_H
 
-
-typedef struct TSMS_STACK *TSMS_STACK_POINTER;
-typedef TSMS_STACK_POINTER TSMS_STP;
-
-#include "tsms_link_list.h"
+#include "tsms_def.h"
 
 struct TSMS_STACK {
 	TSMS_LKLP list;

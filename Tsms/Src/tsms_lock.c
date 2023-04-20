@@ -1,4 +1,6 @@
 #include "tsms_lock.h"
+#include "tsms_stack.h"
+#include "tsms_int_stack.h"
 
 pLock TSMS_LOCK_create() {
 	pLock lock = (pLock)malloc(sizeof(tLock));
@@ -157,7 +159,9 @@ pLock TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(pSequencePriorityLock lock, pLock curr
 		return TSMS_NULL;
 	if (!TSMS_LOCK_tryLock(lock->lock))
 		return TSMS_NULL;
-	if ((TSMS_SEQUENCE_LOCK_currentLock(lock->sequenceLock) != currentLock || currentLock == TSMS_NULL ) && TSMS_INT_STACK_peek(lock->stack) > priority) {
+	pLock cur = TSMS_SEQUENCE_LOCK_currentLock(lock->sequenceLock);
+	int p = TSMS_INT_STACK_peek(lock->stack);
+	if ((cur != currentLock || currentLock == TSMS_NULL ) && p > priority) {
 		TSMS_LOCK_unlock(lock->lock);
 		return TSMS_NULL;
 	}

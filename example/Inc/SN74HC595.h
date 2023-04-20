@@ -1,10 +1,6 @@
 #ifndef TSMS_SN74HC595_H
 #define TSMS_SN74HC595_H
 
-#include "gpio.h"
-#include "tsms_driver.h"
-#include "tsms_gpio.h"
-
 #define SN74HC595_Q0 0
 #define SN74HC595_Q1 1
 #define SN74HC595_Q2 2
@@ -30,6 +26,8 @@
 #define SN74HC595_SRCLK 1
 #define SN74HC595_RCLK 2
 #define SN74HC595_DATA 3
+
+#include "tsms.h"
 
 struct SN74HC595_Handler {
 	TSMS_DHP handler;

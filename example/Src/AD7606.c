@@ -1,9 +1,15 @@
 #include "AD7606.h"
+#include "tsms_driver.h"
+#include "tsms_iic.h"
+#include "tsms_spi.h"
+#include "tsms_custom.h"
 
 static void AD7606_busyInterrupt(void *handler, TSMS_GHP gpio) {
 	struct AD7606_Handler *ad7606 = handler;
 	ad7606->ready = 1;
 }
+
+#ifdef TSMS_STM32_GPIO
 
 struct AD7606_Handler *
 AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO_TypeDef *db15, uint16_t db15Pin,
@@ -61,6 +67,7 @@ AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO
 
 	return handler;
 }
+#endif
 
 void AD7606_setOverSampleRate(struct AD7606_Handler *handler, AD7606_OS_RATE overSampleRate) {
 	uint32_t value = overSampleRate;

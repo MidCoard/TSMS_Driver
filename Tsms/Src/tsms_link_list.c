@@ -1,4 +1,5 @@
 #include "tsms_link_list.h"
+#include "tsms_string.h"
 
 TSMS_LKLP TSMS_LINK_LIST_create() {
 	TSMS_LKLP list = (TSMS_LKLP) malloc(sizeof(struct TSMS_LINK_LIST));

@@ -1,12 +1,26 @@
 #include "tsms_display.h"
+#include "tsms_timer.h"
+#include "tsms_util.h"
+#include "tsms_lock.h"
+#include "tsms_gpio.h"
+#include "touch/tsms_gt9147.h"
+#include "screen/tsms_ili9341.h"
+#include "screen/tsms_st7789.h"
+#include "screen/tsms_nt35310.h"
+#include "screen/tsms_nt5510.h"
+#include "screen/tsms_ssd1963.h"
+
+#define TSMS_SCREEN_SWAP_LOCK
 
 TSMS_INLINE void __tsms_internal_auto_swap(void * screen, pTimer pTimer) {
+	double now = TSMS_TIMER_now(timer);
 	TSMS_SCREEN_swap(screen);
+	dur = TSMS_TIMER_now(timer) - now;
 }
 
-TSMS_INLINE void __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color) {
+TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color) {
 	if (x >= screen->width || y >= screen->height)
-		return;
+		return TSMS_ERROR;
 	if (screen->swapBuffer == TSMS_NULL) {
 		TSMS_SCREEN_setCursor(screen, x, y);
 		TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
@@ -15,6 +29,44 @@ TSMS_INLINE void __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x,
 		screen->lazySwapLabels[y / screen->swapStep] = true;
 		screen->swapBuffer[y * screen->width + x] = TSMS_UTIL_color565(color);
 	}
+	return TSMS_SUCCESS;
+}
+
+TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_line(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR color) {
+	if (x0 >= screen->width || y0 >= screen->height || x1 >= screen->width || y1 >= screen->height)
+		return TSMS_ERROR;
+	int16_t dx = x1 - x0;
+	int16_t dy = y1 - y0;
+	int16_t sx = (dx > 0) - (dx < 0);
+	int16_t sy = (dy > 0) - (dy < 0);
+	dx = abs(dx);
+	dy = abs(dy);
+	int16_t err = (dx > dy ? dx : -dy) / 2;
+	int16_t e2;
+	while (1) {
+		__tsms_internal_screen_draw_point(screen, x0, y0, color);
+		if (x0 == x1 && y0 == y1)
+			break;
+		e2 = err;
+		if (e2 > -dx) {
+			err -= dy;
+			x0 += sx;
+		}
+		if (e2 < dy) {
+			err += dx;
+			y0 += sy;
+		}
+	}
+	return TSMS_SUCCESS;
+}
+
+TSMS_INLINE TSMS_RESULT __tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color) {
+	if (x >= screen->width || y >= screen->height || x + w >= screen->width || y + h >= screen->height)
+		return TSMS_ERROR;
+	for (uint16_t i = x; i < x + w; i++)
+		for (uint16_t j = y; j < y + h; j++)
+			__tsms_internal_screen_draw_point(screen, i, j, color);
+	return TSMS_SUCCESS;
 }
 
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value) {
@@ -44,7 +96,7 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_reset_gt9147(TSMS_THP touch) {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t *swapBuffer, TSMS_SSD1963_OP option) {
+                               uint16_t height, uint16_t *swapBuffer, TSMS_SSD1963_OPTION* option) {
 	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
 	if (screen == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
@@ -60,7 +112,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->defaultHeight = height;
 	screen->swapBuffer = swapBuffer;
 	screen->swapY = 0;
-	screen->swapStep = 80;
+	screen->swapStep = 40;
 	for (TSMS_POS i = 0; i < 100; i ++)
 		screen->lazySwapLabels[i] = true;
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
@@ -221,22 +273,26 @@ TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
 TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
+#ifdef TSMS_SCREEN_SWAP_LOCK
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(screen->lock, TSMS_NULL, 1);
 	if (lock == TSMS_NULL) {
 		TSMS_SEQUENCE_PRIORITY_LOCK_preLock(screen->lock, 1);
 		return TSMS_ERROR;
 	}
+#endif
 	uint16_t preSwapY = screen->swapY;
 	while (!screen->lazySwapLabels[screen->swapY/ screen->swapStep]) {
 		screen->swapY += screen->swapStep;
 		if (screen->swapY >= screen->height)
 			screen->swapY = 0;
 		if (screen->swapY == preSwapY) {
+#ifdef TSMS_SCREEN_SWAP_LOCK
 			TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
+#endif
 			return TSMS_SUCCESS;
 		}
 	}
-	screen->lazySwapLabels[screen->swapY] = false;
+	screen->lazySwapLabels[screen->swapY/ screen->swapStep] = false;
 	TSMS_SCREEN_setCursor(screen,  0, screen->swapY);
 	TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
 	for (uint32_t i = 0; i < screen->swapStep * screen->width ; i++)
@@ -244,29 +300,22 @@ TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 	screen->swapY += screen->swapStep;
 	if (screen->swapY >= screen->height)
 		screen->swapY = 0;
+#ifdef TSMS_SCREEN_SWAP_LOCK
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	TSMS_SEQUENCE_PRIORITY_LOCK_postLock(screen->lock, 1);
+#endif
 	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-//	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
-//	if (lock == TSMS_NULL)
-//		return TSMS_ERROR;
-	if (x >= screen->width || y >= screen->height)
+	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
+	if (lock == TSMS_NULL)
 		return TSMS_ERROR;
-	if (screen->swapBuffer == TSMS_NULL) {
-		TSMS_SCREEN_setCursor(screen, x, y);
-		TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
-		TSMS_SCREEN_writeData(screen, TSMS_UTIL_color565(color));
-	} else {
-		screen->lazySwapLabels[y / screen->swapStep] = true;
-		screen->swapBuffer[y * screen->width + x] = TSMS_UTIL_color565(color);
-	}
-//	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
-	return TSMS_SUCCESS;
+	TSMS_RESULT result = __tsms_internal_screen_draw_point(screen, x, y, color);
+	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
+	return result;
 }
 
 TSMS_RESULT TSMS_SCREEN_enableAutoSwap(TSMS_SCHP screen, pTimer timer) {
@@ -274,7 +323,7 @@ TSMS_RESULT TSMS_SCREEN_enableAutoSwap(TSMS_SCHP screen, pTimer timer) {
 		return TSMS_ERROR;
 	if (screen->swapBuffer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (!timer->option->enableCallbackInterrupt)
+	if (!timer->option.enableCallbackInterrupt)
 		return TSMS_ERROR;
 	TSMS_TIMER_setCallback(timer, __tsms_internal_auto_swap, screen);
 	TSMS_TIMER_start(timer);
@@ -289,30 +338,9 @@ TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uin
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
 	if (lock == TSMS_NULL)
 		return TSMS_ERROR;
-	int16_t dx = x1 - x0;
-	int16_t dy = y1 - y0;
-	int16_t sx = (dx > 0) - (dx < 0);
-	int16_t sy = (dy > 0) - (dy < 0);
-	dx = abs(dx);
-	dy = abs(dy);
-	int16_t err = (dx > dy ? dx : -dy) / 2;
-	int16_t e2;
-	while (1) {
-		TSMS_SCREEN_drawPoint(screen, x0, y0, color, lock);
-		if (x0 == x1 && y0 == y1)
-			break;
-		e2 = err;
-		if (e2 > -dx) {
-			err -= dy;
-			x0 += sx;
-		}
-		if (e2 < dy) {
-			err += dx;
-			y0 += sy;
-		}
-	}
+	TSMS_RESULT result = __tsms_internal_screen_draw_line(screen, x0, y0, x1, y1, color);
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
-	return TSMS_SUCCESS;
+	return result;
 }
 
 TSMS_RESULT TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR from, TSMS_CR to, pLock preLock) {
@@ -334,7 +362,7 @@ TSMS_RESULT TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t
 	uint16_t step = 0;
 	uint16_t total = dx > dy ? dx : dy;
 	while (1) {
-		TSMS_SCREEN_drawPoint(screen, x0, y0, TSMS_UTIL_gradientColor(from, to, ((float)step) / total), lock);
+		__tsms_internal_screen_draw_point(screen, x0, y0, TSMS_UTIL_gradientColor(from, to, ((float)step) / total));
 		if (x0 == x1 && y0 == y1)
 			break;
 		e2 = err;
@@ -360,10 +388,10 @@ TSMS_RESULT TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint1
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
 	if (lock == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_SCREEN_drawLine(screen, x, y, x + w, y, color, lock);
-	TSMS_SCREEN_drawLine(screen, x + w, y, x + w, y + h, color, lock);
-	TSMS_SCREEN_drawLine(screen, x + w, y + h, x, y + h, color, lock);
-	TSMS_SCREEN_drawLine(screen, x, y + h, x, y, color, lock);
+	__tsms_internal_screen_draw_line(screen, x, y, x + w, y, color);
+	__tsms_internal_screen_draw_line(screen, x + w, y, x + w, y + h, color);
+	__tsms_internal_screen_draw_line(screen, x + w, y + h, x, y + h, color);
+	__tsms_internal_screen_draw_line(screen, x, y + h, x, y, color);
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	return TSMS_SUCCESS;
 }
@@ -371,14 +399,10 @@ TSMS_RESULT TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint1
 TSMS_RESULT TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-	if (x >= screen->width || y >= screen->height || x + w >= screen->width || y + h >= screen->height)
-		return TSMS_ERROR;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
 	if (lock == TSMS_NULL)
 		return TSMS_ERROR;
-	for (uint16_t i = x; i < x + w; i++)
-		for (uint16_t j = y; j < y + h; j++)
-			TSMS_SCREEN_drawPoint(screen, i, j, color, lock);
+	__tsms_internal_screen_fill_rect(screen, x, y, w, h, color);
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	return TSMS_SUCCESS;
 }
@@ -400,7 +424,7 @@ TSMS_RESULT TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0
 	int16_t err = (dx > dy ? dx : -dy) / 2;
 	int16_t e2;
 	while (1) {
-		TSMS_SCREEN_fillRect(screen, x0 - thickness / 2, y0 - thickness / 2, thickness, thickness, color, lock);
+		__tsms_internal_screen_fill_rect(screen, x0 - thickness / 2, y0 - thickness / 2, thickness, thickness, color);
 		if (x0 == x1 && y0 == y1)
 			break;
 		e2 = err;

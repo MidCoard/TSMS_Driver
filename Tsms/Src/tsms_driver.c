@@ -1,4 +1,8 @@
 #include "tsms_driver.h"
+#include "tsms_custom.h"
+#include "tsms_spi.h"
+#include "tsms_iic.h"
+#include "tsms_util.h"
 
 TSMS_INLINE void __tsms_internal_add_and_remove(TSMS_RHP reg, uint32_t add, uint32_t remove) {
 	reg->value |= add;

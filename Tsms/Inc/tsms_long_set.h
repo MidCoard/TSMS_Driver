@@ -1,15 +1,10 @@
 #ifndef TSMS_LONG_SET_H
 #define TSMS_LONG_SET_H
 
-typedef struct TSMS_LONG_SET *TSMS_LONG_SET_POINTER;
-typedef TSMS_LONG_SET_POINTER TSMS_LSP;
-
-typedef struct TSMS_LONG_SET_ITERATOR TSMS_LSI;
-typedef TSMS_LSI *TSMS_LSIP;
+#include "tsms_def.h"
+#include "tsms_long_map.h"
 
 extern TSMS_LSI TSMS_EMPTY_LONG_SET_ITERATOR;
-
-#include "tsms_long_map.h"
 
 struct TSMS_LONG_SET {
 	TSMS_LMP map;

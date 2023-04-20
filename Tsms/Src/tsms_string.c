@@ -1,4 +1,8 @@
 #include "tsms_string.h"
+#include "tsms_math.h"
+#include "tsms_char_list.h"
+#include "tsms_list.h"
+#include "tsms_map.h"
 
 pString TSMS_EMPTY_STRING;
 

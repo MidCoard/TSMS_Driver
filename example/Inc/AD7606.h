@@ -1,10 +1,7 @@
 #ifndef TSMS_AD7606_H
 #define TSMS_AD7606_H
 
-#include "tsms_custom.h"
-#include "tsms_spi.h"
-#include "tsms_it.h"
-#include "tsms_driver.h"
+#include "tsms.h"
 
 struct AD7606_Handler {
 	TSMS_DHP handler;

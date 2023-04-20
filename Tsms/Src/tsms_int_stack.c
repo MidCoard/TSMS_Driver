@@ -1,4 +1,5 @@
 #include "tsms_int_stack.h"
+#include "tsms_int_link_list.h"
 
 TSMS_INT_STP TSMS_INT_STACK_create() {
 	TSMS_INT_STP stack = (TSMS_INT_STP) malloc(sizeof(struct TSMS_INT_STACK));
@@ -8,15 +9,15 @@ TSMS_INT_STP TSMS_INT_STACK_create() {
 		return TSMS_NULL;
 	}
 	stack->list = TSMS_INT_LINK_LIST_create();
-	if (stack->list == NULL) {
+	if (stack->list == TSMS_NULL) {
 		TSMS_INT_STACK_release(stack);
-		return NULL;
+		return TSMS_NULL;
 	}
 	return stack;
 }
 
 TSMS_RESULT TSMS_INT_STACK_push(TSMS_INT_STP stack, int element) {
-	if (stack == NULL)
+	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	return TSMS_INT_LINK_LIST_add(stack->list, element);
 }
@@ -30,7 +31,7 @@ int TSMS_INT_STACK_pop(TSMS_INT_STP stack) {
 }
 
 int TSMS_INT_STACK_peek(TSMS_INT_STP stack) {
-	if (stack == NULL)
+	if (stack == TSMS_NULL)
 		return -1;
 	if (stack->list->length == 0)
 		return -1;
@@ -38,13 +39,13 @@ int TSMS_INT_STACK_peek(TSMS_INT_STP stack) {
 }
 
 TSMS_RESULT TSMS_INT_STACK_clear(TSMS_INT_STP stack) {
-	if (stack == NULL)
+	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	return TSMS_INT_LINK_LIST_clear(stack->list);
 }
 
 TSMS_RESULT TSMS_INT_STACK_release(TSMS_INT_STP stack) {
-	if (stack == NULL)
+	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_RESULT result = TSMS_INT_LINK_LIST_release(stack->list);
 	free(stack);

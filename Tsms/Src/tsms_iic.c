@@ -1,4 +1,5 @@
 #include "tsms_iic.h"
+#include "tsms_gpio.h"
 #include "tsms_util.h"
 
 TSMS_INLINE void __tsms_iic_delay() {

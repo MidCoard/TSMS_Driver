@@ -1,21 +1,10 @@
 #ifndef TSMS_LONG_MAP_H
 #define TSMS_LONG_MAP_H
 
-typedef struct TSMS_LONG_MAP_NODE * TSMS_LONG_MAP_NODE_POINTER;
-typedef TSMS_LONG_MAP_NODE_POINTER TSMS_LMNP;
-
-typedef struct TSMS_LONG_MAP * TSMS_LONG_MAP_POINTER;
-typedef TSMS_LONG_MAP_POINTER TSMS_LMP;
-
-typedef struct TSMS_LONG_MAP_ITERATOR TSMS_LMI;
-typedef TSMS_LMI * TSMS_LMIP;
-
-typedef struct TSMS_LONG_MAP_ENTRY TSMS_LME;
+#include "tsms_def.h"
 
 extern TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR;
 extern TSMS_LME TSMS_EMPTY_LONG_MAP_ENTRY;
-
-#include "tsms.h"
 
 struct TSMS_LONG_MAP_NODE {
 	long key;

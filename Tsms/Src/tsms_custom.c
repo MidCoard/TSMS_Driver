@@ -1,4 +1,6 @@
 #include "tsms_custom.h"
+#include "tsms_gpio.h"
+#include "tsms_list.h"
 
 TSMS_INLINE void __tsms_internal_custom_delay() {
 	volatile uint8_t c = 1;

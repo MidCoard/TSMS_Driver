@@ -1,13 +1,7 @@
 #ifndef TSMS_CUSTOM_H
 #define TSMS_CUSTOM_H
 
-#include "tsms_gpio.h"
-#include "tsms_util.h"
-
-struct TSMS_CUSTOM_HANDLER;
-
-typedef struct TSMS_CUSTOM_HANDLER *TSMS_CUSTOM_HANDLER_POINTER;
-typedef TSMS_CUSTOM_HANDLER_POINTER TSMS_CHP;
+#include "tsms_def.h"
 
 struct TSMS_CUSTOM_HANDLER {
 	TSMS_GHP sda;

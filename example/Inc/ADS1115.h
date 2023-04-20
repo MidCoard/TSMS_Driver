@@ -1,11 +1,6 @@
 #ifndef TSMS_ADS1115_H
 #define TSMS_ADS1115_H
 
-
-#include "tsms_driver.h"
-#include "tsms_iic.h"
-#include "tsms_printer.h"
-
 #define ADS1115_RESERVE 0
 #define ADS1115_P 1
 #define ADS1115_D 2
@@ -27,6 +22,8 @@
 #define ADS1115_REG_LO_THRESH 3
 #define ADS1115_REG_HI_THRESH 4
 
+#include "tsms.h"
+#include "tsms_gpio.h"
 
 typedef enum {
 	ADS1115_8_SPS = 0,

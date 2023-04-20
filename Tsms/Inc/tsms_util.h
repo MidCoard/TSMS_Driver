@@ -1,15 +1,7 @@
 #ifndef TSMS_UTIL_H
 #define TSMS_UTIL_H
 
-#include "tsms.h"
-
-typedef struct TSMS_COLOR TSMS_CR;
-
-struct TSMS_COLOR {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-};
+#include "tsms_def.h"
 
 extern TSMS_CR TSMS_COLOR_BLACK;
 extern TSMS_CR TSMS_COLOR_WHITE;
@@ -19,6 +11,12 @@ extern TSMS_CR TSMS_COLOR_BLUE;
 extern TSMS_CR TSMS_COLOR_YELLOW;
 extern TSMS_CR TSMS_COLOR_CYAN;
 extern TSMS_CR TSMS_COLOR_MAGENTA;
+
+struct TSMS_COLOR {
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+};
 
 uint8_t TSMS_UTIL_reverseByte(uint8_t v);
 

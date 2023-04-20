@@ -1,5 +1,4 @@
 #include "W9825G6KH.h"
-#include "fmc.h"
 
 static TSMS_RESULT W9825G6KH_writeCommand(struct W9825G6KH_Handler *handler, uint8_t command, uint8_t refresh, uint16_t value) {
 	if (handler == TSMS_NULL)
@@ -11,6 +10,7 @@ static TSMS_RESULT W9825G6KH_writeCommand(struct W9825G6KH_Handler *handler, uin
 	commandTypeDef.ModeRegisterDefinition = value;
 	return HAL_SDRAM_SendCommand(handler->sdram, &commandTypeDef, 0xFFFF) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
 }
+#ifdef TSMS_STM32_SDRAM
 
 struct W9825G6KH_Handler * W9825G6KH_initHardware(SDRAM_HandleTypeDef * sdram, uint32_t* address) {
 	struct W9825G6KH_Handler * handler = malloc(sizeof(struct W9825G6KH_Handler));
@@ -50,6 +50,8 @@ struct W9825G6KH_Handler * W9825G6KH_initHardware(SDRAM_HandleTypeDef * sdram, u
 	}
 	return handler;
 }
+
+#endif
 
 TSMS_RESULT W9825G6KH_writeBuffer(struct W9825G6KH_Handler *handler, uint32_t offset, const uint16_t * data, uint32_t size) {
 	if (handler == TSMS_NULL)

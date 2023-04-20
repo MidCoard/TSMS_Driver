@@ -1,7 +1,6 @@
 #ifndef TSMS_GT9147_H
 #define TSMS_GT9147_H
 
-
 #define GT9147_REG_CTL 0
 #define GT9147_REG_CTL_ADDRESS 0x8040
 #define GT9147_REG_ID_1 1
@@ -31,7 +30,7 @@
 #define GT9147_REG_TOUCH_2_X_H 13
 #define GT9147_REG_TOUCH_2_X_H_ADDRESS 0x8157
 
-#include "tsms_driver.h"
+#include "tsms_def.h"
 
 typedef struct TSMS_GT9147_HANDLER * TSMS_GT9147_HANDLER_POINTER;
 typedef TSMS_GT9147_HANDLER_POINTER TSMS_GT9147;

@@ -1,17 +1,29 @@
 #ifndef TSMS_SPI_H
 #define TSMS_SPI_H
 
-#include "tsms_gpio.h"
+typedef enum {
+	TSMS_SPI_CPOL_LOW = 0, TSMS_SPI_CPOL_HIGH
+} TSMS_SPI_CPOL;
+typedef enum {
+	TSMS_SPI_CPHA_LOW = 0, TSMS_SPI_CPHA_HIGH
+} TSMS_SPI_CPHA;
+
+typedef enum {
+	TSMS_SPI_READ = 0, TSMS_SPI_WRITE
+} TSMS_SPI_OPERATION_TYPE;
 
 typedef enum {
 	TSMS_SPI_MODE_0 = 0, TSMS_SPI_MODE_1, TSMS_SPI_MODE_2, TSMS_SPI_MODE_3
 } TSMS_SPI_MODE;
 
-struct TSMS_SPI_HANDLER;
-typedef struct TSMS_SPI_HANDLER *TSMS_SPI_HANDLER_POINTER;
-typedef TSMS_SPI_HANDLER_POINTER TSMS_SHP;
+#include "tsms_def.h"
 
 typedef void(*TSMS_SPI_RELEASE_FUNCTION)(TSMS_SHP);
+
+#define TSMS_SPI_MODE_CPOL(x) (TSMS_GPIO_STATUS)((x>>1)&1)
+#define TSMS_SPI_MODE_CPHA(x) (TSMS_GPIO_STATUS)(x&1)
+
+#include "tsms_gpio.h"
 
 struct TSMS_SPI_HANDLER {
 
@@ -32,27 +44,12 @@ struct TSMS_SPI_HANDLER {
 #endif
 };
 
-typedef enum {
-	TSMS_SPI_CPOL_LOW = 0, TSMS_SPI_CPOL_HIGH
-} TSMS_SPI_CPOL;
-typedef enum {
-	TSMS_SPI_CPHA_LOW = 0, TSMS_SPI_CPHA_HIGH
-} TSMS_SPI_CPHA;
-
-typedef enum {
-	TSMS_SPI_READ = 0, TSMS_SPI_WRITE
-} TSMS_SPI_OPERATION_TYPE;
-
 struct TSMS_SPI_OPERATION {
 	TSMS_SPI_OPERATION_TYPE type;
 	uint8_t bits;
 	uint32_t *data;
 	uint32_t length;
 };
-
-
-#define TSMS_SPI_MODE_CPOL(x) (TSMS_GPIO_STATUS)((x>>1)&1)
-#define TSMS_SPI_MODE_CPHA(x) (TSMS_GPIO_STATUS)(x&1)
 
 #if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 

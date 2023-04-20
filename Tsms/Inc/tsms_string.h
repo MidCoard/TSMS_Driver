@@ -1,22 +1,15 @@
 #ifndef TSMS_STRING_H
 #define TSMS_STRING_H
 
-typedef struct TSMS_STRING_HANDLER tString;
-typedef tString *pString;
+#include "tsms_def.h"
 
-#include "tsms_math.h"
-#include "tsms.h"
-#include "tsms_list.h"
-#include "tsms_char_list.h"
-#include "tsms_map.h"
+extern pString TSMS_EMPTY_STRING;
 
 struct TSMS_STRING_HANDLER {
 	char *cStr;
 	TSMS_SIZE length;
 	bool staticString;
 };
-
-extern pString TSMS_EMPTY_STRING;
 
 bool TSMS_STRING_equals(pString str1, pString str2);
 
