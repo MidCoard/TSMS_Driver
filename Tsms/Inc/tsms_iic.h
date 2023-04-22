@@ -53,9 +53,9 @@ TSMS_RESULT TSMS_IIC_writeBytes(TSMS_IHP handler, uint8_t *data, uint16_t length
 
 TSMS_RESULT TSMS_IIC_readBytes(TSMS_IHP handler, uint8_t *data, uint16_t length);
 
-TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint8_t reg, TSMS_BITS regBits, uint32_t data, TSMS_BITS bits);
+TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint32_t reg, TSMS_BITS regBits, uint32_t data, TSMS_BITS bits);
 
-TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint8_t reg, TSMS_BITS regBits, uint32_t *data, TSMS_BITS bits);
+TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint32_t reg, TSMS_BITS regBits, uint32_t *data, TSMS_BITS bits);
 
 
 #endif //TSMS_IIC_H

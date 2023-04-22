@@ -9,6 +9,10 @@ typedef enum {
 } TSMS_SCREEN_TYPE;
 
 typedef enum {
+	TSMS_TOUCH_AUTO_DETECT, TSMS_TOUCH_GT9147
+} TSMS_TOUCH_TYPE;
+
+typedef enum {
 	TSMS_DISPLAY_VERTICAL, TSMS_DISPLAY_HORIZONTAL
 } TSMS_DISPLAY_DIRECTION;
 
@@ -20,6 +24,7 @@ typedef enum {
 #include "tsms_def.h"
 
 typedef TSMS_RESULT(*TSMS_RESET_TOUCH_FUNCTION)(TSMS_THP);
+typedef TSMS_RESULT(*TSMS_INIT_TOUCH_FUNCTION)(TSMS_THP touch, void* option);
 typedef TSMS_RESULT(*TSMS_SCREEN_FUNCTION)(TSMS_SCHP);
 typedef TSMS_RESULT(*TSMS_INIT_SCREEN_FUNCTION)(TSMS_SCHP screen, void* option);
 typedef TSMS_RESULT(*TSMS_DISPLAY_DIRECTION_FUNCTION)(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction);
@@ -32,8 +37,8 @@ struct TSMS_DISPLAY_HANDLER {
 };
 
 struct TSMS_SCREEN_HANDLER {
-	uint16_t * command;
-	uint16_t * data;
+	volatile uint16_t * command;
+	volatile uint16_t * data;
 	TSMS_SCREEN_FUNCTION reset;
 	TSMS_GHP bg;
 	TSMS_SCREEN_TYPE type;
@@ -62,6 +67,9 @@ struct TSMS_SCREEN_HANDLER {
 struct TSMS_TOUCH_HANDLER {
 	void* custom;
 	TSMS_RESET_TOUCH_FUNCTION reset;
+	TSMS_TOUCH_TYPE type;
+	TSMS_INIT_TOUCH_FUNCTION init;
+	TSMS_GHP rst;
 };
 
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);
@@ -76,7 +84,11 @@ TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
                                uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OPTION* option);
 
-TSMS_THP TSMS_TOUCH_createGT9147Handler(TSMS_IHP iic, TSMS_GHP reset, TSMS_GHP interrupt);
+TSMS_THP TSMS_TOUCH_createHandler(void* handler, TSMS_TOUCH_TYPE type, TSMS_GHP rst, void * option);
+
+TSMS_RESULT TSMS_TOUCH_reset(TSMS_THP touch);
+
+TSMS_RESULT TSMS_SCREEN_reset(TSMS_SCHP screen);
 
 TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch);
 
@@ -107,5 +119,9 @@ TSMS_RESULT TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint1
 TSMS_RESULT TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock);
 
 TSMS_RESULT TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t thickness, TSMS_CR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawChar(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void * font, uint8_t c, TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawString(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void * font, pString str, TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock);
 
 #endif //TSMS_DISPLAY_H

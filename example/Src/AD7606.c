@@ -60,7 +60,7 @@ AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO
 	TSMS_CUSTOM_parallelWrite(handler->digitalInterface, &value, 1);
 
 
-	TSMS_IT_addGPIO(handler->busy, TSMS_IT_GPIO_FALLING, AD7606_busyInterrupt, handler);
+	TSMS_IT_addGPIO(handler->busy, AD7606_busyInterrupt, handler);
 
 	AD7606_setRange(handler, AD7606_RANGE_5V);
 	AD7606_setMode(handler, AD7606_MODE_POWER_ON);

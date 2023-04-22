@@ -64,14 +64,13 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef * htim) {
 }
 #endif
 
-TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_TYPE type, TSMS_IT_GPIO_CALLBACK callback, void *handler) {
+TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_CALLBACK callback, void *handler) {
 	if (gpio == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_IGP igp = malloc(sizeof(struct TSMS_IT_GPIO));
 	if (igp == TSMS_NULL)
 		return TSMS_ERROR;
 	igp->gpio = gpio;
-	igp->type = type;
 	igp->callback = callback;
 	igp->handler = handler;
 	TSMS_LIST_add(gpioList, igp);

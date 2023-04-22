@@ -6,9 +6,9 @@
 
 pString TSMS_EMPTY_STRING;
 
-TSMS_MP staticMap;
+static TSMS_MP staticMap;
 
-char intBuffer[13];
+static char intBuffer[13];
 
 TSMS_INLINE long __tsms_internal_hash(void * p) {
 	char * cStr = p;
@@ -44,6 +44,8 @@ bool TSMS_STRING_equals(pString str1, pString str2) {
 
 long TSMS_STRING_compare(pString str1, pString str2) {
 	if (str1 == TSMS_NULL && str2 == TSMS_NULL)
+		return 0;
+	if (str1 == str2)
 		return 0;
 	if (str1 == TSMS_NULL)
 		return -1;

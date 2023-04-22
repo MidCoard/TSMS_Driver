@@ -60,6 +60,12 @@ TSMS_RESULT TSMS_GPIO_setMode(TSMS_GHP gpio, TSMS_GPIO_MODE mode, TSMS_GPIO_PULL
 		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	else if (mode == TSMS_GPIO_INPUT)
 		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	else if (mode == TSMS_GPIO_IT_RISING)
+		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	else if (mode == TSMS_GPIO_IT_FALLING)
+		GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	else if (mode == TSMS_GPIO_IT_RISING_FALLING)
+		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
 	else
 		return TSMS_ERROR;
 	if (pull == TSMS_GPIO_NO_PULL)

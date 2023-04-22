@@ -5,7 +5,6 @@
 
 struct TSMS_IT_GPIO {
 	TSMS_GHP gpio;
-	TSMS_IT_GPIO_TYPE type;
 	TSMS_IT_GPIO_CALLBACK callback;
 	void *handler;
 };

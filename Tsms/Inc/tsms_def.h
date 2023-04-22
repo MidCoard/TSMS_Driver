@@ -9,6 +9,8 @@
 
 #include "stdint.h"
 
+typedef uint8_t TSMS_FONT_SIZE;
+
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
 typedef uint32_t TSMS_SIZE;
@@ -204,6 +206,11 @@ typedef enum {
 } TSMS_IT_TIMER_TYPE;
 
 typedef void(*TSMS_IT_TIMER_CALLBACK)(void *, pTimer);
+
+typedef enum {
+	TSMS_INVALID_FONT = 0, TSMS_ARRAY_FONT, TSMS_FILE_FONT
+} TSMS_FONT_TYPE;
+
 
 #include "memory.h"
 #include "stdio.h"
