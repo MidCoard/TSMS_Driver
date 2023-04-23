@@ -2,6 +2,14 @@
 #define TSMS_DISPLAY_H
 
 typedef enum {
+	TSMS_SCREEN_MANUAL_REQUEST, TSMS_SCREEN_IT_AUTO_REQUEST, TSMS_SCREEN_REQUEST_BOTH
+} TSMS_SCREEN_REQUEST_MODE;
+
+typedef enum {
+	TSMS_TOUCH_MANUAL_REQUEST, TSMS_TOUCH_IT_AUTO_REQUEST
+} TSMS_TOUCH_REQUEST_MODE;
+
+typedef enum {
 	TSMS_SCREEN_AUTO_DETECT, TSMS_SCREEN_ILI9341, TSMS_SCREEN_ST7789, // default width 240 height 320
 	TSMS_SCREEN_NT35310, // default width 320 height 480
 	TSMS_SCREEN_NT35510, TSMS_SCREEN_NT5510, // default width 480 height 800
@@ -34,6 +42,16 @@ typedef TSMS_RESULT(*TSMS_CURSOR_FUNCTION)(TSMS_SCHP screen, uint16_t x, uint16_
 struct TSMS_DISPLAY_HANDLER {
 	TSMS_THP touch;
 	TSMS_SCHP screen;
+
+	TSMS_SCREEN_REQUEST_MODE screenMode;
+	TSMS_TOUCH_REQUEST_MODE touchMode;
+
+	float refreshRate;
+	pTimer timer;
+	double lastTime;
+	double restCount;
+	uint64_t count;
+	pLock lock;
 };
 
 struct TSMS_SCREEN_HANDLER {
@@ -70,6 +88,16 @@ struct TSMS_TOUCH_HANDLER {
 	TSMS_TOUCH_TYPE type;
 	TSMS_INIT_TOUCH_FUNCTION init;
 	TSMS_GHP rst;
+	TSMS_LP list;
+	pSequencePriorityLock lock;
+	bool request;
+};
+
+struct TSMS_TOUCH_DATA {
+	uint16_t x;
+	uint16_t y;
+	uint16_t id;
+	uint16_t size;
 };
 
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);
@@ -82,7 +110,7 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data);
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t * swapBuffer, TSMS_SSD1963_OPTION* option);
+                               uint16_t height, uint16_t *swapBuffer, TSMS_SSD1963_OPTION* option);
 
 TSMS_THP TSMS_TOUCH_createHandler(void* handler, TSMS_TOUCH_TYPE type, TSMS_GHP rst, void * option);
 
@@ -90,7 +118,7 @@ TSMS_RESULT TSMS_TOUCH_reset(TSMS_THP touch);
 
 TSMS_RESULT TSMS_SCREEN_reset(TSMS_SCHP screen);
 
-TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch);
+TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float refreshRate);
 
 TSMS_RESULT TSMS_DISPLAY_reset(TSMS_DPHP display);
 
@@ -108,7 +136,7 @@ TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y);
 
 TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color, pLock preLock);
 
-TSMS_RESULT TSMS_SCREEN_enableAutoSwap(TSMS_SCHP screen, pTimer timer);
+TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SCREEN_REQUEST_MODE screenMode, TSMS_TOUCH_REQUEST_MODE touchMode);
 
 TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR color, pLock preLock);
 
@@ -123,5 +151,11 @@ TSMS_RESULT TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0
 TSMS_RESULT TSMS_SCREEN_drawChar(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void * font, uint8_t c, TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock);
 
 TSMS_RESULT TSMS_SCREEN_drawString(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void * font, pString str, TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock);
+
+TSMS_RESULT TSMS_TOUCH_request(TSMS_THP touch);
+
+TSMS_RESULT TSMS_SCREEN_request(TSMS_SCHP screen);
+
+TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display);
 
 #endif //TSMS_DISPLAY_H

@@ -18,7 +18,6 @@ TSMS_RESULT TSMS_IT_addTimer(pTimer timer,TSMS_IT_TIMER_TYPE type, TSMS_IT_TIMER
 
 typedef struct {
 	bool enablePeriodInterrupt;
-	bool enableDelay;
 	bool enableCallbackInterrupt;
 	TSMS_DELAY_UNIT delayUnit;
 } TSMS_TIMER_OPTION;

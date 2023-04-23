@@ -5,6 +5,7 @@
 #include "tsms_gpio.h"
 #include "tsms_font.h"
 #include "tsms_it.h"
+#include "tsms_list.h"
 #include "touch/tsms_gt9147.h"
 #include "screen/tsms_ili9341.h"
 #include "screen/tsms_st7789.h"
@@ -23,11 +24,25 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_touch_reset(TSMS_THP touch) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_INLINE void __tsms_internal_auto_swap(void * screen, pTimer pTimer) {
-	double now = TSMS_TIMER_now(timer);
+TSMS_INLINE void __tsms_internal_screen_auto_request(void * screen, pTimer pTimer) {
 	TSMS_SCREEN_swap(screen);
-	dur = TSMS_TIMER_now(timer) - now;
 }
+
+TSMS_INLINE void __tsms_internal_screen_auto_request_both(void * d, pTimer pTimer) {
+	TSMS_DPHP display = d;
+	if (display->restCount >= 1) {
+		if (TSMS_LOCK_tryLock(display->lock)) {
+			if (display->restCount >= 1) {
+				display->count++;
+				display->restCount--;
+				TSMS_SCREEN_swap(display->screen);
+			}
+			TSMS_LOCK_unlock(display->lock);
+		}
+	}
+	TSMS_SEQUENCE_PRIORITY_LOCK_postLock(display->screen->lock, 1);
+}
+
 
 TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color) {
 	if (x >= screen->width || y >= screen->height)
@@ -134,8 +149,6 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen,volatile uint16_t data) {
 	*screen->data = data;
 }
 
-
-
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
                                uint16_t height, uint16_t *swapBuffer, TSMS_SSD1963_OPTION* option) {
@@ -228,11 +241,12 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	}
 	tString temp = TSMS_STRING_temp("screen type not supported");
 	TSMS_ERR_report(TSMS_ERR_SCREEN_TYPE_NOT_SUPPORTED, &temp);
+	TSMS_SEQUENCE_PRIORITY_LOCK_release(screen->lock);
 	free(screen);
 	return TSMS_NULL;
 }
 
-TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch) {
+TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float refreshRate) {
 	// touch could be null
 	if (screen == TSMS_NULL)
 		return TSMS_NULL;
@@ -244,6 +258,8 @@ TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch) {
 	}
 	display->touch = touch;
 	display->screen = screen;
+	display->refreshRate = refreshRate;
+	display->lock = TSMS_LOCK_create();
 	return display;
 }
 
@@ -258,6 +274,9 @@ TSMS_THP TSMS_TOUCH_createHandler(void* handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 	touch->reset = __tsms_internal_touch_reset;
 	touch->type = type;
 	touch->custom = handler;
+	touch->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
+	touch->list = TSMS_LIST_create(10);
+	touch->request = false;
 	TSMS_TOUCH_reset(touch);
 	volatile uint32_t id;
 	if (touch->type == TSMS_TOUCH_AUTO_DETECT || touch->type == TSMS_TOUCH_GT9147) {
@@ -274,6 +293,8 @@ TSMS_THP TSMS_TOUCH_createHandler(void* handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 	}
 	tString temp = TSMS_STRING_temp("touch type not supported");
 	TSMS_ERR_report(TSMS_ERR_TOUCH_TYPE_NOT_SUPPORTED, &temp);
+	TSMS_SEQUENCE_PRIORITY_LOCK_release(touch->lock);
+	TSMS_LIST_release(touch->list);
 	free(touch);
 	return TSMS_NULL;
 }
@@ -384,14 +405,33 @@ TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS
 	return result;
 }
 
-TSMS_RESULT TSMS_SCREEN_enableAutoSwap(TSMS_SCHP screen, pTimer timer) {
-	if (screen == TSMS_NULL)
+
+TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SCREEN_REQUEST_MODE screenMode, TSMS_TOUCH_REQUEST_MODE touchMode) {
+	if (display == TSMS_NULL)
 		return TSMS_ERROR;
-	if (screen->swapBuffer == TSMS_NULL)
+	if (display->screen->swapBuffer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (!timer->option.enableCallbackInterrupt)
+	display->timer = timer;
+	display->lastTime = TSMS_TIMER_now(timer);
+	display->restCount = 0;
+	display->count = 0;
+	if (screenMode == TSMS_SCREEN_IT_AUTO_REQUEST) {
+		if (!timer->option.enableCallbackInterrupt)
+			return TSMS_ERROR;
+		TSMS_TIMER_setCallback(timer, __tsms_internal_screen_auto_request, display->screen);
+	} else if (screenMode == TSMS_SCREEN_REQUEST_BOTH) {
+		if (!timer->option.enableCallbackInterrupt || !timer->option.enablePeriodInterrupt)
+			return TSMS_ERROR;
+		TSMS_TIMER_setCallback(timer, __tsms_internal_screen_auto_request_both, display);
+	} else
 		return TSMS_ERROR;
-	TSMS_TIMER_setCallback(timer, __tsms_internal_auto_swap, screen);
+	if (touchMode == TSMS_TOUCH_IT_AUTO_REQUEST) {
+
+	} else if (touchMode == TSMS_TOUCH_MANUAL_REQUEST) {
+
+	} else return TSMS_ERROR;
+	display->screenMode = screenMode;
+	display->touchMode = touchMode;
 	TSMS_TIMER_start(timer);
 	return TSMS_SUCCESS;
 }
@@ -533,4 +573,60 @@ TSMS_RESULT TSMS_SCREEN_drawString(TSMS_SCHP screen, uint16_t x, uint16_t y, TSM
 	TSMS_RESULT result = __tsms_internal_screen_draw_string(screen, x, y, fontType, font, str, color, size);
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	return result;
+}
+
+TSMS_RESULT TSMS_TOUCH_request(TSMS_THP touch) {
+	if (touch == TSMS_NULL)
+		return TSMS_ERROR;
+	pLock lock;
+	if ((lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(touch->lock, TSMS_NULL, 0)) != TSMS_NULL) {
+		touch->request = true;
+		TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);
+	} else {
+		TSMS_SEQUENCE_PRIORITY_LOCK_preLock(touch->lock, 1);
+		if ((lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(touch->lock, TSMS_NULL, 1)) != TSMS_NULL) {
+			touch->request = true;
+			TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);
+		}
+		TSMS_SEQUENCE_PRIORITY_LOCK_postLock(touch->lock, 1);
+	}
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_SCREEN_request(TSMS_SCHP screen) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	if (screen->swapBuffer == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_SCREEN_swap(screen);
+	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display) {
+	if (display == TSMS_NULL)
+		return TSMS_ERROR;
+	double now = TSMS_TIMER_now(display->timer);
+	display->restCount += (TSMS_TIMER_now(display->timer) - display->lastTime) * display->refreshRate;
+	if (display->restCount >= 1)
+		if (TSMS_LOCK_tryLock(display->lock)) {
+			if (display->restCount >= 1) {
+				display->count++;
+				display->restCount--;
+				if (display->screenMode != TSMS_SCREEN_IT_AUTO_REQUEST)
+					TSMS_SCREEN_request(display->screen);
+				TSMS_TOUCH_request(display->touch);
+			}
+			TSMS_LOCK_unlock(display->lock);
+		}
+	if (display->restCount > display->refreshRate)
+		if (TSMS_LOCK_tryLock(display->lock)) {
+			if (display->restCount > display->refreshRate) {
+				display->restCount = 0;
+				tString temp = TSMS_STRING_temp("Display refresh is too slow.");
+				TSMS_ERR_report(TSMS_ERR_DISPLAY_REFRESH_TOO_SLOW, &temp);
+			}
+			TSMS_LOCK_unlock(display->lock);
+		}
+	display->lastTime = now;
+	return TSMS_SUCCESS;
 }
