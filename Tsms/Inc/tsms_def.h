@@ -186,7 +186,7 @@ typedef TSMS_DEQUE_POINTER TSMS_DP;
 
 
 
-typedef struct TSMS_COLOR TSMS_CR;
+typedef struct TSMS_COLOR TSMS_COLOR;
 typedef struct TSMS_SSD1963_OPTION TSMS_SSD1963_OPTION;
 
 

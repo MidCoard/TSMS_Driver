@@ -40,7 +40,7 @@ TSMS_INLINE void __tsms_internal_screen_auto_request_both(void *d, pTimer pTimer
 }
 
 
-TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color) {
+TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_COLOR color) {
 	if (x >= screen->width || y >= screen->height)
 		return TSMS_ERROR;
 	if (screen->swapBuffer == TSMS_NULL) {
@@ -55,7 +55,7 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint
 }
 
 TSMS_INLINE TSMS_RESULT
-__tsms_internal_screen_draw_line(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR color) {
+__tsms_internal_screen_draw_line(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_COLOR color) {
 	if (x0 >= screen->width || y0 >= screen->height || x1 >= screen->width || y1 >= screen->height)
 		return TSMS_ERROR;
 	int16_t dx = x1 - x0;
@@ -85,7 +85,7 @@ __tsms_internal_screen_draw_line(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uin
 }
 
 TSMS_INLINE TSMS_RESULT
-__tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color) {
+__tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_COLOR color) {
 	if (x >= screen->width || y >= screen->height || x + w >= screen->width || y + h >= screen->height)
 		return TSMS_ERROR;
 	for (uint16_t i = x; i < x + w; i++)
@@ -97,7 +97,7 @@ __tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint1
 
 TSMS_INLINE TSMS_RESULT
 __tsms_internal_screen_draw_block(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t offsetX, uint16_t offsetY,
-                                  uint16_t blockSize, TSMS_CR color) {
+                                  uint16_t blockSize, TSMS_COLOR color) {
 	if (x >= screen->width || y >= screen->height || x + blockSize * offsetX >= screen->width ||
 	    y + blockSize * offsetY >= screen->height)
 		return TSMS_ERROR;
@@ -107,7 +107,7 @@ __tsms_internal_screen_draw_block(TSMS_SCHP screen, uint16_t x, uint16_t y, uint
 
 TSMS_INLINE TSMS_RESULT
 __tsms_internal_screen_draw_char(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font,
-                                 uint8_t c, TSMS_CR color, TSMS_FONT_SIZE size) {
+                                 uint8_t c, TSMS_COLOR color, TSMS_FONT_SIZE size) {
 	if (x >= screen->width || y >= screen->height)
 		return TSMS_ERROR;
 	TSMS_FONT_DATA data = TSMS_FONT_resolve(fontType, font, c);
@@ -123,7 +123,7 @@ __tsms_internal_screen_draw_char(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_
 
 TSMS_INLINE TSMS_RESULT
 __tsms_internal_screen_draw_string(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font,
-                                   pString str, TSMS_CR color, TSMS_FONT_SIZE size) {
+                                   pString str, TSMS_COLOR color, TSMS_FONT_SIZE size) {
 	if (x >= screen->width || y >= screen->height)
 		return TSMS_ERROR;
 	uint16_t x0 = x;
@@ -396,7 +396,7 @@ TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_CR color, pLock preLock) {
+TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_COLOR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
@@ -434,7 +434,7 @@ TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SC
 	return TSMS_SUCCESS;
 }
 
-TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR color,
+TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_COLOR color,
                                  pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
@@ -449,8 +449,8 @@ TSMS_RESULT TSMS_SCREEN_drawLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uin
 }
 
 TSMS_RESULT
-TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_CR from,
-                             TSMS_CR to, pLock preLock) {
+TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, TSMS_COLOR from,
+                             TSMS_COLOR to, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	if (x0 >= screen->width || y0 >= screen->height || x1 >= screen->width || y1 >= screen->height)
@@ -488,7 +488,7 @@ TSMS_SCREEN_drawGradientLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_
 }
 
 TSMS_RESULT
-TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock) {
+TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_COLOR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	if (x >= screen->width || y >= screen->height || x + w >= screen->width || y + h >= screen->height)
@@ -505,7 +505,7 @@ TSMS_SCREEN_drawRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint1
 }
 
 TSMS_RESULT
-TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_CR color, pLock preLock) {
+TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_COLOR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
@@ -518,7 +518,7 @@ TSMS_SCREEN_fillRect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint1
 
 TSMS_RESULT
 TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t thickness,
-                          TSMS_CR color, pLock preLock) {
+                          TSMS_COLOR color, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	if (x0 >= screen->width || y0 >= screen->height || x1 >= screen->width || y1 >= screen->height)
@@ -554,7 +554,7 @@ TSMS_SCREEN_drawThickLine(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uint16_t x
 
 TSMS_RESULT
 TSMS_SCREEN_drawChar(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, uint8_t c,
-                     TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock) {
+                     TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	if (x >= screen->width || y >= screen->height)
@@ -569,7 +569,7 @@ TSMS_SCREEN_drawChar(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fo
 
 TSMS_RESULT
 TSMS_SCREEN_drawString(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, pString str,
-                       TSMS_CR color, TSMS_FONT_SIZE size, pLock preLock) {
+                       TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
 	if (str == TSMS_NULL)

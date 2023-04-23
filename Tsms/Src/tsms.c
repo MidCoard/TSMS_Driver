@@ -9,6 +9,9 @@ TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timer
 	result |= TSMS_STRING_init();
 	result |= TSMS_FONT_init();
 	result |= TSMS_LIST_init();
+#ifdef TSMS_GUI_STYLE
+	result |= TSMS_GUI_STYLE_init();
+#endif
 	return result;
 }
 

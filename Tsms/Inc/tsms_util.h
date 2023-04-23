@@ -3,14 +3,14 @@
 
 #include "tsms_def.h"
 
-extern TSMS_CR TSMS_COLOR_BLACK;
-extern TSMS_CR TSMS_COLOR_WHITE;
-extern TSMS_CR TSMS_COLOR_RED;
-extern TSMS_CR TSMS_COLOR_GREEN;
-extern TSMS_CR TSMS_COLOR_BLUE;
-extern TSMS_CR TSMS_COLOR_YELLOW;
-extern TSMS_CR TSMS_COLOR_CYAN;
-extern TSMS_CR TSMS_COLOR_MAGENTA;
+extern const TSMS_COLOR TSMS_COLOR_BLACK;
+extern const TSMS_COLOR TSMS_COLOR_WHITE;
+extern const TSMS_COLOR TSMS_COLOR_RED;
+extern const TSMS_COLOR TSMS_COLOR_GREEN;
+extern const TSMS_COLOR TSMS_COLOR_BLUE;
+extern const TSMS_COLOR TSMS_COLOR_YELLOW;
+extern const TSMS_COLOR TSMS_COLOR_CYAN;
+extern const TSMS_COLOR TSMS_COLOR_MAGENTA;
 
 struct TSMS_COLOR {
 	uint8_t red;
@@ -26,14 +26,14 @@ uint8_t *TSMS_UTIL_streamAppend(uint8_t * stream, TSMS_SIZE size, uint8_t * data
 
 TSMS_BITS TSMS_UTIL_bits(uint8_t bits);
 
-TSMS_CR TSMS_UTIL_color(uint8_t r, uint8_t g, uint8_t b);
+TSMS_COLOR TSMS_UTIL_color(uint8_t r, uint8_t g, uint8_t b);
 
-uint16_t TSMS_UTIL_color565(TSMS_CR color);
+uint16_t TSMS_UTIL_color565(TSMS_COLOR color);
 
-uint32_t TSMS_UTIL_color888(TSMS_CR color);
+uint32_t TSMS_UTIL_color888(TSMS_COLOR color);
 
 void TSMS_UTIL_swap(uint16_t* a, uint16_t* b);
 
-TSMS_CR TSMS_UTIL_gradientColor(TSMS_CR color1, TSMS_CR color2, float ratio);
+TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float ratio);
 
 #endif //TSMS_UTIL_H
