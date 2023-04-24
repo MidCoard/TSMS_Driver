@@ -6,9 +6,9 @@
 
 pString TSMS_EMPTY_STRING;
 
-static TSMS_MP staticMap;
+static TSMS_MP _StringStaticMap;
 
-static char intBuffer[13];
+static char _StringIntConvertBuffer[13];
 
 TSMS_INLINE long __tsms_internal_hash(void * p) {
 	char * cStr = p;
@@ -105,7 +105,7 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 }
 
 pString TSMS_STRING_static(const char *cStr) {
-	pString tmp = TSMS_MAP_get(staticMap, cStr);
+	pString tmp = TSMS_MAP_get(_StringStaticMap, cStr);
 	if (tmp != TSMS_NULL)
 		return tmp;
 	pString str = TSMS_STRING_create();
@@ -115,7 +115,7 @@ pString TSMS_STRING_static(const char *cStr) {
 	str->staticString = true;
 	str->cStr = cStr;
 	str->length = strlen(cStr);
-	TSMS_MAP_put(staticMap, cStr, str);
+	TSMS_MAP_put(_StringStaticMap, cStr, str);
 	return str;
 }
 
@@ -217,10 +217,10 @@ long TSMS_STRING_indexOf(pString str, char c) {
 }
 
 TSMS_RESULT TSMS_STRING_init() {
-	staticMap = TSMS_MAP_create(256, __tsms_internal_hash,
-	                             __tsms_internal_compare);
+	_StringStaticMap = TSMS_MAP_create(256, __tsms_internal_hash,
+	                                   __tsms_internal_compare);
 	TSMS_EMPTY_STRING = TSMS_STRING_static("");
-	if (staticMap == TSMS_NULL || TSMS_EMPTY_STRING == TSMS_NULL)
+	if (_StringStaticMap == TSMS_NULL || TSMS_EMPTY_STRING == TSMS_NULL)
 		return TSMS_ERROR;
 	return TSMS_SUCCESS;
 }
@@ -300,8 +300,8 @@ pString TSMS_STRING_createAndInitInt(int i) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
-	sprintf(intBuffer, "%d", i);
-	str->length = strlen(intBuffer);
+	sprintf(_StringIntConvertBuffer, "%d", i);
+	str->length = strlen(_StringIntConvertBuffer);
 	str->cStr = realloc(str->cStr, sizeof (char) * (str->length + 1));
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
@@ -310,6 +310,6 @@ pString TSMS_STRING_createAndInitInt(int i) {
 		return TSMS_NULL;
 	}
 	str->staticString = false;
-	strcpy(str->cStr, intBuffer);
+	strcpy(str->cStr, _StringIntConvertBuffer);
 	return str;
 }

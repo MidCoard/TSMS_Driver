@@ -18,7 +18,7 @@ struct TSMS_SSD1963_OPTION {
 	uint16_t verticalFrontPorch;
 };
 
-extern TSMS_SSD1963_OPTION defaultSSD1963Option;
+extern const TSMS_SSD1963_OPTION TSMS_SSD1963_DEFAULT_OPTION;
 
 uint16_t TSMS_SSD1963_horizontalTotal(TSMS_SSD1963_OPTION option);
 

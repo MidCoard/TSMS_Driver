@@ -1,5 +1,4 @@
 #include "tsms_sync.h"
-#include "tsms_stack.h"
 
 TSMS_SYNC_STP TSMS_SYNC_STACK_create(TSMS_STP stack) {
 	TSMS_SYNC_STP sync_stack = (TSMS_SYNC_STP)malloc(sizeof(struct TSMS_SYNC_STACK));

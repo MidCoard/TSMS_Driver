@@ -10,7 +10,7 @@ TSMS_INLINE void __tsms_internal_set_ssd1963_light(TSMS_SCHP screen, uint8_t lig
 	TSMS_SCREEN_writeData(screen, 0x00);
 }
 
-TSMS_SSD1963_OPTION defaultSSD1963Option = {
+const TSMS_SSD1963_OPTION TSMS_SSD1963_DEFAULT_OPTION = {
 		800, 400, 1, 46, 210, 1, 23, 22
 };
 
@@ -43,7 +43,7 @@ uint16_t TSMS_SSD1963_readId(TSMS_SCHP screen) {
 }
 
 TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
-	TSMS_SSD1963_OPTION option = op == TSMS_NULL ? defaultSSD1963Option : *(TSMS_SSD1963_OPTION*) op;
+	TSMS_SSD1963_OPTION option = op == TSMS_NULL ? TSMS_SSD1963_DEFAULT_OPTION : *(TSMS_SSD1963_OPTION*) op;
 	TSMS_SCREEN_writeCommand(screen,
 	                         0xE2);        //Set PLL with OSC = 10MHz (hardware),	Multiplier N = 35, 250MHz < VCO < 800MHz = OSC*(N+1), VCO = 300MHz
 	TSMS_SCREEN_writeData(screen, 0x1D);        //参数1
@@ -68,10 +68,10 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
 	TSMS_SCREEN_writeData(screen, 0x20);        //24位模式
 	TSMS_SCREEN_writeData(screen, 0x00);        //TFT 模式
 
-	TSMS_SCREEN_writeData(screen, (defaultSSD1963Option.horizontalResolution - 1) >> 8);//设置LCD水平像素
-	TSMS_SCREEN_writeData(screen, defaultSSD1963Option.horizontalResolution - 1);
-	TSMS_SCREEN_writeData(screen, (defaultSSD1963Option.verticalResolution - 1) >> 8);//设置LCD垂直像素
-	TSMS_SCREEN_writeData(screen, defaultSSD1963Option.verticalResolution - 1);
+	TSMS_SCREEN_writeData(screen, (TSMS_SSD1963_DEFAULT_OPTION.horizontalResolution - 1) >> 8);//设置LCD水平像素
+	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_DEFAULT_OPTION.horizontalResolution - 1);
+	TSMS_SCREEN_writeData(screen, (TSMS_SSD1963_DEFAULT_OPTION.verticalResolution - 1) >> 8);//设置LCD垂直像素
+	TSMS_SCREEN_writeData(screen, TSMS_SSD1963_DEFAULT_OPTION.verticalResolution - 1);
 	TSMS_SCREEN_writeData(screen, 0x00);        //RGB序列
 
 	TSMS_SCREEN_writeCommand(screen, 0xB4);        //Set horizontal period

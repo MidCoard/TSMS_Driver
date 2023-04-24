@@ -1,7 +1,8 @@
 #include "tsms_timer.h"
-#include "tsms_it.h"
 
-double TSMS_DELAY_UNIT_TO_SECOND[4] = {1, 0.001, 0.000001, 0.000000001};
+static double _TimerDelayUnitToSecond[4] = {1, 0.001, 0.000001, 0.000000001};
+
+TSMS_CLOCK_FREQUENCY TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY;
 
 TSMS_INLINE void __tsms_internal_period_callback(void * handler, pTimer timer) {
 	if (timer->option.enablePeriodInterrupt)
@@ -10,8 +11,6 @@ TSMS_INLINE void __tsms_internal_period_callback(void * handler, pTimer timer) {
 		if (timer->callback != TSMS_NULL)
 			timer->callback(timer->handler, timer);
 }
-
-TSMS_CLOCK_FREQUENCY TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY;
 
 TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency) {
 	TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY = frequency;
@@ -70,7 +69,7 @@ TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay) {
 		return TSMS_ERROR;
 #ifdef TSMS_STM32_TIMER
 	volatile uint64_t now = TSMS_TIMER_nowRaw(timer);
-	volatile uint64_t target = now + delay * (TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY * TSMS_DELAY_UNIT_TO_SECOND[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
+	volatile uint64_t target = now + delay * (TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY * _TimerDelayUnitToSecond[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
 	while (now < target)
 		now = TSMS_TIMER_nowRaw(timer);
 	return TSMS_SUCCESS;
