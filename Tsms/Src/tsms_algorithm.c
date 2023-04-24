@@ -1,30 +1,29 @@
 #include "tsms_algorithm.h"
 #include "tsms_list.h"
 
-TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_COMPARE_FUNCTION compareFunction) {
-	if (size <= 1)
-		return;
-	TSMS_SIZE pivotIndex = size / 2;
-	void* pivotNode = data[pivotIndex];
-	TSMS_SIZE leftIndex = 0;
-	TSMS_SIZE rightIndex = size - 1;
-	while (leftIndex < rightIndex) {
-		while (leftIndex < rightIndex && compareFunction(data[leftIndex], pivotNode) < 0) {
-			leftIndex++;
+TSMS_INLINE void __tsms_internal_swap(void** a, void** b) {
+	void* temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_POS first, TSMS_POS last, TSMS_COMPARE_FUNCTION compareFunction) {
+	if (first < last) {
+		TSMS_POS pivot = first;
+		TSMS_POS i = first;
+		TSMS_POS j = last;
+		while (i < j) {
+			while (i < j && compareFunction(data[i], data[pivot]) <= 0)
+				i++;
+			while (compareFunction(data[j], data[pivot]) > 0)
+				j--;
+			if (i < j)
+				__tsms_internal_swap(&data[i], &data[j]);
 		}
-		while (leftIndex < rightIndex && compareFunction(data[rightIndex], pivotNode) > 0) {
-			rightIndex--;
-		}
-		if (leftIndex < rightIndex) {
-			void* temp = data[leftIndex];
-			data[leftIndex] = data[rightIndex];
-			data[rightIndex] = temp;
-			leftIndex++;
-			rightIndex--;
-		}
+		__tsms_internal_swap(&data[pivot], &data[j]);
+		__tsms_internal_quick_sort(data, size, first, j - 1, compareFunction);
+		__tsms_internal_quick_sort(data, size, j + 1, last, compareFunction);
 	}
-	__tsms_internal_quick_sort(data, leftIndex, compareFunction);
-	__tsms_internal_quick_sort(data + leftIndex, size - leftIndex, compareFunction);
 }
 
 TSMS_RESULT TSMS_ALGORITHM_sort(TSMS_LP list, TSMS_COMPARE_FUNCTION compareFunction) {
@@ -32,6 +31,6 @@ TSMS_RESULT TSMS_ALGORITHM_sort(TSMS_LP list, TSMS_COMPARE_FUNCTION compareFunct
 		return TSMS_ERROR;
 	}
 	TSMS_SIZE size = list->length;
-	__tsms_internal_quick_sort(list->list, size, compareFunction);
+	__tsms_internal_quick_sort(list->list, size, 0, size - 1, compareFunction);
 	return TSMS_SUCCESS;
 }

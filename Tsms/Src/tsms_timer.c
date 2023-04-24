@@ -35,23 +35,32 @@ pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option) {
 		TSMS_IT_addTimer(timer, TSMS_IT_TIMER_PERIOD_ELAPSED, __tsms_internal_period_callback, TSMS_NULL);
 	return timer;
 }
+#endif
 
 TSMS_RESULT TSMS_TIMER_start(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
+#ifdef TSMS_STM32_TIMER
 	if (timer->option.enablePeriodInterrupt)
 		return HAL_TIM_Base_Start_IT(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
 	else
 		return HAL_TIM_Base_Start(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
+#else
+	return TSMS_SUCCESS;
+#endif
 }
 
 TSMS_RESULT TSMS_TIMER_stop(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
+#ifdef TSMS_STM32_TIMER
 	if (timer->option.enablePeriodInterrupt)
 		return HAL_TIM_Base_Stop_IT(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
 	else
 		return HAL_TIM_Base_Stop(timer->timer) == HAL_OK ? TSMS_SUCCESS : TSMS_FAIL;
+#else
+	return TSMS_SUCCESS;
+#endif
 }
 
 TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay) {
@@ -59,26 +68,36 @@ TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay) {
 		return TSMS_ERROR;
 	if (!timer->option.enablePeriodInterrupt)
 		return TSMS_ERROR;
+#ifdef TSMS_STM32_TIMER
 	volatile uint64_t now = TSMS_TIMER_nowRaw(timer);
 	volatile uint64_t target = now + delay * (defaultTimerClock * TSMS_DELAY_UNIT_TO_SECOND[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
 	while (now < target)
 		now = TSMS_TIMER_nowRaw(timer);
 	return TSMS_SUCCESS;
+#else
+	return TSMS_SUCCESS;
+#endif
 }
 
 volatile double TSMS_TIMER_now(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return -1;
+#ifdef TSMS_STM32_TIMER
 	return (double) TSMS_TIMER_nowRaw(timer) / ((double) defaultTimerClock / (timer->timer->Init.Prescaler + 1));
+#else
+	return 0;
+#endif
 }
 
 volatile uint64_t TSMS_TIMER_nowRaw(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return 0;
+#ifdef TSMS_STM32_TIMER
 	return timer->periods * (timer->timer->Init.Period + 1) + __HAL_TIM_GET_COUNTER(timer->timer);
-}
-
+#else
+	return 0;
 #endif
+}
 
 TSMS_RESULT TSMS_TIMER_setCallback(pTimer timer, TSMS_TIMER_CALLBACK callback, void * handler) {
 	if (timer == TSMS_NULL)

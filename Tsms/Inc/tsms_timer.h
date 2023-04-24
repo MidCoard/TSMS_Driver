@@ -34,7 +34,7 @@ struct TSMS_TIMER_HANDLER {
 
 #ifdef TSMS_STM32_TIMER
 pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option);
-
+#endif
 TSMS_RESULT TSMS_TIMER_start(pTimer timer);
 
 TSMS_RESULT TSMS_TIMER_stop(pTimer timer);
@@ -44,7 +44,6 @@ TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay);
 volatile double TSMS_TIMER_now(pTimer timer);
 
 volatile uint64_t TSMS_TIMER_nowRaw(pTimer timer);
-#endif
 
 TSMS_RESULT TSMS_TIMER_setCallback(pTimer timer, TSMS_TIMER_CALLBACK callback, void* handler);
 
