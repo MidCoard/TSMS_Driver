@@ -24,7 +24,7 @@ bool TSMS_STRING_startsWith(pString str, pString prefix);
 
 pString TSMS_STRING_create();
 
-pString TSMS_STRING_createAndInit(const char *cStr);
+pString TSMS_STRING_createWithString(const char *cStr);
 
 pString TSMS_STRING_static(const char *cStr);
 
@@ -44,9 +44,9 @@ TSMS_RESULT TSMS_STRING_copy(pString str1, pString str2);
 
 long TSMS_STRING_indexOf(pString str, char c);
 
-pString TSMS_STRING_createAndInitChar(char c);
+pString TSMS_STRING_createWithChar(char c);
 
-pString TSMS_STRING_createAndInitBytes(const uint8_t * bytes);
+pString TSMS_STRING_createWithBytes(const uint8_t * bytes);
 
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
@@ -56,6 +56,6 @@ pString TSMS_STRING_empty();
 
 long TSMS_STRING_hash(pString str);
 
-pString TSMS_STRING_createAndInitInt(int i);
+pString TSMS_STRING_createWithInt(int i);
 
 #endif //TSMS_STRING_H

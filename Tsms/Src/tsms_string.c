@@ -85,7 +85,7 @@ pString TSMS_STRING_create() {
 	return str;
 }
 
-pString TSMS_STRING_createAndInit(const char *cStr) {
+pString TSMS_STRING_createWithString(const char *cStr) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
@@ -225,7 +225,7 @@ TSMS_RESULT TSMS_STRING_init() {
 	return TSMS_SUCCESS;
 }
 
-pString TSMS_STRING_createAndInitChar(char c) {
+pString TSMS_STRING_createWithChar(char c) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
@@ -243,7 +243,7 @@ pString TSMS_STRING_createAndInitChar(char c) {
 	return str;
 }
 
-pString TSMS_STRING_createAndInitBytes(const uint8_t * bytes) {
+pString TSMS_STRING_createWithBytes(const uint8_t * bytes) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
@@ -287,7 +287,7 @@ tString TSMS_STRING_temp(const char* str) {
 }
 
 pString TSMS_STRING_empty() {
-	return TSMS_STRING_createAndInit("");
+	return TSMS_STRING_createWithString("");
 }
 
 long TSMS_STRING_hash(pString str) {
@@ -296,7 +296,7 @@ long TSMS_STRING_hash(pString str) {
 	return __tsms_internal_hash(str->cStr);
 }
 
-pString TSMS_STRING_createAndInitInt(int i) {
+pString TSMS_STRING_createWithInt(int i) {
 	pString str = TSMS_STRING_create();
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
