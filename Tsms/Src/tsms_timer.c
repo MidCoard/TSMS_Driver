@@ -2,6 +2,8 @@
 
 static double _timerDelayUnitToSecond[4] = {1, 0.001, 0.000001, 0.000000001};
 
+static pTimer _timerDefaultTimer;
+
 TSMS_CLOCK_FREQUENCY TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY;
 
 TSMS_INLINE void __tsms_internal_period_callback(void * handler, pTimer timer) {
@@ -104,4 +106,19 @@ TSMS_RESULT TSMS_TIMER_setCallback(pTimer timer, TSMS_TIMER_CALLBACK callback, v
 	timer->callback = callback;
 	timer->handler = handler;
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_TIMER_setDefaultTimer(pTimer timer) {
+	_timerDefaultTimer = timer;
+	return TSMS_SUCCESS;
+}
+
+pTimer TSMS_TIMER_getDefaultTimer() {
+	return _timerDefaultTimer;
+}
+
+TSMS_RESULT TSMS_TIMER_delayDefault(TSMS_DELAY_TIME delay) {
+	if (_timerDefaultTimer == TSMS_NULL)
+		return TSMS_ERROR;
+	return TSMS_TIMER_delay(_timerDefaultTimer, delay);
 }

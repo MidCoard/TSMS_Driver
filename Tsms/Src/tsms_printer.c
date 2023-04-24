@@ -121,6 +121,10 @@ TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_PHP TSMS_getDefaultPrinter() {
+	return _printerDefaultPrinter;
+}
+
 TSMS_RESULT print(const char *str, ...) {
 	if (_printerDefaultPrinter == TSMS_NULL)
 		return TSMS_ERROR;

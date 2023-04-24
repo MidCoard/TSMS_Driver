@@ -59,6 +59,8 @@ TSMS_RESULT TSMS_printf(TSMS_PHP printer, const char * c, ...);
 
 TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer);
 
+TSMS_PHP TSMS_getDefaultPrinter();
+
 TSMS_RESULT print(const char * str, ...);
 
 #endif //TSMS_PRINTER_H

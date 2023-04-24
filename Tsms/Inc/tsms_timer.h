@@ -47,6 +47,12 @@ volatile uint64_t TSMS_TIMER_nowRaw(pTimer timer);
 
 TSMS_RESULT TSMS_TIMER_setCallback(pTimer timer, TSMS_TIMER_CALLBACK callback, void* handler);
 
+TSMS_RESULT TSMS_TIMER_setDefaultTimer(pTimer timer);
+
+pTimer TSMS_TIMER_getDefaultTimer();
+
+TSMS_RESULT TSMS_TIMER_delayDefault(TSMS_DELAY_TIME delay);
+
 TSMS_RESULT TSMS_IT_addTimer(pTimer timer,TSMS_IT_TIMER_TYPE type, TSMS_IT_TIMER_CALLBACK callback, void *handler);
 
 #endif //TSMS_TIMER_H
