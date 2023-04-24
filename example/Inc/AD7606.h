@@ -1,26 +1,6 @@
 #ifndef TSMS_AD7606_H
 #define TSMS_AD7606_H
 
-#include "tsms_gpio.h"
-
-struct AD7606_Handler {
-	TSMS_DHP handler;
-	TSMS_CHP parallel;
-	TSMS_CHP overSample;
-	TSMS_GHP range;
-	TSMS_GHP reset;
-	TSMS_GHP referenceSelect;
-	TSMS_CHP digitalInterface;
-	TSMS_GHP busy;
-	TSMS_GHP firstData;
-	float referenceVoltage;
-	TSMS_GHP convstA;
-	TSMS_GHP convstB;
-	TSMS_CHP mode;
-	uint8_t voltage;
-	volatile uint8_t ready;
-};
-
 #define AD7606_OS_NONE 0
 #define AD7606_OS_2 1
 #define AD7606_OS_4 2
@@ -39,10 +19,32 @@ struct AD7606_Handler {
 #define AD7606_MODE_POWER_ON 1
 #define AD7606_MODE_STANDBY 2
 
+#include "tsms_def.h"
+
 typedef uint8_t AD7606_OS_RATE;
 typedef uint8_t AD7606_RANGE;
 typedef uint8_t AD7606_REFERENCE_MODE;
 typedef uint8_t AD7606_MODE;
+
+#include "tsms_driver.h"
+
+struct AD7606_Handler {
+	TSMS_DHP handler;
+	TSMS_CHP parallel;
+	TSMS_CHP overSample;
+	TSMS_GHP range;
+	TSMS_GHP reset;
+	TSMS_GHP referenceSelect;
+	TSMS_CHP digitalInterface;
+	TSMS_GHP busy;
+	TSMS_GHP firstData;
+	float referenceVoltage;
+	TSMS_GHP convstA;
+	TSMS_GHP convstB;
+	TSMS_CHP mode;
+	uint8_t voltage;
+	volatile uint8_t ready;
+};
 
 #ifdef TSMS_STM32_GPIO
 

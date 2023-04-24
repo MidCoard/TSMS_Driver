@@ -69,7 +69,7 @@ pString TSMS_STRING_create() {
 	pString str = malloc(sizeof(tString));
 	if (str == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for tString");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->staticString = false;
@@ -77,7 +77,7 @@ pString TSMS_STRING_create() {
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("malloc failed for cStr");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->cStr[0] = '\0';
@@ -96,7 +96,7 @@ pString TSMS_STRING_createAndInit(const char *cStr) {
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("realloc failed for cStr");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	strcpy(str->cStr, cStr);
@@ -233,7 +233,7 @@ pString TSMS_STRING_createAndInitChar(char c) {
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("malloc failed for cStr");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->cStr[0] = c;
@@ -255,7 +255,7 @@ pString TSMS_STRING_createAndInitBytes(const uint8_t * bytes) {
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("malloc failed for cStr");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	for (int i = 0; i < str->length; i++)
@@ -306,7 +306,7 @@ pString TSMS_STRING_createAndInitInt(int i) {
 	if (str->cStr == TSMS_NULL) {
 		TSMS_STRING_release(str);
 		tString temp = TSMS_STRING_temp("malloc failed for cStr");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	str->staticString = false;

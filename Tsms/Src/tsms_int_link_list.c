@@ -4,7 +4,7 @@ TSMS_INT_LKLP TSMS_INT_LINK_LIST_create() {
 	TSMS_INT_LKLP list = (TSMS_INT_LKLP) malloc(sizeof(struct TSMS_INT_LINK_LIST));
 	if (list == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for int link list");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	list->head = TSMS_NULL;
@@ -84,7 +84,7 @@ TSMS_RESULT TSMS_INT_LINK_LIST_insert(TSMS_INT_LKLP list, int element, TSMS_POS 
 	TSMS_INT_LKNP node = (TSMS_INT_LKNP) malloc(sizeof(struct TSMS_INT_LINK_NODE));
 	if (node == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for int link node");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_ERROR;
 	}
 	node->element = element;

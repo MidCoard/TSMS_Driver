@@ -11,10 +11,10 @@ TSMS_INLINE void __tsms_internal_period_callback(void * handler, pTimer timer) {
 			timer->callback(timer->handler, timer);
 }
 
-TSMS_CLOCK_FREQUENCY defaultTimerClock;
+TSMS_CLOCK_FREQUENCY TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY;
 
 TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency) {
-	defaultTimerClock = frequency;
+	TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY = frequency;
 	return TSMS_SUCCESS;
 }
 
@@ -24,7 +24,7 @@ pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option) {
 	pTimer timer = (pTimer) malloc(sizeof(tTimer));
 	if (timer == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for pTimer");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	timer->timer = tim;
@@ -32,7 +32,7 @@ pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option) {
 	timer->periods = 0;
 	timer->callback = TSMS_NULL;
 	if (option.enablePeriodInterrupt || option.enableCallbackInterrupt)
-		TSMS_IT_addTimer(timer, TSMS_IT_TIMER_PERIOD_ELAPSED, __tsms_internal_period_callback, TSMS_NULL);
+		TSMS_IT_addTimer(timer, TSMS_IT_TIMER_TYPE_PERIOD_ELAPSED, __tsms_internal_period_callback, TSMS_NULL);
 	return timer;
 }
 #endif
@@ -70,7 +70,7 @@ TSMS_RESULT TSMS_TIMER_delay(pTimer timer, TSMS_DELAY_TIME delay) {
 		return TSMS_ERROR;
 #ifdef TSMS_STM32_TIMER
 	volatile uint64_t now = TSMS_TIMER_nowRaw(timer);
-	volatile uint64_t target = now + delay * (defaultTimerClock * TSMS_DELAY_UNIT_TO_SECOND[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
+	volatile uint64_t target = now + delay * (TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY * TSMS_DELAY_UNIT_TO_SECOND[timer->option.delayUnit]) / (timer->timer->Init.Prescaler + 1);
 	while (now < target)
 		now = TSMS_TIMER_nowRaw(timer);
 	return TSMS_SUCCESS;
@@ -83,7 +83,7 @@ volatile double TSMS_TIMER_now(pTimer timer) {
 	if (timer == TSMS_NULL)
 		return -1;
 #ifdef TSMS_STM32_TIMER
-	return (double) TSMS_TIMER_nowRaw(timer) / ((double) defaultTimerClock / (timer->timer->Init.Prescaler + 1));
+	return (double) TSMS_TIMER_nowRaw(timer) / ((double) TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY / (timer->timer->Init.Prescaler + 1));
 #else
 	return 0;
 #endif

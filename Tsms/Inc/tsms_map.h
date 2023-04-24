@@ -1,13 +1,19 @@
 #ifndef TSMS_MAP_H
 #define TSMS_MAP_H
 
-typedef long (*TSMS_HASH_FUNCTION)(void* key);
+typedef struct TSMS_MAP_NODE * TSMS_MAP_NODE_POINTER;
+typedef TSMS_MAP_NODE_POINTER TSMS_MNP;
+
+typedef struct TSMS_MAP * TSMS_MAP_POINTER;
+typedef TSMS_MAP_POINTER TSMS_MP;
+
+typedef struct TSMS_MAP_ITERATOR TSMS_MI;
+typedef TSMS_MI * TSMS_MIP;
+
+typedef struct TSMS_MAP_ENTRY TSMS_ME;
 
 #include "tsms_def.h"
 #include "tsms_function_def.h"
-
-extern TSMS_ME TSMS_EMPTY_MAP_ENTRY;
-extern TSMS_MI TSMS_EMPTY_MAP_ITERATOR;
 
 struct TSMS_MAP_ITERATOR {
 	TSMS_MP map;
@@ -33,6 +39,9 @@ struct TSMS_MAP_ENTRY {
 	void* key;
 	void* value;
 };
+
+extern const TSMS_ME TSMS_EMPTY_MAP_ENTRY;
+extern const TSMS_MI TSMS_EMPTY_MAP_ITERATOR;
 
 TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare);
 

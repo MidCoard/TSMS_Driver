@@ -1,11 +1,10 @@
 #include "tsms_link_list.h"
-#include "tsms_string.h"
 
 TSMS_LKLP TSMS_LINK_LIST_create() {
 	TSMS_LKLP list = (TSMS_LKLP) malloc(sizeof(struct TSMS_LINK_LIST));
 	if (list == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for link list");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	list->head = TSMS_NULL;
@@ -103,7 +102,7 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 	TSMS_LKNP node = (TSMS_LKNP) malloc(sizeof(struct TSMS_LINK_NODE));
 	if (node == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for link node");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_ERROR;
 	}
 	node->element = element;

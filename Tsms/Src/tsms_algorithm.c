@@ -1,5 +1,4 @@
 #include "tsms_algorithm.h"
-#include "tsms_list.h"
 #include "tsms_util.h"
 
 TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_POS first, TSMS_POS last, TSMS_COMPARE_FUNCTION compareFunction) {

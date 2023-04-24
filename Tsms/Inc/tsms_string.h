@@ -8,13 +8,13 @@ typedef tString *pString;
 #include "tsms_char_list.h"
 #include "tsms_list.h"
 
-extern pString TSMS_EMPTY_STRING;
-
 struct TSMS_STRING_HANDLER {
 	char *cStr;
 	TSMS_SIZE length;
 	bool staticString;
 };
+
+extern pString TSMS_EMPTY_STRING;
 
 bool TSMS_STRING_equals(pString str1, pString str2);
 

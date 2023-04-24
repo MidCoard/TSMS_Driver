@@ -93,7 +93,7 @@ static uint32_t AD7606_DATA[8];
 static float AD7606_FLOAT_DATA[8];
 
 float *AD7606_readData(struct AD7606_Handler *handler) {
-	if (handler->handler->type == TSMS_DRIVER_SPI) {
+	if (handler->handler->type == TSMS_DRIVER_TYPE_SPI) {
 		handler->ready = 0;
 		TSMS_GPIO_write(handler->convstA, TSMS_GPIO_STATUS_LOW);
 		TSMS_GPIO_write(handler->convstB, TSMS_GPIO_STATUS_LOW);

@@ -4,7 +4,7 @@ TSMS_DP TSMS_DEQUE_create() {
 	TSMS_DP deque = (TSMS_DP) malloc(sizeof(struct TSMS_DEQUE));
 	if (deque == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for deque");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	deque->list = TSMS_LINK_LIST_create();

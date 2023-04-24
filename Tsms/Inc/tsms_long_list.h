@@ -1,6 +1,9 @@
 #ifndef TSMS_LONG_LIST_H
 #define TSMS_LONG_LIST_H
 
+typedef struct TSMS_LONG_LIST *TSMS_LONG_LIST_POINTER;
+typedef TSMS_LONG_LIST_POINTER TSMS_LLP;
+
 #include "tsms_def.h"
 
 struct TSMS_LONG_LIST {

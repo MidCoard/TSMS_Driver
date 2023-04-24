@@ -1,8 +1,7 @@
 #include "tsms_iic.h"
-#include "tsms_gpio.h"
 #include "tsms_util.h"
 
-TSMS_INLINE void __tsms_iic_delay() {
+TSMS_INLINE void __tsms_internal_iic_delay() {
 	volatile int v;
 	int i;
 
@@ -11,19 +10,19 @@ TSMS_INLINE void __tsms_iic_delay() {
 	}
 }
 
-TSMS_INLINE void __tsms_iic_sda_high(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_sda_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_STATUS_HIGH);
 }
 
-TSMS_INLINE void __tsms_iic_sda_low(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_sda_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->sda, TSMS_GPIO_STATUS_LOW);
 }
 
-TSMS_INLINE void __tsms_iic_scl_high(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_scl_high(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_STATUS_HIGH);
 }
 
-TSMS_INLINE void __tsms_iic_scl_low(TSMS_IHP iic) {
+TSMS_INLINE void __tsms_internal_iic_scl_low(TSMS_IHP iic) {
 	TSMS_GPIO_write(iic->scl, TSMS_GPIO_STATUS_LOW);
 }
 
@@ -45,11 +44,11 @@ TSMS_GPIO_STATUS TSMS_IIC_readBit(TSMS_IHP handler) {
 		return TSMS_GPIO_STATUS_ERROR;
 	handler->delay();
 	handler->delay();
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
 	TSMS_GPIO_STATUS status = TSMS_GPIO_read(handler->sda);
 	handler->delay();
-	__tsms_iic_scl_low(handler);
+	__tsms_internal_iic_scl_low(handler);
 	return status;
 }
 
@@ -58,14 +57,14 @@ TSMS_RESULT TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 		return TSMS_ERROR;
 	handler->delay();
 	if (bit)
-		__tsms_iic_sda_high(handler);
+		__tsms_internal_iic_sda_high(handler);
 	else
-		__tsms_iic_sda_low(handler);
+		__tsms_internal_iic_sda_low(handler);
 	handler->delay();
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
 	handler->delay();
-	__tsms_iic_scl_low(handler);
+	__tsms_internal_iic_scl_low(handler);
 	return TSMS_SUCCESS;
 }
 
@@ -76,13 +75,13 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * sdaPort, uint16_t sdaPin,
 									uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof (struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
 		return TSMS_NULL;
 	}
 	iic->sda = TSMS_GPIO_createHandler(sdaPort, sdaPin);
 	iic->scl = TSMS_GPIO_createHandler(sclPort, sclPin);
-	TSMS_GPIO_setMode(iic->sda, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
-	TSMS_GPIO_setMode(iic->scl, TSMS_GPIO_OUTPUT_PULL_PUSH, TSMS_GPIO_NO_PULL);
+	TSMS_GPIO_setMode(iic->sda, TSMS_GPIO_MODE_OUTPUT_PULL_PUSH, TSMS_GPIO_PULL_NONE);
+	TSMS_GPIO_setMode(iic->scl, TSMS_GPIO_MODE_OUTPUT_PULL_PUSH, TSMS_GPIO_PULL_NONE);
 	TSMS_IIC_SDA_HIGH(iic);
 	TSMS_IIC_SCL_HIGH(iic);
 	iic->isHardware = false;
@@ -96,13 +95,13 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * sdaPort, uint16_t sdaPin,
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
 		return TSMS_NULL;
 	}
 	iic->sda = sda;
 	iic->scl = scl;
 	iic->isHardware = false;
-	iic->delay = __tsms_iic_delay;
+	iic->delay = __tsms_internal_iic_delay;
 	iic->release = __tsms_internal_iic_release1;
 	iic->address = address;
 	iic->type = type;
@@ -114,7 +113,7 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
 		return TSMS_NULL;
 	}
 	iic->hardwareHandler = handler;
@@ -130,7 +129,7 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_IHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	iic->sda = sda;
@@ -163,15 +162,15 @@ uint8_t TSMS_IIC_read(TSMS_IHP handler, bool nack) {
 		v = (v << 1u) | TSMS_IIC_readBit(handler);
 	handler->delay();
 	if (nack)
-		__tsms_iic_sda_high(handler);
+		__tsms_internal_iic_sda_high(handler);
 	else
-		__tsms_iic_sda_low(handler);
+		__tsms_internal_iic_sda_low(handler);
 	handler->delay();
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
 	handler->delay();
-	__tsms_iic_scl_low(handler);
-	__tsms_iic_sda_high(handler);
+	__tsms_internal_iic_scl_low(handler);
+	__tsms_internal_iic_sda_high(handler);
 	return v;
 }
 
@@ -179,12 +178,12 @@ uint8_t TSMS_IIC_read(TSMS_IHP handler, bool nack) {
 TSMS_RESULT TSMS_IIC_start(TSMS_IHP handler) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	__tsms_iic_sda_high(handler);
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_sda_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
-	__tsms_iic_sda_low(handler);
+	__tsms_internal_iic_sda_low(handler);
 	handler->delay();
-	__tsms_iic_scl_low(handler);
+	__tsms_internal_iic_scl_low(handler);
 	handler->delay();
 	return TSMS_SUCCESS;
 }
@@ -193,12 +192,12 @@ TSMS_RESULT TSMS_IIC_start(TSMS_IHP handler) {
 TSMS_RESULT TSMS_IIC_stop(TSMS_IHP handler) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	__tsms_iic_scl_low(handler);
-	__tsms_iic_sda_low(handler);
+	__tsms_internal_iic_scl_low(handler);
+	__tsms_internal_iic_sda_low(handler);
 	handler->delay();
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
-	__tsms_iic_sda_high(handler);
+	__tsms_internal_iic_sda_high(handler);
 	handler->delay();
 	return TSMS_SUCCESS;
 }
@@ -216,19 +215,19 @@ TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler, uint8_t v) {
 bool TSMS_IIC_wait(TSMS_IHP handler) {
 	if (handler == TSMS_NULL)
 		return false;
-	__tsms_iic_sda_high(handler);
+	__tsms_internal_iic_sda_high(handler);
 	handler->delay();
 	handler->delay();
-	__tsms_iic_scl_high(handler);
+	__tsms_internal_iic_scl_high(handler);
 	handler->delay();
 	if (TSMS_GPIO_read(handler->sda)) {
 		handler->delay();
-		__tsms_iic_scl_low(handler);
+		__tsms_internal_iic_scl_low(handler);
 		TSMS_IIC_stop(handler);
 		return false;
 	}
 	handler->delay();
-	__tsms_iic_scl_low(handler);
+	__tsms_internal_iic_scl_low(handler);
 	return true;
 }
 

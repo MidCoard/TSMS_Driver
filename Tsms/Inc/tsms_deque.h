@@ -1,6 +1,9 @@
 #ifndef TSMS_DEQUE_H
 #define TSMS_DEQUE_H
 
+typedef struct TSMS_DEQUE *TSMS_DEQUE_POINTER;
+typedef TSMS_DEQUE_POINTER TSMS_DP;
+
 #include "tsms_link_list.h"
 
 struct TSMS_DEQUE {

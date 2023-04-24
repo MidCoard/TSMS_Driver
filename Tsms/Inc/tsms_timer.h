@@ -2,21 +2,16 @@
 #define TSMS_TIMER_H
 
 typedef enum {
-	TSMS_IT_TIMER_PERIOD_ELAPSED, TSMS_IT_TIMER_CAPTURE
+	TSMS_IT_TIMER_TYPE_PERIOD_ELAPSED, TSMS_IT_TIMER_TYPE_CAPTURE
 } TSMS_IT_TIMER_TYPE;
 
 typedef struct TSMS_TIMER_HANDLER tTimer;
 typedef tTimer *pTimer;
 
 typedef void(*TSMS_IT_TIMER_CALLBACK)(void *, pTimer);
-
-#include "tsms.h"
-
 typedef void(*TSMS_TIMER_CALLBACK)(void *, pTimer);
 
-extern TSMS_CLOCK_FREQUENCY defaultTimerClock;
-
-TSMS_RESULT TSMS_IT_addTimer(pTimer timer,TSMS_IT_TIMER_TYPE type, TSMS_IT_TIMER_CALLBACK callback, void *handler);
+#include "tsms.h"
 
 typedef struct {
 	bool enablePeriodInterrupt;
@@ -34,6 +29,8 @@ struct TSMS_TIMER_HANDLER {
 	void *handler;
 };
 
+extern TSMS_CLOCK_FREQUENCY TSMS_DEFAULT_TIMER_CLOCK_FREQUENCY;
+
 #ifdef TSMS_STM32_TIMER
 pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option);
 #endif
@@ -49,5 +46,7 @@ volatile double TSMS_TIMER_now(pTimer timer);
 volatile uint64_t TSMS_TIMER_nowRaw(pTimer timer);
 
 TSMS_RESULT TSMS_TIMER_setCallback(pTimer timer, TSMS_TIMER_CALLBACK callback, void* handler);
+
+TSMS_RESULT TSMS_IT_addTimer(pTimer timer,TSMS_IT_TIMER_TYPE type, TSMS_IT_TIMER_CALLBACK callback, void *handler);
 
 #endif //TSMS_TIMER_H

@@ -27,7 +27,7 @@
 #define SN74HC595_RCLK 2
 #define SN74HC595_DATA 3
 
-#include "tsms.h"
+#include "tsms_driver.h"
 
 struct SN74HC595_Handler {
 	TSMS_DHP handler;

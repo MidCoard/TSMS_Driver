@@ -119,7 +119,7 @@ TSMS_RESULT TSMS_SSD1963_init(TSMS_SCHP screen, void * op) {
 }
 
 TSMS_RESULT TSMS_SSD1963_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction) {
-	if (direction == TSMS_DISPLAY_VERTICAL) {
+	if (direction == TSMS_DISPLAY_DIRECTION_VERTICAL) {
 		screen->width = screen->defaultWidth;
 		screen->height = screen->defaultHeight;
 		screen->writeCommand = 0X2C;
@@ -138,58 +138,58 @@ TSMS_RESULT TSMS_SSD1963_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRE
 
 TSMS_RESULT TSMS_SSD1963_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction) {
 	TSMS_SCAN_DIRECTION dir = direction;
-	if (screen->displayDirection == TSMS_DISPLAY_VERTICAL)
+	if (screen->displayDirection == TSMS_DISPLAY_DIRECTION_VERTICAL)
 		switch (direction) {
-			case TSMS_SCAN_L2R_U2D:
+			case TSMS_SCAN_DIRECTION_L2R_U2D:
 				dir = 6;
 				break;
-			case TSMS_SCAN_L2R_D2U:
+			case TSMS_SCAN_DIRECTION_L2R_D2U:
 				dir = 7;
 				break;
-			case TSMS_SCAN_R2L_U2D:
+			case TSMS_SCAN_DIRECTION_R2L_U2D:
 				dir = 4;
 				break;
-			case TSMS_SCAN_R2L_D2U:
+			case TSMS_SCAN_DIRECTION_R2L_D2U:
 				dir = 5;
 				break;
-			case TSMS_SCAN_U2D_L2R:
+			case TSMS_SCAN_DIRECTION_U2D_L2R:
 				dir = 1;
 				break;
-			case TSMS_SCAN_U2D_R2L:
+			case TSMS_SCAN_DIRECTION_U2D_R2L:
 				dir = 0;
 				break;
-			case TSMS_SCAN_D2U_L2R:
+			case TSMS_SCAN_DIRECTION_D2U_L2R:
 				dir = 3;
 				break;
-			case TSMS_SCAN_D2U_R2L:
+			case TSMS_SCAN_DIRECTION_D2U_R2L:
 				dir = 2;
 				break;
 		}
 	uint16_t reg = 0x36;
 	uint16_t value = 0;
 	switch (dir) {
-		case TSMS_SCAN_L2R_U2D:
+		case TSMS_SCAN_DIRECTION_L2R_U2D:
 			value |= (0 << 7) | (0 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_L2R_D2U:
+		case TSMS_SCAN_DIRECTION_L2R_D2U:
 			value |= (1 << 7) | (0 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_R2L_U2D:
+		case TSMS_SCAN_DIRECTION_R2L_U2D:
 			value |= (0 << 7) | (1 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_R2L_D2U:
+		case TSMS_SCAN_DIRECTION_R2L_D2U:
 			value |= (1 << 7) | (1 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_U2D_L2R:
+		case TSMS_SCAN_DIRECTION_U2D_L2R:
 			value |= (0 << 7) | (0 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_U2D_R2L:
+		case TSMS_SCAN_DIRECTION_U2D_R2L:
 			value |= (0 << 7) | (1 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_D2U_L2R:
+		case TSMS_SCAN_DIRECTION_D2U_L2R:
 			value |= (1 << 7) | (0 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_D2U_R2L:
+		case TSMS_SCAN_DIRECTION_D2U_R2L:
 			value |= (1 << 7) | (1 << 6) | (1 << 5);
 			break;
 	}
@@ -209,7 +209,7 @@ TSMS_RESULT TSMS_SSD1963_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION 
 }
 
 TSMS_RESULT TSMS_SSD1963_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
-	if (screen->displayDirection == TSMS_DISPLAY_VERTICAL) {
+	if (screen->displayDirection == TSMS_DISPLAY_DIRECTION_VERTICAL) {
 		x = screen->width - x - 1;
 		TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
 		TSMS_SCREEN_writeData(screen, 0);

@@ -1,15 +1,8 @@
 #include "touch/tsms_gt9147.h"
-#include "tsms_gpio.h"
-#include "tsms_display.h"
-#include "tsms_iic.h"
-#include "tsms_printer.h"
-#include "tsms_lock.h"
-#include "tsms_list.h"
-#include "tsms_util.h"
 
-static uint8_t gt9147CommandBuffer[4];
+static uint8_t _gt9147CommandBuffer[4];
 
-static uint8_t gt9147Buffer[200];
+static uint8_t _gt9147Buffer[200];
 
 // details show in GT9147_Programmer_Guide
 uint8_t TSMS_GT9147_CUSTOM_CFG_TBL[] = {
@@ -103,43 +96,43 @@ uint8_t TSMS_GT9147_CUSTOM_CFG_TBL_0x60[] = {
 };
 
 TSMS_INLINE void __tsms_internal_write_register(TSMS_GT9147 gt9147, uint16_t reg, const uint8_t *buffer, uint16_t length) {
-	gt9147CommandBuffer[0] = reg >> 8;
-	gt9147CommandBuffer[1] = reg & 0xFF;
+	_gt9147CommandBuffer[0] = reg >> 8;
+	_gt9147CommandBuffer[1] = reg & 0xFF;
 	for (uint16_t i = 0; i < length; i++)
-		gt9147CommandBuffer[i + 2] = buffer[i];
-	TSMS_IIC_writeBytes(gt9147->iic, gt9147CommandBuffer, length + 2);
+		_gt9147CommandBuffer[i + 2] = buffer[i];
+	TSMS_IIC_writeBytes(gt9147->iic, _gt9147CommandBuffer, length + 2);
 }
 
 TSMS_INLINE void __tsms_internal_read_register(TSMS_GT9147 gt9147, uint16_t reg, uint8_t *buffer, uint16_t length) {
-	gt9147CommandBuffer[0] = reg >> 8;
-	gt9147CommandBuffer[1] = reg & 0xFF;
-	TSMS_IIC_writeBytes(gt9147->iic, gt9147CommandBuffer, 2);
+	_gt9147CommandBuffer[0] = reg >> 8;
+	_gt9147CommandBuffer[1] = reg & 0xFF;
+	TSMS_IIC_writeBytes(gt9147->iic, _gt9147CommandBuffer, 2);
 	TSMS_IIC_readBytes(gt9147->iic, buffer, length);
 }
 
 TSMS_INLINE uint32_t __tsms_internal_read_id(TSMS_GT9147 gt9147) {
-	__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_ID_ADDRESS, gt9147Buffer, 4);
-	return gt9147Buffer[0] << 24 | gt9147Buffer[1] << 16 | gt9147Buffer[2] << 8 | gt9147Buffer[3];
+	__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_ID_ADDRESS, _gt9147Buffer, 4);
+	return _gt9147Buffer[0] << 24 | _gt9147Buffer[1] << 16 | _gt9147Buffer[2] << 8 | _gt9147Buffer[3];
 }
 
 TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 	TSMS_GT9147 gt9147 = (TSMS_GT9147) touch->custom;
 	pLock lock;
 	if ((lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(touch->lock, preLock, 0)) != TSMS_NULL) {
-		__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, gt9147Buffer, 1);
+		__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, _gt9147Buffer, 1);
 		for (TSMS_POS i = 0; i < touch->list->length; i++)
 			free(touch->list->list[i]);
 		TSMS_LIST_clear(touch->list);
-		TSMS_SIZE touchCount = gt9147Buffer[0] & 0x0F;
-		if ((gt9147Buffer[0] & 0x80) != 0 && touchCount > 0 ) {
-			__tsms_internal_read_register(gt9147, 0x814f, gt9147Buffer,
+		TSMS_SIZE touchCount = _gt9147Buffer[0] & 0x0F;
+		if ((_gt9147Buffer[0] & 0x80) != 0 && touchCount > 0 ) {
+			__tsms_internal_read_register(gt9147, 0x814f, _gt9147Buffer,
 			                              touchCount * 8);
 			for (TSMS_SIZE i = 0; i < touchCount; i++) {
-				uint16_t id = gt9147Buffer[i * 8];
-				uint16_t x = gt9147Buffer[i * 8 + 1] | (gt9147Buffer[i * 8 + 2] << 8);
-				uint16_t y = gt9147Buffer[i * 8 + 3] | (gt9147Buffer[i * 8 + 4] << 8);
-				uint16_t size = gt9147Buffer[i * 8 + 5] | (gt9147Buffer[i * 8 + 6] << 8);
-				if (touch->display->screen->displayDirection == TSMS_DISPLAY_HORIZONTAL) {
+				uint16_t id = _gt9147Buffer[i * 8];
+				uint16_t x = _gt9147Buffer[i * 8 + 1] | (_gt9147Buffer[i * 8 + 2] << 8);
+				uint16_t y = _gt9147Buffer[i * 8 + 3] | (_gt9147Buffer[i * 8 + 4] << 8);
+				uint16_t size = _gt9147Buffer[i * 8 + 5] | (_gt9147Buffer[i * 8 + 6] << 8);
+				if (touch->display->screen->displayDirection == TSMS_DISPLAY_DIRECTION_HORIZONTAL) {
 					TSMS_UTIL_swapUnsignedShort(&x, &y);
 					x = touch->display->screen->width - x;
 				}
@@ -158,8 +151,8 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 		}
 		TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);
 	}
-	gt9147Buffer[0] = 0;
-	__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, gt9147Buffer, 1);
+	_gt9147Buffer[0] = 0;
+	__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, _gt9147Buffer, 1);
 }
 
 TSMS_INLINE void __tsms_internal_auto_request_both(void* t, TSMS_GHP gpio) {
@@ -180,21 +173,21 @@ TSMS_INLINE void __tsms_internal_auto_request(void* t, TSMS_GHP gpio) {
 	TSMS_THP touch = t;
 	TSMS_GT9147 gt9147 = touch->custom;
 	__tsms_internal_touch_request(touch, TSMS_NULL);
-	gt9147Buffer[0] = 0;
-	__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, gt9147Buffer, 1);
+	_gt9147Buffer[0] = 0;
+	__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, _gt9147Buffer, 1);
 }
 
 TSMS_RESULT TSMS_GT9147_setRequestMode(TSMS_THP touch, TSMS_TOUCH_REQUEST_MODE mode) {
 	TSMS_GT9147 gt9147 = touch->custom;
-	if (mode == TSMS_TOUCH_SYNC_AND_IT_REQUEST)
+	if (mode == TSMS_TOUCH_REQUEST_MODE_SYNC_AND_IT)
 		return TSMS_IT_addGPIO(gt9147->interrupt, __tsms_internal_auto_request_both, touch);
-	else if (mode == TSMS_TOUCH_IT_AUTO_REQUEST)
+	else if (mode == TSMS_TOUCH_REQUEST_MODE_IT)
 		return TSMS_IT_addGPIO(gt9147->interrupt, __tsms_internal_auto_request, touch);
 	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_GT9147_request(TSMS_THP touch, TSMS_TOUCH_REQUEST_MODE mode) {
-	if (mode == TSMS_TOUCH_SYNC_AND_IT_REQUEST) {
+	if (mode == TSMS_TOUCH_REQUEST_MODE_SYNC_AND_IT) {
 		if (touch->requestFlag)
 			return TSMS_FAIL;
 		pLock lock;
@@ -202,7 +195,7 @@ TSMS_RESULT TSMS_GT9147_request(TSMS_THP touch, TSMS_TOUCH_REQUEST_MODE mode) {
 			touch->requestFlag = true;
 			TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);
 		} else return TSMS_FAIL;
-	} else if (mode == TSMS_TOUCH_SYNC_REQUEST)
+	} else if (mode == TSMS_TOUCH_REQUEST_MODE_SYNC)
 		__tsms_internal_touch_request(touch, TSMS_NULL);
 	return TSMS_SUCCESS;
 }
@@ -216,11 +209,11 @@ TSMS_GT9147 TSMS_GT9147_createHandler(TSMS_IHP iic, TSMS_GHP interrupt) {
 	TSMS_GT9147 gt9147 = malloc(sizeof(struct TSMS_GT9147_HANDLER));
 	if (gt9147 == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_GT9147");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	gt9147->iic = iic;
-	TSMS_GPIO_setMode(interrupt, TSMS_GPIO_IT_RISING, TSMS_GPIO_PULL_UP);
+	TSMS_GPIO_setMode(interrupt, TSMS_GPIO_MODE_IT_RISING, TSMS_GPIO_PULL_UP);
 	gt9147->interrupt = interrupt;
 	return gt9147;
 }
@@ -229,26 +222,26 @@ TSMS_RESULT TSMS_GT9147_init(TSMS_THP touch, void * op) {
 	if (op == TSMS_NULL)
 		return TSMS_FAIL;
 	TSMS_GT9147 gt9147 = touch->custom;
-	TSMS_GPIO_setMode(gt9147->interrupt, TSMS_GPIO_IT_RISING, TSMS_GPIO_NO_PULL);
+	TSMS_GPIO_setMode(gt9147->interrupt, TSMS_GPIO_MODE_IT_RISING, TSMS_GPIO_PULL_NONE);
 	TSMS_delay(50);
-	__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_CONFIG_ADDRESS, gt9147Buffer, 184);
+	__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_CONFIG_ADDRESS, _gt9147Buffer, 184);
 	uint8_t * option = op;
-	int cmp = memcmp(gt9147Buffer + 1, option + 3, 183);
-	if (gt9147Buffer[0] != option[2] && cmp != 0) {
-		if (option[2] < gt9147Buffer[0])
-			option[2] = gt9147Buffer[0] + 1;
-		gt9147Buffer[0] = 0;
-		gt9147Buffer[1] = 1;
+	int cmp = memcmp(_gt9147Buffer + 1, option + 3, 183);
+	if (_gt9147Buffer[0] != option[2] && cmp != 0) {
+		if (option[2] < _gt9147Buffer[0])
+			option[2] = _gt9147Buffer[0] + 1;
+		_gt9147Buffer[0] = 0;
+		_gt9147Buffer[1] = 1;
 		for (TSMS_POS i = 2; i < 186; i++)
-			gt9147Buffer[0] += option[i];
-		gt9147Buffer[0] = (~gt9147Buffer[0]) + 1;
+			_gt9147Buffer[0] += option[i];
+		_gt9147Buffer[0] = (~_gt9147Buffer[0]) + 1;
 		TSMS_IIC_writeBytes(gt9147->iic, option, 186);
-		__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_CONFIG_CHECKSUM_ADDRESS, gt9147Buffer, 2);
+		__tsms_internal_write_register(gt9147, TSMS_GT9147_REG_CONFIG_CHECKSUM_ADDRESS, _gt9147Buffer, 2);
 		TSMS_delay(50);
-		__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_CONFIG_ADDRESS, gt9147Buffer, 1);
-		if (gt9147Buffer[0] != option[2]) {
+		__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_CONFIG_ADDRESS, _gt9147Buffer, 1);
+		if (_gt9147Buffer[0] != option[2]) {
 			tString temp = TSMS_STRING_temp("GT9147 init failed");
-			TSMS_ERR_report(TSMS_ERR_INIT_FAILED, &temp);
+			TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
 			return TSMS_FAIL;
 		}
 	}

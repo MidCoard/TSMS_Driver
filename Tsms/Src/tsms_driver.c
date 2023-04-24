@@ -1,7 +1,4 @@
 #include "tsms_driver.h"
-#include "tsms_custom.h"
-#include "tsms_spi.h"
-#include "tsms_iic.h"
 #include "tsms_util.h"
 
 TSMS_INLINE void __tsms_internal_add_and_remove(TSMS_RHP reg, uint32_t add, uint32_t remove) {
@@ -21,7 +18,7 @@ TSMS_RHP TSMS_REG_Register(uint32_t address, uint8_t bits) {
 	TSMS_RHP reg = malloc(sizeof(struct TSMS_REGISTER_HANDLER));
 	if (reg == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	reg->address = address;
@@ -171,16 +168,16 @@ TSMS_RESULT TSMS_REG_configure(TSMS_RHLP list, uint8_t reg, uint8_t pos, uint8_t
 TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 	if (spi == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("spi handler is null");
-		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
 	if (handler == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	handler->type = TSMS_DRIVER_SPI;
+	handler->type = TSMS_DRIVER_TYPE_SPI;
 	handler->spi = spi;
 	handler->regs = regs;
 	handler->spiWrite = TSMS_SPI_transmitCustomBits;
@@ -193,16 +190,16 @@ TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
 	if (iic == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("iic handler is null");
-		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
 	if (handler == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	handler->type = TSMS_DRIVER_IIC;
+	handler->type = TSMS_DRIVER_TYPE_IIC;
 	handler->iic = iic;
 	handler->regs = regs;
 	handler->iicWrite = TSMS_IIC_writeCustomRegister;
@@ -213,16 +210,16 @@ TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
 TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs) {
 	if (custom == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("custom handler is null");
-		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
 	if (handler == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	handler->type = TSMS_DRIVER_CUSTOM;
+	handler->type = TSMS_DRIVER_TYPE_CUSTOM;
 	handler->custom = custom;
 	handler->regs = regs;
 	return handler;
@@ -232,7 +229,7 @@ TSMS_RHLP TSMS_REG_createList(int n, ...) {
 	TSMS_RHLP list = malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
 	if (list == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHLP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	list->size = n;
@@ -255,7 +252,7 @@ TSMS_RHLP TSMS_REG_createList(int n, ...) {
 	list->starts = malloc(sizeof(uint8_t) * list->maxSize);
 	if (list->ids == TSMS_NULL || list->sizes == TSMS_NULL || list->types == TSMS_NULL || list->starts == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHLP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	memset(list->ids, 0, sizeof(uint8_t) * list->maxSize);

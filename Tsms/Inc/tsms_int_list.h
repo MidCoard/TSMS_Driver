@@ -1,6 +1,9 @@
 #ifndef TSMS_INT_LIST_H
 #define TSMS_INT_LIST_H
 
+typedef struct TSMS_INT_LIST *TSMS_INT_LIST_POINTER;
+typedef TSMS_INT_LIST_POINTER TSMS_ILP;
+
 #include "tsms_def.h"
 
 struct TSMS_INT_LIST {

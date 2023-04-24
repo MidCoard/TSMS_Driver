@@ -9,7 +9,6 @@ typedef TSMS_IIC_HANDLER_POINTER TSMS_IHP;
 
 typedef void(*TSMS_IIC_RELEASE_FUNCTION)(TSMS_IHP);
 
-#include "tsms.h"
 #include "tsms_gpio.h"
 
 struct TSMS_IIC_HANDLER {

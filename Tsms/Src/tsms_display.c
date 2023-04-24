@@ -1,10 +1,4 @@
 #include "tsms_display.h"
-#include "tsms_timer.h"
-#include "tsms_util.h"
-#include "tsms_lock.h"
-#include "tsms_gpio.h"
-#include "tsms_font.h"
-#include "tsms_list.h"
 #include "touch/tsms_gt9147.h"
 #include "screen/tsms_ili9341.h"
 #include "screen/tsms_st7789.h"
@@ -155,11 +149,11 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data) {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t *swapBuffer, TSMS_SSD1963_OPTION *option) {
+                               uint16_t height, uint16_t *swapBuffer, void *option) {
 	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
 	if (screen == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	screen->reset = TSMS_NULL;
@@ -177,74 +171,74 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
 	TSMS_delay(50);
 	uint16_t id;
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_ILI9341) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_ILI9341) {
 		id = TSMS_ILI9341_readId(screen);
 		if (id == TSMS_ILI9341_ID) {
-			screen->type = TSMS_SCREEN_ILI9341;
+			screen->type = TSMS_SCREEN_TYPE_ILI9341;
 			screen->init = TSMS_ILI9341_init;
 			screen->setDisplayDirection = TSMS_ILI9341_setDisplayDirection;
 			screen->setScanDirection = TSMS_ILI9341_setScanDirection;
 			screen->setCursor = TSMS_ILI9341_setCursor;
 		}
 	}
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_ST7789) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_ST7789) {
 		id = TSMS_ST7789_readId(screen);
 		if (id == TSMS_ST7789_ID) {
-			screen->type = TSMS_SCREEN_ST7789;
+			screen->type = TSMS_SCREEN_TYPE_ST7789;
 			screen->init = TSMS_ST7789_init;
 			screen->setDisplayDirection = TSMS_ST7789_setDisplayDirection;
 			screen->setScanDirection = TSMS_ST7789_setScanDirection;
 			screen->setCursor = TSMS_ST7789_setCursor;
 		}
 	}
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT35310) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_NT35310) {
 		id = TSMS_NT35310_readId(screen);
 		if (id == TSMS_NT35310_ID) {
-			screen->type = TSMS_SCREEN_NT35310;
+			screen->type = TSMS_SCREEN_TYPE_NT35310;
 			screen->init = TSMS_NT35310_init;
 			screen->setDisplayDirection = TSMS_NT35310_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT35310_setScanDirection;
 			screen->setCursor = TSMS_NT35310_setCursor;
 		}
 	}
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT35510) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_NT35510) {
 		id = TSMS_NT5510_readId(screen);
 		if (id == TSMS_NT35510_ID) {
-			screen->type = TSMS_SCREEN_NT35510;
+			screen->type = TSMS_SCREEN_TYPE_NT35510;
 			screen->init = TSMS_NT5510_init;
 			screen->setDisplayDirection = TSMS_NT5510_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT5510_setScanDirection;
 			screen->setCursor = TSMS_NT5510_setCursor;
 		}
 	}
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_NT5510) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_NT5510) {
 		id = TSMS_NT5510_readId(screen);
 		if (id == TSMS_NT5510_ID) {
-			screen->type = TSMS_SCREEN_NT5510;
+			screen->type = TSMS_SCREEN_TYPE_NT5510;
 			screen->init = TSMS_NT5510_init;
 			screen->setDisplayDirection = TSMS_NT5510_setDisplayDirection;
 			screen->setScanDirection = TSMS_NT5510_setScanDirection;
 			screen->setCursor = TSMS_NT5510_setCursor;
 		}
 	}
-	if (screen->type == TSMS_SCREEN_AUTO_DETECT || screen->type == TSMS_SCREEN_SSD1963) {
+	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_SSD1963) {
 		id = TSMS_SSD1963_readId(screen);
 		if (id == TSMS_SSD1963_ID) {
-			screen->type = TSMS_SCREEN_SSD1963;
+			screen->type = TSMS_SCREEN_TYPE_SSD1963;
 			screen->init = TSMS_SSD1963_init;
 			screen->setDisplayDirection = TSMS_SSD1963_setDisplayDirection;
 			screen->setScanDirection = TSMS_SSD1963_setScanDirection;
 			screen->setCursor = TSMS_SSD1963_setCursor;
 		}
 	}
-	if (screen->type != TSMS_SCREEN_AUTO_DETECT) {
+	if (screen->type != TSMS_SCREEN_TYPE_AUTO_DETECT) {
 		screen->init(screen, option);
-		TSMS_SCREEN_setDisplayDirection(screen, TSMS_DISPLAY_VERTICAL);
+		TSMS_SCREEN_setDisplayDirection(screen, TSMS_DISPLAY_DIRECTION_VERTICAL);
 		TSMS_SCREEN_enableBackgroudLight(screen);
 		return screen;
 	}
 	tString temp = TSMS_STRING_temp("screen type not supported");
-	TSMS_ERR_report(TSMS_ERR_SCREEN_TYPE_NOT_SUPPORTED, &temp);
+	TSMS_ERR_report(TSMS_ERROR_TYPE_SCREEN_TYPE_NOT_SUPPORTED, &temp);
 	TSMS_SEQUENCE_PRIORITY_LOCK_release(screen->lock);
 	free(screen);
 	return TSMS_NULL;
@@ -257,7 +251,7 @@ TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float ref
 	TSMS_DPHP display = malloc(sizeof(struct TSMS_DISPLAY_HANDLER));
 	if (display == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DPHP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	display->touch = touch;
@@ -273,7 +267,7 @@ TSMS_THP TSMS_TOUCH_createHandler(void *handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 	TSMS_THP touch = malloc(sizeof(struct TSMS_TOUCH_HANDLER));
 	if (touch == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_THP");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	touch->resetPin = rst;
@@ -285,22 +279,22 @@ TSMS_THP TSMS_TOUCH_createHandler(void *handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 	touch->callback = TSMS_NULL;
 	TSMS_TOUCH_reset(touch);
 	volatile uint32_t id;
-	if (touch->type == TSMS_TOUCH_AUTO_DETECT || touch->type == TSMS_TOUCH_GT9147) {
+	if (touch->type == TSMS_TOUCH_TYPE_AUTO_DETECT || touch->type == TSMS_TOUCH_TYPE_GT9147) {
 		id = TSMS_GT9147_readId(touch);
 		id;
 		if (id == TSMS_GT9147_ID) {
-			touch->type = TSMS_TOUCH_GT9147;
+			touch->type = TSMS_TOUCH_TYPE_GT9147;
 			touch->init = TSMS_GT9147_init;
 			touch->request = TSMS_GT9147_request;
 			touch->setRequestMode = TSMS_GT9147_setRequestMode;
 		}
 	}
-	if (touch->type != TSMS_TOUCH_AUTO_DETECT) {
+	if (touch->type != TSMS_TOUCH_TYPE_AUTO_DETECT) {
 		touch->init(touch, option);
 		return touch;
 	}
 	tString temp = TSMS_STRING_temp("touch type not supported");
-	TSMS_ERR_report(TSMS_ERR_TOUCH_TYPE_NOT_SUPPORTED, &temp);
+	TSMS_ERR_report(TSMS_ERROR_TYPE_TOUCH_TYPE_NOT_SUPPORTED, &temp);
 	TSMS_SEQUENCE_PRIORITY_LOCK_release(touch->lock);
 	TSMS_LIST_release(touch->list);
 	free(touch);
@@ -350,7 +344,7 @@ TSMS_RESULT TSMS_SCREEN_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIREC
 	TSMS_RESULT result = screen->setDisplayDirection(screen, direction);
 	if (result != TSMS_SUCCESS)
 		return result;
-	return TSMS_SCREEN_setScanDirection(screen, TSMS_SCAN_L2R_U2D);
+	return TSMS_SCREEN_setScanDirection(screen, TSMS_SCAN_DIRECTION_L2R_U2D);
 }
 
 TSMS_RESULT TSMS_SCREEN_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction) {
@@ -414,11 +408,11 @@ TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SC
 		return TSMS_ERROR;
 	if (display->screen->swapBuffer == TSMS_NULL)
 		return TSMS_ERROR;
-	if (screenMode == TSMS_SCREEN_IT_AUTO_REQUEST) {
+	if (screenMode == TSMS_SCREEN_REQUEST_MODE_IT) {
 		if (!timer->option.enableCallbackInterrupt)
 			return TSMS_ERROR;
 		TSMS_TIMER_setCallback(timer, __tsms_internal_screen_auto_request, display->screen);
-	} else if (screenMode == TSMS_SCREEN_SYNC_AND_IT_REQUEST) {
+	} else if (screenMode == TSMS_SCREEN_REQUEST_MODE_SYNC_AND_IT) {
 		if (!timer->option.enableCallbackInterrupt || !timer->option.enablePeriodInterrupt)
 			return TSMS_ERROR;
 		TSMS_TIMER_setCallback(timer, __tsms_internal_screen_auto_request_both, display);
@@ -640,9 +634,9 @@ TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display) {
 			if (display->restCount >= 1) {
 				display->count++;
 				display->restCount--;
-				if (display->screenMode != TSMS_SCREEN_IT_AUTO_REQUEST)
+				if (display->screenMode != TSMS_SCREEN_REQUEST_MODE_IT)
 					TSMS_SCREEN_request(display->screen, display->screenMode);
-				if (display->touchMode != TSMS_TOUCH_IT_AUTO_REQUEST)
+				if (display->touchMode != TSMS_TOUCH_REQUEST_MODE_IT)
 					TSMS_TOUCH_request(display->touch, display->touchMode);
 			}
 			TSMS_LOCK_unlock(display->lock);
@@ -652,7 +646,7 @@ TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display) {
 			if (display->restCount > display->refreshRate) {
 				display->restCount = 0;
 				tString temp = TSMS_STRING_temp("Display refresh is too slow.");
-				TSMS_ERR_report(TSMS_ERR_DISPLAY_REFRESH_TOO_SLOW, &temp);
+				TSMS_ERR_report(TSMS_ERROR_TYPE_DISPLAY_REFRESH_TOO_SLOW, &temp);
 			}
 			TSMS_LOCK_unlock(display->lock);
 		}

@@ -1,6 +1,4 @@
 #include "tsms_lock.h"
-#include "tsms_stack.h"
-#include "tsms_int_stack.h"
 
 pLock TSMS_LOCK_create() {
 	pLock lock = (pLock)malloc(sizeof(tLock));

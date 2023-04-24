@@ -1,4 +1,4 @@
-#include "tsms_def.h"
+#include "font/tsms_array_font.h"
 
 const unsigned char TSMS_FONT_DEFAULT_FONT[94][7] = {
 		{0x00,0x00, 0x00, 0x00, 0x00, 0x00,0x00}, // 20

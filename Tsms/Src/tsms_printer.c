@@ -1,7 +1,6 @@
 #include "tsms_printer.h"
-#include "tsms_char_list.h"
 
-TSMS_PHP defaultPrinter = TSMS_NULL;
+static TSMS_PHP _printerDefaultPrinter = TSMS_NULL;
 
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
 
@@ -118,18 +117,18 @@ TSMS_RESULT TSMS_printf(TSMS_PHP printer, const char *c, ...) {
 }
 
 TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer) {
-	defaultPrinter = printer;
+	_printerDefaultPrinter = printer;
 	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT print(const char *str, ...) {
-	if (defaultPrinter == TSMS_NULL)
+	if (_printerDefaultPrinter == TSMS_NULL)
 		return TSMS_ERROR;
 	va_list p;
 	va_start(p, str);
-	vsprintf(defaultPrinter->stringBuffer, str, p);
+	vsprintf(_printerDefaultPrinter->stringBuffer, str, p);
 	va_end(p);
-	TSMS_print(defaultPrinter, defaultPrinter->stringBuffer);
+	TSMS_print(_printerDefaultPrinter, _printerDefaultPrinter->stringBuffer);
 	return TSMS_SUCCESS;
 }
 

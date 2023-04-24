@@ -10,7 +10,8 @@ typedef tSequenceLock *pSequenceLock;
 typedef struct TSMS_SEQUENCE_PRIORITY_LOCK_HANDLER tSequencePriorityLock;
 typedef tSequencePriorityLock *pSequencePriorityLock;
 
-#include "tsms_def.h"
+#include "tsms_stack.h"
+#include "tsms_int_stack.h"
 
 struct TSMS_LOCK_HANDLER {
 	bool locked;

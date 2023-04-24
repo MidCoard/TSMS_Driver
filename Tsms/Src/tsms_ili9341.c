@@ -1,6 +1,4 @@
 #include "screen/tsms_ili9341.h"
-#include "tsms_delay.h"
-#include "tsms_util.h"
 
 // 0x9341
 uint16_t TSMS_ILI9341_readId(TSMS_SCHP screen) {
@@ -111,7 +109,7 @@ TSMS_RESULT TSMS_ILI9341_init(TSMS_SCHP screen, void * op) {
 }
 
 TSMS_RESULT TSMS_ILI9341_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction) {
-	if (direction == TSMS_DISPLAY_VERTICAL) {
+	if (direction == TSMS_DISPLAY_DIRECTION_VERTICAL) {
 		screen->width = screen->defaultWidth;
 		screen->height = screen->defaultHeight;
 	} else {
@@ -127,58 +125,58 @@ TSMS_RESULT TSMS_ILI9341_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRE
 
 TSMS_RESULT TSMS_ILI9341_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION direction) {
 	TSMS_SCAN_DIRECTION dir = direction;
-	if (screen->displayDirection == TSMS_DISPLAY_HORIZONTAL)
+	if (screen->displayDirection == TSMS_DISPLAY_DIRECTION_HORIZONTAL)
 		switch (direction) {
-			case TSMS_SCAN_L2R_U2D:
+			case TSMS_SCAN_DIRECTION_L2R_U2D:
 				dir = 6;
 				break;
-			case TSMS_SCAN_L2R_D2U:
+			case TSMS_SCAN_DIRECTION_L2R_D2U:
 				dir = 7;
 				break;
-			case TSMS_SCAN_R2L_U2D:
+			case TSMS_SCAN_DIRECTION_R2L_U2D:
 				dir = 4;
 				break;
-			case TSMS_SCAN_R2L_D2U:
+			case TSMS_SCAN_DIRECTION_R2L_D2U:
 				dir = 5;
 				break;
-			case TSMS_SCAN_U2D_L2R:
+			case TSMS_SCAN_DIRECTION_U2D_L2R:
 				dir = 1;
 				break;
-			case TSMS_SCAN_U2D_R2L:
+			case TSMS_SCAN_DIRECTION_U2D_R2L:
 				dir = 0;
 				break;
-			case TSMS_SCAN_D2U_L2R:
+			case TSMS_SCAN_DIRECTION_D2U_L2R:
 				dir = 3;
 				break;
-			case TSMS_SCAN_D2U_R2L:
+			case TSMS_SCAN_DIRECTION_D2U_R2L:
 				dir = 2;
 				break;
 		}
 	uint16_t reg = 0x36;
 	uint16_t value = 0;
 	switch (dir) {
-		case TSMS_SCAN_L2R_U2D:
+		case TSMS_SCAN_DIRECTION_L2R_U2D:
 			value |= (0 << 7) | (0 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_L2R_D2U:
+		case TSMS_SCAN_DIRECTION_L2R_D2U:
 			value |= (1 << 7) | (0 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_R2L_U2D:
+		case TSMS_SCAN_DIRECTION_R2L_U2D:
 			value |= (0 << 7) | (1 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_R2L_D2U:
+		case TSMS_SCAN_DIRECTION_R2L_D2U:
 			value |= (1 << 7) | (1 << 6) | (0 << 5);
 			break;
-		case TSMS_SCAN_U2D_L2R:
+		case TSMS_SCAN_DIRECTION_U2D_L2R:
 			value |= (0 << 7) | (0 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_U2D_R2L:
+		case TSMS_SCAN_DIRECTION_U2D_R2L:
 			value |= (0 << 7) | (1 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_D2U_L2R:
+		case TSMS_SCAN_DIRECTION_D2U_L2R:
 			value |= (1 << 7) | (0 << 6) | (1 << 5);
 			break;
-		case TSMS_SCAN_D2U_R2L:
+		case TSMS_SCAN_DIRECTION_D2U_R2L:
 			value |= (1 << 7) | (1 << 6) | (1 << 5);
 			break;
 	}

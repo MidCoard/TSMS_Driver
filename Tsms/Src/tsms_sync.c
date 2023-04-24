@@ -5,7 +5,7 @@ TSMS_SYNC_STP TSMS_SYNC_STACK_create(TSMS_STP stack) {
 	TSMS_SYNC_STP sync_stack = (TSMS_SYNC_STP)malloc(sizeof(struct TSMS_SYNC_STACK));
 	if (sync_stack == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for sync stack");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	sync_stack->stack = stack;

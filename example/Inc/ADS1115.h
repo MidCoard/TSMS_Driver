@@ -22,9 +22,6 @@
 #define ADS1115_REG_LO_THRESH 3
 #define ADS1115_REG_HI_THRESH 4
 
-#include "tsms.h"
-#include "tsms_gpio.h"
-
 typedef enum {
 	ADS1115_8_SPS = 0,
 	ADS1115_16_SPS,
@@ -67,6 +64,9 @@ typedef enum {
 	ADS1115_AIN2_GND,
 	ADS1115_AIN3_GND
 } ADS1115_CHANNEL_MUX;
+
+#include "tsms_gpio.h"
+#include "tsms_driver.h"
 
 struct ADS1115_Handler {
 	TSMS_DHP handler;

@@ -1,11 +1,11 @@
 #ifndef TSMS_FONT_H
 #define TSMS_FONT_H
 
-typedef struct TSMS_FONT_DATA TSMS_FONT_DATA;
-
 typedef enum {
 	TSMS_FONT_TYPE_INVALID = 0, TSMS_FONT_TYPE_ARRAY, TSMS_FONT_TYPE_FILE
 } TSMS_FONT_TYPE;
+
+typedef struct TSMS_FONT_DATA TSMS_FONT_DATA;
 
 #include "tsms_def.h"
 
@@ -17,15 +17,15 @@ struct TSMS_FONT_DATA {
 	TSMS_BITS bits;
 };
 
-extern pString TSMS_FONT_defaultFont;
-extern pString TSMS_FONT_thickFont;
-extern pString TSMS_FONT_homeSpunFont;
-extern pString TSMS_FONT_sevenSegFont;
-extern pString TSMS_FONT_wideFont;
-extern pString TSMS_FONT_tinyFont;
-extern pString TSMS_FONT_largeFont;
-extern pString TSMS_FONT_hugeFont;
-extern pString TSMS_FONT_megaFont;
+extern pString TSMS_FONT_ARRAY_DEFAULT_FONT;
+extern pString TSMS_FONT_ARRAY_THICK_FONT;
+extern pString TSMS_FONT_ARRAY_HOME_SPUN_FONT;
+extern pString TSMS_FONT_ARRAY_SEVEN_SEG_FONT;
+extern pString TSMS_FONT_ARRAY_WIDE_FONT;
+extern pString TSMS_FONT_ARRAY_TINY_FONT;
+extern pString TSMS_FONT_ARRAY_LARGE_FONT;
+extern pString TSMS_FONT_ARRAY_HUGE_FONT;
+extern pString TSMS_FONT_ARRAY_MEGA_FONT;
 
 TSMS_FONT_DATA TSMS_FONT_resolve(TSMS_FONT_TYPE type, void* font, uint8_t c);
 

@@ -14,7 +14,6 @@
 #define SDRAM_WRITE_BURST_MODE_SINGLE     0x0200
 
 #include "tsms.h"
-#include "fmc.h"
 
 struct W9825G6KH_Handler {
 

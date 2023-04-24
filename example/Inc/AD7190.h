@@ -121,7 +121,7 @@ typedef enum {
 
 typedef uint8_t AD7190_CLOCK_MODE;
 
-#include "tsms_gpio.h"
+#include "tsms_driver.h"
 
 typedef TSMS_GPIO_STATUS AD7190_GPIO_STATUS;
 

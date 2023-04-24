@@ -5,7 +5,7 @@ TSMS_INT_STP TSMS_INT_STACK_create() {
 	TSMS_INT_STP stack = (TSMS_INT_STP) malloc(sizeof(struct TSMS_INT_STACK));
 	if (stack == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for int stack");
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, &temp);
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
 		return TSMS_NULL;
 	}
 	stack->list = TSMS_INT_LINK_LIST_create();

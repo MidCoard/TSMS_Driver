@@ -4,12 +4,12 @@
 
 TSMS_GHP TSMS_GPIO_createHandler(GPIO_TypeDef * port, uint16_t pin) {
 	if (port == NULL) {
-		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("STM32 GPIO is null"));
+		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, TSMS_STRING_static("STM32 GPIO is null"));
 		return TSMS_NULL_GHP;
 	}
 	TSMS_GHP gpio = malloc(sizeof (struct TSMS_GPIO_HANDLER));
 	if (gpio == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_INIT_FAILED, TSMS_STRING_static("malloc failed for TSMS_GHP"));
+		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, TSMS_STRING_static("malloc failed for TSMS_GHP"));
 		return TSMS_NULL_GHP;
 	}
 	gpio->port = port;
@@ -54,21 +54,21 @@ TSMS_RESULT TSMS_GPIO_setMode(TSMS_GHP gpio, TSMS_GPIO_MODE mode, TSMS_GPIO_PULL
 #ifdef TSMS_STM32_GPIO
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	GPIO_InitStruct.Pin = gpio->pin;
-	if (mode == TSMS_GPIO_OUTPUT_OD || mode == TSMS_GPIO_OUTPUT_OPEN_DRAIN)
+	if (mode == TSMS_GPIO_MODE_OUTPUT_OD)
 		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-	else if (mode == TSMS_GPIO_OUTPUT_PP || mode == TSMS_GPIO_OUTPUT_PULL_PUSH)
+	else if (mode == TSMS_GPIO_MODE_OUTPUT_PP)
 		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	else if (mode == TSMS_GPIO_INPUT)
+	else if (mode == TSMS_GPIO_MODE_INPUT)
 		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	else if (mode == TSMS_GPIO_IT_RISING)
+	else if (mode == TSMS_GPIO_MODE_IT_RISING)
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	else if (mode == TSMS_GPIO_IT_FALLING)
+	else if (mode == TSMS_GPIO_MODE_IT_FALLING)
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-	else if (mode == TSMS_GPIO_IT_RISING_FALLING)
+	else if (mode == TSMS_GPIO_IT_MODE_RISING_FALLING)
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
 	else
 		return TSMS_ERROR;
-	if (pull == TSMS_GPIO_NO_PULL)
+	if (pull == TSMS_GPIO_PULL_NONE)
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 	else if (pull == TSMS_GPIO_PULL_UP)
 		GPIO_InitStruct.Pull = GPIO_PULLUP;
