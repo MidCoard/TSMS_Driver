@@ -29,9 +29,10 @@ TSMS_INLINE void __tsms_internal_screen_auto_request_both(void *d, pTimer pTimer
 	if (display->restCount >= 1) {
 		if (TSMS_LOCK_tryLock(display->lock)) {
 			if (display->restCount >= 1) {
-				display->count++;
-				display->restCount--;
-				TSMS_SCREEN_swap(display->screen);
+				if (TSMS_SCREEN_swap(display->screen) == TSMS_SUCCESS) {
+					display->count++;
+					display->restCount--;
+				}
 			}
 			TSMS_LOCK_unlock(display->lock);
 		}
@@ -173,7 +174,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->defaultHeight = height;
 	screen->swapBuffer = swapBuffer;
 	screen->swapY = 0;
-	screen->swapStep = 40;
+	screen->swapStep = 160;
 	for (TSMS_POS i = 0; i < 100; i++)
 		screen->lazySwapLabels[i] = true;
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();

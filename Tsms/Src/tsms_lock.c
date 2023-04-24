@@ -157,10 +157,13 @@ TSMS_RESULT TSMS_SEQUENCE_PRIORITY_LOCK_postLock(pSequencePriorityLock lock, int
 pLock TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(pSequencePriorityLock lock, pLock currentLock, int priority) {
 	if (lock == TSMS_NULL)
 		return TSMS_NULL;
+	int p = TSMS_INT_STACK_peek(lock->stack);
+	if (p > priority)
+		return TSMS_NULL;
 	if (!TSMS_LOCK_tryLock(lock->lock))
 		return TSMS_NULL;
 	pLock cur = TSMS_SEQUENCE_LOCK_currentLock(lock->sequenceLock);
-	int p = TSMS_INT_STACK_peek(lock->stack);
+	p = TSMS_INT_STACK_peek(lock->stack);
 	if ((cur != currentLock || currentLock == TSMS_NULL ) && p > priority) {
 		TSMS_LOCK_unlock(lock->lock);
 		return TSMS_NULL;
