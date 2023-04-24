@@ -18,6 +18,7 @@ TSMS_INLINE TSMS_MNP __tsms_internal_create_node(void * key, void * value) {
 	}
 	node->key = key;
 	node->value = value;
+	node->next = TSMS_NULL;
 	return node;
 }
 
@@ -30,6 +31,7 @@ TSMS_INLINE TSMS_LMNP __tsms_internal_create_long_node(long key, void * value) {
 	}
 	node->key = key;
 	node->value = value;
+	node->next = TSMS_NULL;
 	return node;
 }
 
