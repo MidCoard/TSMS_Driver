@@ -506,9 +506,9 @@ TSMS_RESULT TSMS_NT5510_setScanDirection(TSMS_SCHP screen, TSMS_SCAN_DIRECTION d
 	TSMS_SCREEN_writeRegister(screen, reg, value);
 	if (value & 0X20) {
 		if (screen->width < screen->height)
-			TSMS_UTIL_swap(&screen->width, &screen->height);
+			TSMS_UTIL_swapUnsignedShort(&screen->width, &screen->height);
 	} else if (screen->width > screen->height)
-		TSMS_UTIL_swap(&screen->width, &screen->height);
+		TSMS_UTIL_swapUnsignedShort(&screen->width, &screen->height);
 	TSMS_SCREEN_writeCommand(screen, screen->setXCommand);
 	TSMS_SCREEN_writeData(screen, 0);
 	TSMS_SCREEN_writeCommand(screen, screen->setXCommand + 1);

@@ -87,7 +87,7 @@ __tsms_internal_screen_draw_line(TSMS_SCHP screen, uint16_t x0, uint16_t y0, uin
 
 TSMS_INLINE TSMS_RESULT
 __tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t w, uint16_t h, TSMS_COLOR color) {
-	if (x >= screen->width || y >= screen->height || x + w >= screen->width || y + h >= screen->height)
+	if (x >= screen->width || y >= screen->height || x + w > screen->width || y + h > screen->height)
 		return TSMS_ERROR;
 	for (uint16_t i = x; i < x + w; i++)
 		for (uint16_t j = y; j < y + h; j++)
@@ -99,9 +99,6 @@ __tsms_internal_screen_fill_rect(TSMS_SCHP screen, uint16_t x, uint16_t y, uint1
 TSMS_INLINE TSMS_RESULT
 __tsms_internal_screen_draw_block(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t offsetX, uint16_t offsetY,
                                   uint16_t blockSize, TSMS_COLOR color) {
-	if (x >= screen->width || y >= screen->height || x + blockSize * offsetX >= screen->width ||
-	    y + blockSize * offsetY >= screen->height)
-		return TSMS_ERROR;
 	return __tsms_internal_screen_fill_rect(screen, x + blockSize * offsetX, y + blockSize * offsetY, blockSize,
 	                                        blockSize, color);
 }
@@ -264,6 +261,8 @@ TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float ref
 		return TSMS_NULL;
 	}
 	display->touch = touch;
+	if (display->touch != TSMS_NULL)
+		display->touch->display = display;
 	display->screen = screen;
 	display->refreshRate = refreshRate;
 	display->lock = TSMS_LOCK_create();
@@ -659,4 +658,41 @@ TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display) {
 		}
 	display->lastTime = now;
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_SCREEN_fillRectTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t width, uint16_t height, TSMS_COLOR color, pLock preLock) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
+	if (lock == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_RESULT result = __tsms_internal_screen_fill_rect(screen, x, screen->height - y, width, height, color);
+	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
+	return result;
+}
+
+TSMS_RESULT TSMS_SCREEN_drawCharTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, char c, TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	if (x >= screen->width || y >= screen->height)
+		return TSMS_ERROR;
+	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
+	if (lock == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_RESULT result = __tsms_internal_screen_draw_char(screen, x, screen->height - y, fontType, font, c, color, size);
+	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
+	return result;
+}
+
+TSMS_RESULT  TSMS_SCREEN_drawStringTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, pString str, TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	if (x >= screen->width || y >= screen->height)
+		return TSMS_ERROR;
+	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(screen->lock, preLock, 0);
+	if (lock == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_RESULT result = __tsms_internal_screen_draw_string(screen, x, screen->height - y, fontType, font, str, color, size);
+	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
+	return result;
 }

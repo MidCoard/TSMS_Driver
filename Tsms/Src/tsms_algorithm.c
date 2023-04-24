@@ -1,11 +1,6 @@
 #include "tsms_algorithm.h"
 #include "tsms_list.h"
-
-TSMS_INLINE void __tsms_internal_swap(void** a, void** b) {
-	void* temp = *a;
-	*a = *b;
-	*b = temp;
-}
+#include "tsms_util.h"
 
 TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_POS first, TSMS_POS last, TSMS_COMPARE_FUNCTION compareFunction) {
 	if (first < last) {
@@ -18,9 +13,9 @@ TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_PO
 			while (compareFunction(data[j], data[pivot]) > 0)
 				j--;
 			if (i < j)
-				__tsms_internal_swap(&data[i], &data[j]);
+				TSMS_UTIL_swap(&data[i], &data[j]);
 		}
-		__tsms_internal_swap(&data[pivot], &data[j]);
+		TSMS_UTIL_swap(&data[pivot], &data[j]);
 		__tsms_internal_quick_sort(data, size, first, j - 1, compareFunction);
 		__tsms_internal_quick_sort(data, size, j + 1, last, compareFunction);
 	}

@@ -89,6 +89,7 @@ struct TSMS_SCREEN_HANDLER {
 };
 
 struct TSMS_TOUCH_HANDLER {
+	TSMS_DPHP display;
 	void* custom;
 	TSMS_RESET_TOUCH_FUNCTION reset;
 	TSMS_TOUCH_TYPE type;
@@ -180,6 +181,12 @@ TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SC
 TSMS_RESULT TSMS_DISPLAY_reset(TSMS_DPHP display);
 
 TSMS_RESULT TSMS_DISPLAY_request(TSMS_DPHP display);
+
+TSMS_RESULT TSMS_SCREEN_fillRectTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, uint16_t width, uint16_t height, TSMS_COLOR color, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawCharTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, char c, TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock);
+
+TSMS_RESULT TSMS_SCREEN_drawStringTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, pString str, TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock);
 
 
 #endif //TSMS_DISPLAY_H

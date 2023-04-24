@@ -60,7 +60,13 @@ uint32_t TSMS_UTIL_color888(TSMS_COLOR color) {
 	return (color.red & 0xFF) << 16 | (color.green & 0xFF) << 8 | (color.blue & 0xFF);
 }
 
-void TSMS_UTIL_swap(uint16_t* a, uint16_t* b) {
+void TSMS_UTIL_swap(void** a, void** b) {
+	void* t = *a;
+	*a = *b;
+	*b = t;
+}
+
+void TSMS_UTIL_swapUnsignedShort(uint16_t* a, uint16_t* b) {
 	uint16_t t = *a;
 	*a = *b;
 	*b = t;

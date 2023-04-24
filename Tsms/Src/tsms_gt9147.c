@@ -5,6 +5,7 @@
 #include "tsms_printer.h"
 #include "tsms_lock.h"
 #include "tsms_list.h"
+#include "tsms_util.h"
 
 static uint8_t gt9147CommandBuffer[4];
 
@@ -138,6 +139,10 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 				uint16_t x = gt9147Buffer[i * 8 + 1] | (gt9147Buffer[i * 8 + 2] << 8);
 				uint16_t y = gt9147Buffer[i * 8 + 3] | (gt9147Buffer[i * 8 + 4] << 8);
 				uint16_t size = gt9147Buffer[i * 8 + 5] | (gt9147Buffer[i * 8 + 6] << 8);
+				if (touch->display->screen->displayDirection == TSMS_DISPLAY_HORIZONTAL) {
+					TSMS_UTIL_swapUnsignedShort(&x, &y);
+					x = touch->display->screen->width - x;
+				}
 				bool flag = false;
 				if (touch->callback != TSMS_NULL)
 					flag = touch->callback(touch, id, x, y, size, touch->handler);

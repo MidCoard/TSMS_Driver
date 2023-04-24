@@ -6,4 +6,6 @@
 
 TSMS_LSIZE min(TSMS_LSIZE a, TSMS_LSIZE b);
 
+TSMS_LSIZE max(TSMS_LSIZE a, TSMS_LSIZE b);
+
 #endif //TSMS_MATH_H

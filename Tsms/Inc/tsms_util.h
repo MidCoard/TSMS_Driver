@@ -32,7 +32,9 @@ uint16_t TSMS_UTIL_color565(TSMS_COLOR color);
 
 uint32_t TSMS_UTIL_color888(TSMS_COLOR color);
 
-void TSMS_UTIL_swap(uint16_t* a, uint16_t* b);
+void TSMS_UTIL_swap(void** a, void** b);
+
+void TSMS_UTIL_swapUnsignedShort(uint16_t* a, uint16_t* b);
 
 TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float ratio);
 
