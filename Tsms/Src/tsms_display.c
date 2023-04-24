@@ -13,9 +13,9 @@
 #include "screen/tsms_ssd1963.h"
 
 TSMS_INLINE TSMS_RESULT __tsms_internal_touch_reset(TSMS_THP touch) {
-	TSMS_GPIO_write(touch->resetPin, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(touch->resetPin, TSMS_GPIO_STATUS_LOW);
 	TSMS_delay(10);
-	TSMS_GPIO_write(touch->resetPin, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(touch->resetPin, TSMS_GPIO_STATUS_HIGH);
 	TSMS_delay(10);
 	return TSMS_SUCCESS;
 }
@@ -109,7 +109,7 @@ __tsms_internal_screen_draw_char(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_
 	if (x >= screen->width || y >= screen->height)
 		return TSMS_ERROR;
 	TSMS_FONT_DATA data = TSMS_FONT_resolve(fontType, font, c);
-	if (data.type == TSMS_INVALID_FONT)
+	if (data.type == TSMS_FONT_TYPE_INVALID)
 		return TSMS_ERROR;
 	for (uint16_t i = 0; i < data.width; i++)
 		for (uint16_t j = 0; j < data.height; j++)
@@ -335,13 +335,13 @@ TSMS_RESULT TSMS_DISPLAY_reset(TSMS_DPHP display) {
 TSMS_RESULT TSMS_SCREEN_enableBackgroudLight(TSMS_SCHP screen) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-	return TSMS_GPIO_write(screen->bg, TSMS_GPIO_HIGH);
+	return TSMS_GPIO_write(screen->bg, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_RESULT TSMS_SCREEN_disableBackgroudLight(TSMS_SCHP screen) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-	return TSMS_GPIO_write(screen->bg, TSMS_GPIO_LOW);
+	return TSMS_GPIO_write(screen->bg, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_RESULT TSMS_SCREEN_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRECTION direction) {

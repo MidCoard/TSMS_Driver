@@ -6,6 +6,7 @@ typedef enum {
 } TSMS_DRIVER_TYPE;
 
 #include "tsms_def.h"
+#include "tsms_iic.h"
 
 struct TSMS_REGISTER_HANDLER {
 	uint32_t address;

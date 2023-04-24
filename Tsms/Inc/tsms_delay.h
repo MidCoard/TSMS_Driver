@@ -1,10 +1,16 @@
 #ifndef TSMS_DELAY_H
 #define TSMS_DELAY_H
 
-#include "tsms_def.h"
+#define TSMS_NO_DELAY_TIME (TSMS_DELAY_TIME)(-1)
+
+typedef enum  {
+	TSMS_DELAY_UNIT_S,
+	TSMS_DELAY_UNIT_MS,
+	TSMS_DELAY_UNIT_US,
+	TSMS_DELAY_UNIT_NS
+}TSMS_DELAY_UNIT;
 
 typedef int32_t TSMS_DELAY_TIME;
-#define TSMS_NO_DELAY_TIME (TSMS_DELAY_TIME)(-1)
 
 typedef void(*TSMS_DELAY_FUNCTION)();
 

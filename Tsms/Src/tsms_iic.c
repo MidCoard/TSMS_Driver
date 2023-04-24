@@ -12,19 +12,19 @@ TSMS_INLINE void __tsms_iic_delay() {
 }
 
 TSMS_INLINE void __tsms_iic_sda_high(TSMS_IHP iic) {
-	TSMS_GPIO_write(iic->sda, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(iic->sda, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_INLINE void __tsms_iic_sda_low(TSMS_IHP iic) {
-	TSMS_GPIO_write(iic->sda, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(iic->sda, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_INLINE void __tsms_iic_scl_high(TSMS_IHP iic) {
-	TSMS_GPIO_write(iic->scl, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(iic->scl, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_INLINE void __tsms_iic_scl_low(TSMS_IHP iic) {
-	TSMS_GPIO_write(iic->scl, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(iic->scl, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_INLINE void __tsms_internal_iic_release0(TSMS_IHP iic) {
@@ -42,7 +42,7 @@ TSMS_INLINE void __tsms_internal_iic_release1(TSMS_IHP iic) {
 
 TSMS_GPIO_STATUS TSMS_IIC_readBit(TSMS_IHP handler) {
 	if (handler == TSMS_NULL)
-		return TSMS_GPIO_ERROR;
+		return TSMS_GPIO_STATUS_ERROR;
 	handler->delay();
 	handler->delay();
 	__tsms_iic_scl_high(handler);
@@ -207,7 +207,7 @@ TSMS_RESULT TSMS_IIC_write(TSMS_IHP handler, uint8_t v) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	for (int i = 0; i < 8; i++) {
-		TSMS_IIC_writeBit(handler, (v & (0x80)) ? TSMS_GPIO_HIGH : TSMS_GPIO_LOW);
+		TSMS_IIC_writeBit(handler, (v & (0x80)) ? TSMS_GPIO_STATUS_HIGH : TSMS_GPIO_STATUS_LOW);
 		v <<= 1;
 	}
 	return TSMS_SUCCESS;
@@ -285,7 +285,7 @@ TSMS_RESULT TSMS_IIC_writeCustomRegister(TSMS_IHP handler, uint32_t reg, TSMS_BI
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	static uint8_t buffer[8];
-	if (handler->type == TSMS_TRANSFER_LSB) {
+	if (handler->type == TSMS_TRANSFER_TYPE_LSB) {
 		for (int i = 0; i < regBits + 1; i++)
 			buffer[i] = TSMS_UTIL_reverseByte((reg >> (i * 8)) & 0xff);
 		for (int i = 0; i < bits + 1; i++)
@@ -304,7 +304,7 @@ TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint32_t reg, TSMS_BIT
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	static uint8_t buffer[4];
-	if (handler->type == TSMS_TRANSFER_LSB)
+	if (handler->type == TSMS_TRANSFER_TYPE_LSB)
 		for (int i = 0; i < regBits + 1; i++)
 			buffer[i] = TSMS_UTIL_reverseByte((reg >> (i * 8)) & 0xff);
 	else
@@ -317,7 +317,7 @@ TSMS_RESULT TSMS_IIC_readCustomRegister(TSMS_IHP handler, uint32_t reg, TSMS_BIT
 	if (result != TSMS_SUCCESS)
 		return result;
 	*data = 0;
-	if (handler->type == TSMS_TRANSFER_LSB)
+	if (handler->type == TSMS_TRANSFER_TYPE_LSB)
 		for (int i = 0; i < bits + 1; i++)
 			*data |= TSMS_UTIL_reverseByte(buffer[i]) << (i * 8);
 	else

@@ -1,7 +1,7 @@
 #ifndef TSMS_AD7606_H
 #define TSMS_AD7606_H
 
-#include "tsms.h"
+#include "tsms_gpio.h"
 
 struct AD7606_Handler {
 	TSMS_DHP handler;

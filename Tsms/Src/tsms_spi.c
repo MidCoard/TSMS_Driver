@@ -6,27 +6,27 @@ TSMS_INLINE void __tsms_internal_spi_delay() {
 }
 
 TSMS_INLINE void __tsms_spi_sclk_high(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_INLINE void __tsms_spi_sclk_low(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(spi->sclk, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_INLINE void __tsms_spi_cs_high(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->cs, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(spi->cs, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_INLINE void __tsms_spi_cs_low(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->cs, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(spi->cs, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_INLINE void __tsms_spi_dout_high(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->dout, TSMS_GPIO_HIGH);
+	TSMS_GPIO_write(spi->dout, TSMS_GPIO_STATUS_HIGH);
 }
 
 TSMS_INLINE void __tsms_spi_dout_low(TSMS_SHP spi) {
-	TSMS_GPIO_write(spi->dout, TSMS_GPIO_LOW);
+	TSMS_GPIO_write(spi->dout, TSMS_GPIO_STATUS_LOW);
 }
 
 TSMS_INLINE TSMS_GPIO_STATUS __tsms_spi_din(TSMS_SHP spi) {
@@ -39,7 +39,7 @@ TSMS_INLINE void __tsms_spi_receive_custom_bit(TSMS_SHP spi, uint8_t bits, uint3
 		for (uint8_t i = 0; i < bits; i++) {
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			if (!TSMS_SPI_MODE_CPHA(spi->mode))
-				*data |= __tsms_spi_din(spi) << (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i);
+				*data |= __tsms_spi_din(spi) << (spi->type == TSMS_TRANSFER_TYPE_MSB ? bits - i - 1 : i);
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			TSMS_GPIO_write(spi->sclk, !TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -51,7 +51,7 @@ TSMS_INLINE void __tsms_spi_receive_custom_bit(TSMS_SHP spi, uint8_t bits, uint3
 			TSMS_GPIO_write(spi->sclk, !TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			if (TSMS_SPI_MODE_CPHA(spi->mode))
-				*data |= __tsms_spi_din(spi) << (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i);
+				*data |= __tsms_spi_din(spi) << (spi->type == TSMS_TRANSFER_TYPE_MSB ? bits - i - 1 : i);
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			TSMS_GPIO_write(spi->sclk, TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -65,7 +65,7 @@ TSMS_INLINE void __tsms_spi_transmit_custom_bit(TSMS_SHP spi, uint8_t bits, uint
 		for (uint8_t i = 0; i < bits; i++) {
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			if (!TSMS_SPI_MODE_CPHA(spi->mode))
-				TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i)) & 0x01);
+				TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_TYPE_MSB ? bits - i - 1 : i)) & 0x01);
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			TSMS_GPIO_write(spi->sclk, !TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -77,7 +77,7 @@ TSMS_INLINE void __tsms_spi_transmit_custom_bit(TSMS_SHP spi, uint8_t bits, uint
 			TSMS_GPIO_write(spi->sclk, !TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			if (TSMS_SPI_MODE_CPHA(spi->mode))
-				TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_MSB ? bits - i - 1 : i)) & 0x01);
+				TSMS_GPIO_write(spi->dout, (data >> (spi->type == TSMS_TRANSFER_TYPE_MSB ? bits - i - 1 : i)) & 0x01);
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 			TSMS_GPIO_write(spi->sclk, TSMS_SPI_MODE_CPOL(spi->mode));
 			TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -206,7 +206,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 		return TSMS_FAIL;
 #endif
 	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_high(spi);
 		else __tsms_spi_cs_low(spi);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -215,7 +215,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 			__tsms_spi_transmit_custom_bit(spi, bits, data[i]);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_low(spi);
 		else __tsms_spi_cs_high(spi);
 		return TSMS_SUCCESS;
@@ -233,7 +233,7 @@ TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bit
 		return TSMS_FAIL;
 #endif
 	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_high(spi);
 		else __tsms_spi_cs_low(spi);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -242,7 +242,7 @@ TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bit
 			__tsms_spi_receive_custom_bit(spi, bits, data + i);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_low(spi);
 		else __tsms_spi_cs_high(spi);
 		return TSMS_SUCCESS;
@@ -261,7 +261,7 @@ TSMS_RESULT TSMS_SPI_transform(TSMS_SHP spi, uint32_t *data, uint8_t writeBits, 
 		return TSMS_FAIL;
 #endif
 	} else {
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_high(spi);
 		else __tsms_spi_cs_low(spi);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -272,7 +272,7 @@ TSMS_RESULT TSMS_SPI_transform(TSMS_SHP spi, uint32_t *data, uint8_t writeBits, 
 			__tsms_spi_receive_custom_bit(spi, readBits, data + i);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_low(spi);
 		else __tsms_spi_cs_high(spi);
 		return TSMS_SUCCESS;
@@ -292,7 +292,7 @@ TSMS_RESULT TSMS_SPI_sequenceTransform(TSMS_SHP spi, uint32_t n, ...) {
 	} else {
 		va_list args;
 		va_start(args, n);
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_high(spi);
 		else __tsms_spi_cs_low(spi);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
@@ -306,7 +306,7 @@ TSMS_RESULT TSMS_SPI_sequenceTransform(TSMS_SHP spi, uint32_t n, ...) {
 		}
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
 		TSMS_SPI_delay(spi, TSMS_NO_DELAY_TIME);
-		if (spi->csValid == TSMS_GPIO_HIGH)
+		if (spi->csValid == TSMS_GPIO_STATUS_HIGH)
 			__tsms_spi_cs_low(spi);
 		else __tsms_spi_cs_high(spi);
 		va_end(args);

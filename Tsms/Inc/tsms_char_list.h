@@ -1,6 +1,9 @@
 #ifndef TSMS_CHAR_LIST_H
 #define TSMS_CHAR_LIST_H
 
+typedef struct TSMS_CHAR_LIST *TSMS_CHAR_LIST_POINTER;
+typedef TSMS_CHAR_LIST_POINTER TSMS_CLP;
+
 #include "tsms_def.h"
 
 struct TSMS_CHAR_LIST {

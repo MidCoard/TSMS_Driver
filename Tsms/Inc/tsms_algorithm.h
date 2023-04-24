@@ -2,8 +2,7 @@
 #define TSMS_ALGORITHM_H
 
 #include "tsms_def.h"
-
-typedef int (*TSMS_COMPARE_FUNCTION)(void *a, void *b);
+#include "tsms_function_def.h"
 
 TSMS_RESULT TSMS_ALGORITHM_sort(TSMS_LP list, TSMS_COMPARE_FUNCTION compareFunction);
 

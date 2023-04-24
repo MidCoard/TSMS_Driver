@@ -1,7 +1,12 @@
 #ifndef TSMS_STRING_H
 #define TSMS_STRING_H
 
+typedef struct TSMS_STRING_HANDLER tString;
+typedef tString *pString;
+
 #include "tsms_def.h"
+#include "tsms_char_list.h"
+#include "tsms_list.h"
 
 extern pString TSMS_EMPTY_STRING;
 

@@ -30,6 +30,10 @@ typedef enum {
 }TSMS_SCAN_DIRECTION;
 
 #include "tsms_def.h"
+#include "tsms_font.h"
+#include "tsms_timer.h"
+#include "tsms_lock.h"
+#include "tsms_gpio.h"
 
 typedef TSMS_RESULT(*TSMS_SCREEN_FUNCTION)(TSMS_SCHP);
 typedef TSMS_RESULT(*TSMS_INIT_SCREEN_FUNCTION)(TSMS_SCHP screen, void* option);

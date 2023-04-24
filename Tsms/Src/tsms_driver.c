@@ -260,7 +260,7 @@ TSMS_RHLP TSMS_REG_createList(int n, ...) {
 	}
 	memset(list->ids, 0, sizeof(uint8_t) * list->maxSize);
 	memset(list->sizes, 0, sizeof(uint8_t) * list->maxSize);
-	memset(list->types, TSMS_REGISTER_MSB, sizeof(TSMS_REGISTER_DATA_TYPE) * list->maxSize);
+	memset(list->types, TSMS_REGISTER_DATA_TYPE_MSB, sizeof(TSMS_REGISTER_DATA_TYPE) * list->maxSize);
 	memset(list->starts, 0, sizeof(uint8_t) * list->maxSize);
 	uint8_t previous = -1;
 	for (int i = 0; i < n; i++)
@@ -322,7 +322,7 @@ TSMS_RESULT TSMS_REG_writeRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t v
 	if (list->maxSize <= pos || pos < 0)
 		return TSMS_FAIL;
 	uint8_t temp;
-	if (list->types[pos] == TSMS_REGISTER_MSB)
+	if (list->types[pos] == TSMS_REGISTER_DATA_TYPE_MSB)
 		temp = value;
 	else
 		temp = TSMS_UTIL_reverseData(value, list->sizes[pos]);
@@ -338,7 +338,7 @@ TSMS_RESULT TSMS_REG_readRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t *v
 	TSMS_RESULT result = TSMS_REG_readAt(list->regs[list->ids[pos]], list->starts[pos], list->sizes[pos], &val);
 	if (result != TSMS_SUCCESS)
 		return result;
-	if (list->types[pos] == TSMS_REGISTER_MSB)
+	if (list->types[pos] == TSMS_REGISTER_DATA_TYPE_MSB)
 		*value = val;
 	else
 		*value = TSMS_UTIL_reverseData(val, list->sizes[pos]);
@@ -349,7 +349,7 @@ uint32_t TSMS_REG_tempWriteRegisterByList(TSMS_RHLP list, uint8_t pos, uint32_t 
 	if (list->maxSize <= pos || pos < 0)
 		return TSMS_FAIL;
 	uint8_t temp;
-	if (list->types[pos] == TSMS_REGISTER_MSB)
+	if (list->types[pos] == TSMS_REGISTER_DATA_TYPE_MSB)
 		temp = value;
 	else
 		temp = TSMS_UTIL_reverseData(value, list->sizes[pos]);

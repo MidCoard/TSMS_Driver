@@ -3,7 +3,7 @@
 
 const bool TSMS_SET_TRUE = true;
 
-TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare) {
+TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare) {
 	TSMS_SP set = (TSMS_SP) malloc(sizeof(struct TSMS_SET));
 	if (set == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp(" malloc failed for set");

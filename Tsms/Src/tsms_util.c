@@ -36,15 +36,15 @@ uint8_t *TSMS_UTIL_streamAppend(uint8_t * stream, TSMS_SIZE size, uint8_t * data
 TSMS_BITS TSMS_UTIL_bits(uint8_t bits) {
 	switch (bits) {
 		case 8:
-			return TSMS_8BIT;
+			return TSMS_BITS_8BIT;
 		case 16:
-			return TSMS_16BIT;
+			return TSMS_BITS_16BIT;
 		case 24:
-			return TSMS_24BIT;
+			return TSMS_BITS_24BIT;
 		case 32:
-			return TSMS_32BIT;
+			return TSMS_BITS_32BIT;
 		default:
-			return TSMS_8BIT;
+			return TSMS_BITS_8BIT;
 	}
 }
 

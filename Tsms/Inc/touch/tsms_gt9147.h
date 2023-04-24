@@ -10,6 +10,7 @@
 #define TSMS_GT9147_REG_STATUS_ADDRESS 0x814E
 
 #include "tsms_display.h"
+#include "tsms_iic.h"
 
 extern uint8_t TSMS_GT9147_CUSTOM_CFG_TBL[];
 

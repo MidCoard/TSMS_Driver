@@ -1,8 +1,13 @@
 #ifndef TSMS_PRINTER_H
 #define TSMS_PRINTER_H
 
-#include "tsms.h"
+typedef struct TSMS_PRINTER_HANDLER *TSMS_PRINTER_HANDLER_POINTER;
+typedef TSMS_PRINTER_HANDLER_POINTER TSMS_PHP;
+
+typedef void(*TSMS_IT_PRINTER_CALLBACK)(void *, TSMS_PHP);
 typedef void (*TSMS_PRINTER_CALLBACK)(void *handler, TSMS_PHP printer);
+
+#include "tsms.h"
 
 struct TSMS_PRINTER_HANDLER {
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)

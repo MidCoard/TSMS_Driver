@@ -13,7 +13,7 @@ struct TSMS_SET_ITERATOR {
 	TSMS_MI mapIterator;
 };
 
-TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare);
+TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare);
 
 TSMS_RESULT TSMS_SET_add(TSMS_SP set, void* key);
 

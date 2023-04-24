@@ -22,9 +22,10 @@ TSMS_INLINE void __tsms_internal_quick_sort(void** data, TSMS_SIZE size, TSMS_PO
 }
 
 TSMS_RESULT TSMS_ALGORITHM_sort(TSMS_LP list, TSMS_COMPARE_FUNCTION compareFunction) {
-	if (list == TSMS_NULL || compareFunction == TSMS_NULL) {
+	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	}
+	if (compareFunction == TSMS_NULL)
+		return TSMS_ERROR;
 	TSMS_SIZE size = list->length;
 	__tsms_internal_quick_sort(list->list, size, 0, size - 1, compareFunction);
 	return TSMS_SUCCESS;

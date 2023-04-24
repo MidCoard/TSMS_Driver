@@ -1,12 +1,14 @@
 #ifndef TSMS_TIMER_H
 #define TSMS_TIMER_H
 
-typedef enum  {
-	TSMS_DELAY_UNIT_S,
-	TSMS_DELAY_UNIT_MS,
-	TSMS_DELAY_UNIT_US,
-	TSMS_DELAY_UNIT_NS
-}TSMS_DELAY_UNIT;
+typedef enum {
+	TSMS_IT_TIMER_PERIOD_ELAPSED, TSMS_IT_TIMER_CAPTURE
+} TSMS_IT_TIMER_TYPE;
+
+typedef struct TSMS_TIMER_HANDLER tTimer;
+typedef tTimer *pTimer;
+
+typedef void(*TSMS_IT_TIMER_CALLBACK)(void *, pTimer);
 
 #include "tsms.h"
 
@@ -35,6 +37,7 @@ struct TSMS_TIMER_HANDLER {
 #ifdef TSMS_STM32_TIMER
 pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option);
 #endif
+
 TSMS_RESULT TSMS_TIMER_start(pTimer timer);
 
 TSMS_RESULT TSMS_TIMER_stop(pTimer timer);

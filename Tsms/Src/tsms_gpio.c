@@ -32,11 +32,11 @@ TSMS_RESULT TSMS_GPIO_write(TSMS_GHP gpio, TSMS_GPIO_STATUS status) {
 
 TSMS_GPIO_STATUS TSMS_GPIO_read(TSMS_GHP gpio) {
 	if (gpio == TSMS_NULL_GHP)
-		return TSMS_GPIO_ERROR;
+		return TSMS_GPIO_STATUS_ERROR;
 #ifdef TSMS_STM32_GPIO
-	return HAL_GPIO_ReadPin(gpio->port, gpio->pin) ? TSMS_GPIO_HIGH : TSMS_GPIO_LOW;
+	return HAL_GPIO_ReadPin(gpio->port, gpio->pin) ? TSMS_GPIO_STATUS_HIGH : TSMS_GPIO_STATUS_LOW;
 #else
-	return TSMS_GPIO_ERROR;
+	return TSMS_GPIO_STATUS_ERROR;
 #endif
 }
 

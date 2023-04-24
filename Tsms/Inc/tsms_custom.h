@@ -2,6 +2,7 @@
 #define TSMS_CUSTOM_H
 
 #include "tsms_def.h"
+#include "tsms_gpio.h"
 
 struct TSMS_CUSTOM_HANDLER {
 	TSMS_GHP sda;

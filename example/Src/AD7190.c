@@ -48,7 +48,7 @@ AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, ui
 	                                                                               TSMS_GPIO_createHandler(mosi,
 	                                                                                                       mosiPin),
 	                                                                               TSMS_SPI_MODE_3, false,
-	                                                                               TSMS_TRANSFER_MSB),
+	                                                                               TSMS_TRANSFER_TYPE_MSB),
 	                                                TSMS_REG_createList(9,
 	                                                                    TSMS_REG_8BitRegister(AD7190_REG_COMM, AD7190_RESERVE,
 	                                                                                          AD7190_RESERVE,

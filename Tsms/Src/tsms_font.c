@@ -1,4 +1,5 @@
 #include "tsms_font.h"
+#include "font/tsms_array_font.h"
 
 pString TSMS_FONT_defaultFont;
 pString TSMS_FONT_thickFont;
@@ -27,91 +28,91 @@ TSMS_FONT_DATA TSMS_FONT_resolve(TSMS_FONT_TYPE type, void* font, uint8_t c) {
 	uint8_t width = 0;
 	uint8_t height = 0;
 	TSMS_SIZE bits = 0;
-	if (type == TSMS_ARRAY_FONT) {
+	if (type == TSMS_FONT_TYPE_ARRAY) {
 		pString name = font;
 		if (TSMS_STRING_equals(name, TSMS_FONT_defaultFont)) {
 			if (c - 32 >= 94)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_DEFAULT_FONT[c - 32];
 			width = TSMS_FONT_DEFAULT_FONT_WIDTH;
 			height = TSMS_FONT_DEFAULT_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_thickFont)) {
 			if (c - 32 >= 59)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_THICK_FONT[c - 32];
 			width = TSMS_FONT_THICK_FONT_WIDTH;
 			height = TSMS_FONT_THICK_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_homeSpunFont)) {
 			if (c - 32 >= 95)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_HOME_SPUN_FONT[c - 32];
 			width = TSMS_FONT_HOME_SPUN_FONT_WIDTH;
 			height = TSMS_FONT_HOME_SPUN_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_sevenSegFont)) {
 			if (c - 32 >= 92)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_SEVEN_SEG_FONT[c - 32];
 			width = TSMS_FONT_SEVEN_SEG_FONT_WIDTH;
 			height = TSMS_FONT_SEVEN_SEG_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_wideFont)) {
 			if (c - 32 >= 59)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_WIDE_FONT[c - 32];
 			width = TSMS_FONT_WIDE_FONT_WIDTH;
 			height = TSMS_FONT_WIDE_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_tinyFont)) {
 			if (c - 32 >= 95)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_TINY_FONT[c - 32];
 			width = TSMS_FONT_TINY_FONT_WIDTH;
 			height = TSMS_FONT_TINY_FONT_HEIGHT;
-			bits = TSMS_8BIT;
+			bits = TSMS_BITS_8BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_largeFont)) {
 			if (c - 32 >= 59)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0,0,0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_LARGE_FONT[c - 32];
 			width = TSMS_FONT_LARGE_FONT_WIDTH;
 			height = TSMS_FONT_LARGE_FONT_HEIGHT;
-			bits = TSMS_16BIT;
+			bits = TSMS_BITS_16BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_hugeFont)) {
 			if (c - '.' >= 13)
-				return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_HUGE_FONT[c - '.'];
 			width = TSMS_FONT_HUGE_FONT_WIDTH;
 			height = TSMS_FONT_HUGE_FONT_HEIGHT;
-			bits = TSMS_24BIT;
+			bits = TSMS_BITS_24BIT;
 		} else if (TSMS_STRING_equals(name, TSMS_FONT_megaFont)) {
 			if (c - '.' >= 13)
-				return (TSMS_FONT_DATA) {TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
+				return (TSMS_FONT_DATA) {TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
 			data = TSMS_FONT_MEGA_FONT[c - '.'];
 			width = TSMS_FONT_MEGA_FONT_WIDTH;
 			height = TSMS_FONT_MEGA_FONT_HEIGHT;
-			bits = TSMS_32BIT;
-		} else return (TSMS_FONT_DATA){TSMS_INVALID_FONT, TSMS_NULL, 0, 0, 0};
-	} else if (type == TSMS_FILE_FONT) {
+			bits = TSMS_BITS_32BIT;
+		} else return (TSMS_FONT_DATA){TSMS_FONT_TYPE_INVALID, TSMS_NULL, 0, 0, 0};
+	} else if (type == TSMS_FONT_TYPE_FILE) {
 
 	}
 	return (TSMS_FONT_DATA){type, data, width, height, bits};
 }
 
 bool TSMS_FONT_pixel(TSMS_FONT_DATA font, uint8_t x, uint8_t y) {
-	if (font.type == TSMS_ARRAY_FONT) {
+	if (font.type == TSMS_FONT_TYPE_ARRAY) {
 		void * data = font.data;
 		switch (font.bits) {
-			case TSMS_8BIT:
+			case TSMS_BITS_8BIT:
 				return ((uint8_t*)data)[x] & (1 << y);
-			case TSMS_16BIT:
+			case TSMS_BITS_16BIT:
 				return ((uint16_t*)data)[x] & (1 << y);
-			case TSMS_24BIT:
-			case TSMS_32BIT:
+			case TSMS_BITS_24BIT:
+			case TSMS_BITS_32BIT:
 				return ((uint32_t*)data)[x] & (1 << y);
 		}
-	} else if (font.type == TSMS_FILE_FONT) {
+	} else if (font.type == TSMS_FONT_TYPE_FILE) {
 
 	}
 	return false;

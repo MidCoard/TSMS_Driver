@@ -1,7 +1,7 @@
 #ifndef TSMS_DAC8831_H
 #define TSMS_DAC8831_H
 
-#include "tsms.h"
+#include "tsms_gpio.h"
 
 struct DAC8831_Handler {
 	TSMS_DHP handler;

@@ -77,7 +77,7 @@ TSMS_RESULT TSMS_CUSTOM_parallelWrite(TSMS_CHP handler, const uint32_t *data, ui
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_RESULT result;
-	if (handler->transferType == TSMS_TRANSFER_MSB)
+	if (handler->transferType == TSMS_TRANSFER_TYPE_MSB)
 		for (int i = 0; i < length; i++) {
 			for (int j = 0; j < handler->list->length; j++) {
 				TSMS_GHP ghp = TSMS_CUSTOM_getGPIO(handler, j);
@@ -86,7 +86,7 @@ TSMS_RESULT TSMS_CUSTOM_parallelWrite(TSMS_CHP handler, const uint32_t *data, ui
 			}
 			TSMS_CUSTOM_delay(handler, TSMS_NO_DELAY_TIME);
 		}
-	else if (handler->transferType == TSMS_TRANSFER_LSB)
+	else if (handler->transferType == TSMS_TRANSFER_TYPE_LSB)
 		for (int i = 0; i < length; i++) {
 			for (int j = 0; j < handler->list->length; j++) {
 				TSMS_GHP ghp = TSMS_CUSTOM_getGPIO(handler, j);
@@ -101,24 +101,24 @@ TSMS_RESULT TSMS_CUSTOM_parallelWrite(TSMS_CHP handler, const uint32_t *data, ui
 TSMS_RESULT TSMS_CUSTOM_parallelRead(TSMS_CHP handler, uint32_t *data, uint32_t length) {
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
-	if (handler->transferType == TSMS_TRANSFER_MSB)
+	if (handler->transferType == TSMS_TRANSFER_TYPE_MSB)
 		for (int i = 0; i < length; i++) {
 			data[i] = 0;
 			for (int j = 0; j < handler->list->length; j++) {
 				TSMS_GHP ghp = TSMS_CUSTOM_getGPIO(handler, j);
 				uint32_t value = TSMS_GPIO_read(ghp);
-				if (value == TSMS_GPIO_ERROR)
+				if (value == TSMS_GPIO_STATUS_ERROR)
 					return TSMS_ERROR;
 				data[i] |= value << (handler->list->length - j - 1);
 			}
 			TSMS_CUSTOM_delay(handler, TSMS_NO_DELAY_TIME);
 		}
-	else if (handler->transferType == TSMS_TRANSFER_LSB)
+	else if (handler->transferType == TSMS_TRANSFER_TYPE_LSB)
 		for (int i = 0; i < length; i++) {
 			for (int j = 0; j < handler->list->length; j++) {
 				TSMS_GHP ghp = TSMS_CUSTOM_getGPIO(handler, j);
 				uint32_t value = TSMS_GPIO_read(ghp);
-				if (value == TSMS_GPIO_ERROR)
+				if (value == TSMS_GPIO_STATUS_ERROR)
 					return TSMS_ERROR;
 				data[i] |= value << j;
 			}

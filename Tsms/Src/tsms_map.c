@@ -39,7 +39,7 @@ TSMS_INLINE bool __tsms_internal_compare(TSMS_MP map, void * key1, void * key2) 
 	return map->compare(key1, key2) == 0;
 }
 
-TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_MAP_HASH_FUNCTION hash, TSMS_MAP_COMPARE_FUNCTION compare) {
+TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare) {
 	TSMS_MP map = malloc(sizeof(struct TSMS_MAP));
 	if (map == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for map");

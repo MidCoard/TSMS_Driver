@@ -29,7 +29,7 @@ ADS1115_initHardware(GPIO_TypeDef *sda, uint16_t sdaPin, GPIO_TypeDef *scl, uint
 			TSMS_GPIO_createHandler(sda, sdaPin),
 			TSMS_GPIO_createHandler(scl, sclPin),
 			address,
-			TSMS_TRANSFER_MSB
+			TSMS_TRANSFER_TYPE_MSB
 	), TSMS_REG_createList(5,
 	                       TSMS_REG_8BitRegister(ADS1115_REG_ADDRESS_POINTER, ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_P, ADS1115_RESERVE,
 	                                             ADS1115_RESERVE, ADS1115_RESERVE, ADS1115_RESERVE),
