@@ -40,7 +40,7 @@ struct TSMS_SPI_HANDLER {
 	TSMS_TRANSFER_TYPE type;
 	TSMS_SPI_RELEASE_FUNCTION release;
 
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 	SPI_HandleTypeDef * hardwareHandler;
 #endif
 };
@@ -52,25 +52,14 @@ struct TSMS_SPI_OPERATION {
 	uint32_t length;
 };
 
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 
-#if defined(TSMS_STM32_SPI_USE_HAL_GPIO)
-TSMS_SHP TSMS_SPI_createSoftwareHandlerInternal(GPIO_TypeDef * csPort, uint16_t csPin,
-										GPIO_TypeDef * sclkPort, uint16_t sclkPin,
-										GPIO_TypeDef * dinPort, uint16_t dinPin,
-										GPIO_TypeDef * doutPort, uint16_t doutPin,
-										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
-#else
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP dout, TSMS_GHP din, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
-#endif
 
-TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi);
-#else
+#endif
 
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode,
                                         TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type);
-
-#endif
 
 TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bits, uint32_t length);
 

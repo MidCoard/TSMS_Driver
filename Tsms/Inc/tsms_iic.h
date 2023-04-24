@@ -20,25 +20,18 @@ struct TSMS_IIC_HANDLER {
 	TSMS_TRANSFER_TYPE type;
 	uint8_t address;
 
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
+#ifdef TSMS_STM32_IIC
 	I2C_HandleTypeDef * hardwareHandler;
 #endif
 };
 
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
-#if defined(TSMS_STM32_IIC_USE_HAL_GPIO)
-TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * csPort, uint16_t csPin,
-									GPIO_TypeDef * sclkPort, uint16_t sclkPin,
-									uint8_t address, TSMS_TRANSFER_TYPE type);
-#else
-TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type);
-#endif
+#ifdef TSMS_STM32_IIC
+
 TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type);
-#else
-
-TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type);
 
 #endif
+
+TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type);
 
 TSMS_RESULT TSMS_IIC_release(TSMS_IHP iic);
 

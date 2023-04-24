@@ -27,7 +27,7 @@ TSMS_INLINE void __tsms_internal_iic_scl_low(TSMS_IHP iic) {
 }
 
 TSMS_INLINE void __tsms_internal_iic_release0(TSMS_IHP iic) {
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
+#ifdef TSMS_STM32_IIC
 	HAL_I2C_DeInit(iic->hardwareHandler);
 #endif
 	free(iic);
@@ -68,63 +68,6 @@ TSMS_RESULT TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 	return TSMS_SUCCESS;
 }
 
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
-#if defined(TSMS_STM32_IIC_USE_HAL_GPIO)
-TSMS_IHP TSMS_IIC_createSoftwareIIC(GPIO_TypeDef * sdaPort, uint16_t sdaPin,
-									GPIO_TypeDef * sclPort, uint16_t sclPin,
-									uint8_t address, TSMS_TRANSFER_TYPE type) {
-	TSMS_IHP iic = malloc(sizeof (struct TSMS_IIC_HANDLER));
-	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
-		return TSMS_NULL;
-	}
-	iic->sda = TSMS_GPIO_createHandler(sdaPort, sdaPin);
-	iic->scl = TSMS_GPIO_createHandler(sclPort, sclPin);
-	TSMS_GPIO_setMode(iic->sda, TSMS_GPIO_MODE_OUTPUT_PULL_PUSH, TSMS_GPIO_PULL_NONE);
-	TSMS_GPIO_setMode(iic->scl, TSMS_GPIO_MODE_OUTPUT_PULL_PUSH, TSMS_GPIO_PULL_NONE);
-	TSMS_IIC_SDA_HIGH(iic);
-	TSMS_IIC_SCL_HIGH(iic);
-	iic->isHardware = false;
-	iic->delay = __tsms_iic_delay;
-	iic->address = address;
-	iic->type = type;
-	iic->release = __tsms_internal_iic_release1;
-	return iic;
-}
-#else
-TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
-	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
-	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
-		return TSMS_NULL;
-	}
-	iic->sda = sda;
-	iic->scl = scl;
-	iic->isHardware = false;
-	iic->delay = __tsms_internal_iic_delay;
-	iic->release = __tsms_internal_iic_release1;
-	iic->address = address;
-	iic->type = type;
-	return iic;
-}
-
-#endif
-
-TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type) {
-	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
-	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
-		return TSMS_NULL;
-	}
-	iic->hardwareHandler = handler;
-	iic->isHardware = true;
-	iic->release = __tsms_internal_iic_release0;
-	iic->address = address;
-	iic->type = type;
-	return iic;
-}
-#else
-
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
 	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
 	if (iic == TSMS_NULL) {
@@ -134,10 +77,26 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 	}
 	iic->sda = sda;
 	iic->scl = scl;
-	__tsms_iic_sda_high(iic);
-	__tsms_iic_scl_high(iic);
+	__tsms_internal_iic_sda_high(iic);
+	__tsms_internal_iic_scl_high(iic);
 	iic->isHardware = false;
-	iic->delay = __tsms_iic_delay;
+	iic->delay = __tsms_internal_iic_delay;
+	iic->release = __tsms_internal_iic_release0;
+	iic->address = address;
+	iic->type = type;
+	return iic;
+}
+
+#ifdef TSMS_STM32_IIC
+
+TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type) {
+	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
+	if (iic == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+		return TSMS_NULL;
+	}
+	iic->hardwareHandler = handler;
+	iic->isHardware = true;
 	iic->release = __tsms_internal_iic_release0;
 	iic->address = address;
 	iic->type = type;
@@ -235,7 +194,7 @@ TSMS_RESULT TSMS_IIC_writeBytes(TSMS_IHP handler, uint8_t *data, uint16_t length
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	if (handler->isHardware) {
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
+#ifdef TSMS_STM32_IIC
 		if (HAL_I2C_Master_Transmit(handler->hardwareHandler, handler->address, data, length, 0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
 		else return TSMS_ERROR;
@@ -261,7 +220,7 @@ TSMS_RESULT TSMS_IIC_readBytes(TSMS_IHP handler, uint8_t *data, uint16_t length)
 	if (handler == TSMS_NULL)
 		return TSMS_ERROR;
 	if (handler->isHardware) {
-#if defined(TSMS_STM32_IIC) && defined(HAL_I2C_MODULE_ENABLED)
+#ifdef TSMS_STM32_IIC
 		if (HAL_I2C_Master_Receive(handler->hardwareHandler, handler->address, data, length, 0xffffffff) == HAL_OK)
 			return TSMS_SUCCESS;
 		else return TSMS_ERROR;

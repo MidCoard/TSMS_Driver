@@ -102,70 +102,7 @@ TSMS_INLINE void __tsms_internal_spi_release1(TSMS_SHP spi) {
 	__tsms_internal_spi_release0(spi);
 }
 
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
 
-#if defined(TSMS_STM32_SPI_USE_HAL_GPIO)
-
-TSMS_SHP TSMS_SPI_createSoftwareHandler(GPIO_TypeDef * csPort, uint16_t csPin,
-										GPIO_TypeDef * sclkPort, uint16_t sclkPin,
-										GPIO_TypeDef * dinPort, uint16_t dinPin,
-										GPIO_TypeDef * doutPort, uint16_t doutPin,
-										TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
-	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
-	if (spi == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERR_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_SHP"));
-		return TSMS_NULL;
-	}
-	spi->cs = TSMS_GPIO_createHandler(csPort, csPin);
-	spi->sclk = TSMS_GPIO_createHandler(sclkPort, sclkPin);
-	spi->dout = TSMS_GPIO_createHandler(dinPort, dinPin);
-	spi->din = TSMS_GPIO_createHandler(doutPort, doutPin);
-	spi->mode = mode;
-	spi->csValid = csValid;
-	spi->delay = __tsms_internal_spi_delay;
-	spi->type = type;
-	spi->isHardware = false;
-	spi->release = __tsms_internal_spi_release1;
-	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
-		TSMS_SPI_SCLK_LOW(spi);
-	else TSMS_SPI_SCLK_HIGH(spi);
-	return spi;
-}
-#else
-
-TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP dout, TSMS_GHP din, TSMS_SPI_MODE mode, TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
-	TSMS_SHP spi = malloc(sizeof (struct TSMS_SPI_HANDLER));
-	if (spi == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_SHP"));
-		return TSMS_NULL;
-	}
-	spi->cs = cs;
-	spi->sclk = sclk;
-	spi->dout = dout;
-	spi->din = din;
-	spi->mode = mode;
-	spi->csValid = csValid;
-	spi->delay = __tsms_internal_spi_delay;
-	spi->type = type;
-	spi->isHardware = false;
-	spi->release = __tsms_internal_spi_release0;
-	if (spi->mode == TSMS_SPI_MODE_0 || spi->mode == TSMS_SPI_MODE_1)
-		TSMS_SPI_SCLK_LOW(spi);
-	else TSMS_SPI_SCLK_HIGH(spi);
-	return spi;
-}
-
-#endif
-
-TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
-	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
-	handler->hardwareHandler = spi;
-	handler->isHardware = true;
-	handler->release = __tsms_internal_spi_release0;
-	return handler;
-}
-
-#else
 
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode,
                                         TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
@@ -192,6 +129,16 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 	return spi;
 }
 
+#ifdef TSMS_STM32_SPI
+
+TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
+	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
+	handler->hardwareHandler = spi;
+	handler->isHardware = true;
+	handler->release = __tsms_internal_spi_release0;
+	return handler;
+}
+
 #endif
 
 
@@ -199,7 +146,7 @@ TSMS_RESULT TSMS_SPI_transmitCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bi
 	if (spi == TSMS_NULL)
 		return TSMS_ERROR;
 	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 		// todo ????????
 		return TSMS_ERROR;
 #else
@@ -226,7 +173,7 @@ TSMS_RESULT TSMS_SPI_receiveCustomBits(TSMS_SHP spi, uint32_t *data, uint8_t bit
 	if (spi == TSMS_NULL)
 		return TSMS_ERROR;
 	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 		// todo ????????
 		return TSMS_ERROR;
 #else
@@ -254,7 +201,7 @@ TSMS_RESULT TSMS_SPI_transform(TSMS_SHP spi, uint32_t *data, uint8_t writeBits, 
 	if (spi == TSMS_NULL)
 		return TSMS_ERROR;
 	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 		// todo ????????
 		return TSMS_ERROR;
 #else
@@ -283,7 +230,7 @@ TSMS_RESULT TSMS_SPI_sequenceTransform(TSMS_SHP spi, uint32_t n, ...) {
 	if (spi == TSMS_NULL)
 		return TSMS_FAIL;
 	if (spi->isHardware) {
-#if defined(TSMS_STM32_SPI) && defined(HAL_SPI_MODULE_ENABLED)
+#ifdef TSMS_STM32_SPI
 		// todo ????????
 		return TSMS_ERROR;
 #else
