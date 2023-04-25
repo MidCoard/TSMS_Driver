@@ -9,6 +9,8 @@ typedef struct TSMS_FONT_DATA TSMS_FONT_DATA;
 
 #include "tsms_def.h"
 
+typedef uint8_t TSMS_FONT_SIZE;
+
 struct TSMS_FONT_DATA {
 	TSMS_FONT_TYPE type;
 	void * data;

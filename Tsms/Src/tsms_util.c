@@ -79,3 +79,7 @@ TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float r
 	color.blue = (uint8_t) (color1.blue * (1 - ratio) + color2.blue * ratio);
 	return color;
 }
+
+bool TSMS_UTIL_equalsColor(TSMS_COLOR color1, TSMS_COLOR color2) {
+	return color1.red == color2.red && color1.green == color2.green && color1.blue == color2.blue;
+}

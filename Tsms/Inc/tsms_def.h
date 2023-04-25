@@ -9,8 +9,6 @@
 
 #include "stdint.h"
 
-typedef uint8_t TSMS_FONT_SIZE;
-
 typedef uint32_t TSMS_CLOCK_FREQUENCY;
 
 typedef uint32_t TSMS_SIZE;
@@ -46,6 +44,7 @@ typedef enum {
 #include "stdlib.h"
 #include "stdarg.h"
 #include "stdbool.h"
+#include "malloc.h"
 #include "tsms_err.h"
 #include "tsms_delay.h"
 

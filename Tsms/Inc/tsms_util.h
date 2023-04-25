@@ -40,4 +40,6 @@ void TSMS_UTIL_swapUnsignedShort(uint16_t* a, uint16_t* b);
 
 TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float ratio);
 
+bool TSMS_UTIL_equalsColor(TSMS_COLOR color1, TSMS_COLOR color2);
+
 #endif //TSMS_UTIL_H
