@@ -19,6 +19,7 @@ extern const TSMS_COLOR TSMS_COLOR_BLUE;
 extern const TSMS_COLOR TSMS_COLOR_YELLOW;
 extern const TSMS_COLOR TSMS_COLOR_CYAN;
 extern const TSMS_COLOR TSMS_COLOR_MAGENTA;
+extern const TSMS_COLOR TSMS_COLOR_GRAY;
 
 uint8_t TSMS_UTIL_reverseByte(uint8_t v);
 

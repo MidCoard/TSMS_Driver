@@ -8,6 +8,7 @@ const TSMS_COLOR TSMS_COLOR_BLUE = {0, 0, 255};
 const TSMS_COLOR TSMS_COLOR_YELLOW = {255, 255, 0};
 const TSMS_COLOR TSMS_COLOR_CYAN = {0, 255, 255};
 const TSMS_COLOR TSMS_COLOR_MAGENTA = {255, 0, 255};
+const TSMS_COLOR TSMS_COLOR_GRAY = {128, 128, 128};
 
 uint8_t TSMS_UTIL_reverseByte(uint8_t v) {
 	return TSMS_UTIL_reverseData(v, 8);
