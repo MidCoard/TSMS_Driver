@@ -11,6 +11,7 @@ TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timer
 	result |= TSMS_LIST_init();
 #ifdef TSMS_GUI_STYLE
 	result |= TSMS_GUI_STYLE_init();
+	result |= TSMS_NATIVE_MUTABLE_init();
 #endif
 	return result;
 }
