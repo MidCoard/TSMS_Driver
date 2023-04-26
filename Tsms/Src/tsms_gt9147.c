@@ -120,33 +120,59 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 	pLock lock;
 	if ((lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(touch->lock, preLock, 0)) != TSMS_NULL) {
 		__tsms_internal_read_register(gt9147, TSMS_GT9147_REG_STATUS_ADDRESS, _gt9147Buffer, 1);
-		for (TSMS_POS i = 0; i < touch->list->length; i++)
-			free(touch->list->list[i]);
-		TSMS_LIST_clear(touch->list);
 		TSMS_SIZE touchCount = _gt9147Buffer[0] & 0x0F;
-		if ((_gt9147Buffer[0] & 0x80) != 0 && touchCount > 0 ) {
-			__tsms_internal_read_register(gt9147, 0x814f, _gt9147Buffer,
-			                              touchCount * 8);
-			for (TSMS_SIZE i = 0; i < touchCount; i++) {
-				uint16_t id = _gt9147Buffer[i * 8];
-				uint16_t x = _gt9147Buffer[i * 8 + 1] | (_gt9147Buffer[i * 8 + 2] << 8);
-				uint16_t y = _gt9147Buffer[i * 8 + 3] | (_gt9147Buffer[i * 8 + 4] << 8);
-				uint16_t size = _gt9147Buffer[i * 8 + 5] | (_gt9147Buffer[i * 8 + 6] << 8);
-				if (touch->display->screen->displayDirection == TSMS_DISPLAY_DIRECTION_HORIZONTAL) {
-					TSMS_UTIL_swapUnsignedShort(&x, &y);
-					x = touch->display->screen->width - x;
+		if ((_gt9147Buffer[0] & 0x80) != 0 ) {
+			if (touchCount > 0) {
+				__tsms_internal_read_register(gt9147, 0x814f, _gt9147Buffer,
+				                              touchCount * 8);
+				for (TSMS_SIZE i = 0; i < touchCount; i++) {
+					uint16_t id = _gt9147Buffer[i * 8];
+					uint16_t x = _gt9147Buffer[i * 8 + 1] | (_gt9147Buffer[i * 8 + 2] << 8);
+					uint16_t y = _gt9147Buffer[i * 8 + 3] | (_gt9147Buffer[i * 8 + 4] << 8);
+					uint16_t size = _gt9147Buffer[i * 8 + 5] | (_gt9147Buffer[i * 8 + 6] << 8);
+					if (touch->display->screen->displayDirection == TSMS_DISPLAY_DIRECTION_HORIZONTAL) {
+						TSMS_UTIL_swapUnsignedShort(&x, &y);
+						x = touch->display->screen->width - x;
+					}
+					TSMS_TDP data = TSMS_NULL;
+					bool exist = false;
+					for (TSMS_POS j = 0; j < touch->list->length; j++) {
+						data = touch->list->list[j];
+						if (data->id == id) {
+							data->x = x;
+							data->y = y;
+							data->size = size;
+							if (data->pressCount == 255)
+								data->pressCount = 254;
+							data->pressCount++;
+							exist = true;
+							break;
+						}
+					}
+					if (!exist) {
+						data = malloc(sizeof(struct TSMS_TOUCH_DATA));
+						data->id = id;
+						data->x = x;
+						data->y = y;
+						data->size = size;
+						data->pressCount = 1;
+						TSMS_LIST_add(touch->list, data);
+					}
+					if (touch->callback != TSMS_NULL) {
+						if (data->pressCount == 1)
+							touch->callback(touch, id, x, y, size, TSMS_TOUCH_STATE_PRESS, touch->handler);
+						else if (data->pressCount == 4)
+							touch->callback(touch, id, x, y, size, TSMS_TOUCH_STATE_LONG_PRESS, touch->handler);
+					}
 				}
-				bool flag = false;
-				if (touch->callback != TSMS_NULL)
-					flag = touch->callback(touch, id, x, y, size, touch->handler);
-				if (!flag) {
-					TSMS_TDP data = malloc(sizeof(struct TSMS_TOUCH_DATA));
-					data->id = id;
-					data->x = x;
-					data->y = y;
-					data->size = size;
-					TSMS_LIST_add(touch->list, data);
+			} else {
+				for (TSMS_POS i = 0; i < touch->list->length; i++) {
+					TSMS_TDP data = touch->list->list[i];
+					if (touch->callback != TSMS_NULL)
+						touch->callback(touch, data->id, data->x, data->y, data->size, TSMS_TOUCH_STATE_RELEASE, touch->handler);
+					free(data);
 				}
+				TSMS_LIST_clear(touch->list);
 			}
 		}
 		TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);

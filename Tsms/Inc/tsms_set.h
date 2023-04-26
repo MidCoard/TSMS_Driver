@@ -19,6 +19,10 @@ struct TSMS_SET_ITERATOR {
 
 extern const TSMS_SI TSMS_EMPTY_SET_ITERATOR;
 
+long TSMS_SET_defaultHash(void* key);
+
+long TSMS_SET_defaultCompare(void* key1, void* key2);
+
 TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare);
 
 TSMS_RESULT TSMS_SET_add(TSMS_SP set, void* key);

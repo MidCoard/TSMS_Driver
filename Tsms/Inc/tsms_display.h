@@ -2,6 +2,10 @@
 #define TSMS_DISPLAY_H
 
 typedef enum {
+	TSMS_TOUCH_STATE_RELEASE = 0, TSMS_TOUCH_STATE_PRESS, TSMS_TOUCH_STATE_LONG_PRESS
+} TSMS_TOUCH_STATE;
+
+typedef enum {
 	TSMS_SCREEN_REQUEST_MODE_SYNC = 0, TSMS_SCREEN_REQUEST_MODE_IT, TSMS_SCREEN_REQUEST_MODE_SYNC_AND_IT
 } TSMS_SCREEN_REQUEST_MODE;
 
@@ -58,7 +62,7 @@ typedef TSMS_RESULT(*TSMS_CURSOR_FUNCTION)(TSMS_SCHP screen, uint16_t x, uint16_
 typedef TSMS_RESULT(*TSMS_RESET_TOUCH_FUNCTION)(TSMS_THP);
 typedef TSMS_RESULT(*TSMS_INIT_TOUCH_FUNCTION)(TSMS_THP touch, void* option);
 typedef TSMS_RESULT(*TSMS_REQUEST_TOUCH_FUNCTION)(TSMS_THP touch, TSMS_TOUCH_REQUEST_MODE mode);
-typedef bool(*TSMS_TOUCH_CALLBACK)(TSMS_THP touch, uint8_t id, uint16_t x, uint16_t y, uint16_t size, void * handler);
+typedef void(*TSMS_TOUCH_CALLBACK)(TSMS_THP touch, uint8_t id, uint16_t x, uint16_t y, uint16_t size, TSMS_TOUCH_STATE state, void * handler);
 
 struct TSMS_DISPLAY_HANDLER {
 	TSMS_THP touch;
@@ -128,6 +132,7 @@ struct TSMS_TOUCH_DATA {
 	uint16_t y;
 	uint16_t id;
 	uint16_t size;
+	uint8_t pressCount;
 };
 
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);

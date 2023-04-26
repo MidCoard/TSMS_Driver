@@ -5,6 +5,14 @@ const bool _setTrue = true;
 
 const TSMS_SI TSMS_EMPTY_SET_ITERATOR = {{TSMS_NULL, 0, TSMS_NULL}};
 
+long TSMS_SET_defaultHash(void* key) {
+	return (long) key;
+}
+
+long TSMS_SET_defaultCompare(void* key1, void* key2) {
+	return key1 - key2;
+}
+
 TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare) {
 	TSMS_SP set = (TSMS_SP) malloc(sizeof(struct TSMS_SET));
 	if (set == TSMS_NULL) {
