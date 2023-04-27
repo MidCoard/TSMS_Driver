@@ -1,4 +1,5 @@
 #include "touch/tsms_gt9147.h"
+#include "tsms_printer.h"
 
 static uint8_t _gt9147CommandBuffer[4];
 
@@ -145,6 +146,7 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 							if (data->pressCount == 255)
 								data->pressCount = 254;
 							data->pressCount++;
+							data->isPress = true;
 							exist = true;
 							break;
 						}
@@ -156,6 +158,7 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 						data->y = y;
 						data->size = size;
 						data->pressCount = 1;
+						data->isPress = true;
 						TSMS_LIST_add(touch->list, data);
 					}
 					if (touch->callback != TSMS_NULL) {
@@ -165,14 +168,16 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 							touch->callback(touch, id, x, y, size, TSMS_TOUCH_STATE_LONG_PRESS, touch->handler);
 					}
 				}
-			} else {
-				for (TSMS_POS i = 0; i < touch->list->length; i++) {
-					TSMS_TDP data = touch->list->list[i];
+			}
+			for (TSMS_POS i = 0; i < touch->list->length; i++) {
+				TSMS_TDP data = touch->list->list[i];
+				if (!data->isPress) {
 					if (touch->callback != TSMS_NULL)
 						touch->callback(touch, data->id, data->x, data->y, data->size, TSMS_TOUCH_STATE_RELEASE, touch->handler);
 					free(data);
-				}
-				TSMS_LIST_clear(touch->list);
+					TSMS_LIST_remove(touch->list, i);
+				} else
+					data->isPress = false;
 			}
 		}
 		TSMS_SEQUENCE_PRIORITY_LOCK_unlock(touch->lock, lock);

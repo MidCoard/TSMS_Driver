@@ -27,4 +27,6 @@ TSMS_RESULT TSMS_LIST_release(TSMS_LP list);
 
 TSMS_RESULT TSMS_LIST_clear(TSMS_LP list);
 
+bool TSMS_LIST_contains(TSMS_LP list, void *element);
+
 #endif //TSMS_LIST_H

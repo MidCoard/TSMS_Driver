@@ -84,6 +84,15 @@ TSMS_RESULT TSMS_LIST_clear(TSMS_LP list) {
 	return TSMS_SUCCESS;
 }
 
+bool TSMS_LIST_contains(TSMS_LP list, void *element) {
+	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
+		return false;
+	for (TSMS_POS i = 0; i < list->length; i++)
+		if (list->list[i] == element)
+			return true;
+	return false;
+}
+
 TSMS_RESULT TSMS_LIST_release(TSMS_LP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
@@ -273,6 +282,15 @@ TSMS_RESULT TSMS_INT_LIST_release(TSMS_ILP list) {
 	free(list->list);
 	free(list);
 	return TSMS_SUCCESS;
+}
+
+bool TSMS_INT_LIST_contains(TSMS_ILP list, int element) {
+	if (list == TSMS_NULL)
+		return false;
+	for (TSMS_POS i = 0; i < list->length; i++)
+		if (list->list[i] == element)
+			return true;
+	return false;
 }
 
 

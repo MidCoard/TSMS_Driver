@@ -133,6 +133,7 @@ struct TSMS_TOUCH_DATA {
 	uint16_t id;
 	uint16_t size;
 	uint8_t pressCount;
+	bool isPress;
 };
 
 void TSMS_SCREEN_writeRegister(TSMS_SCHP screen, uint16_t reg, uint16_t value);
