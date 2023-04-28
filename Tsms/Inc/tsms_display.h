@@ -88,6 +88,7 @@ struct TSMS_SCREEN_HANDLER {
 	uint16_t defaultWidth;
 	uint16_t defaultHeight;
 	uint16_t width;
+	uint16_t xWidth;
 	uint16_t height;
 	uint16_t writeCommand;
 	uint16_t setXCommand;
@@ -97,9 +98,7 @@ struct TSMS_SCREEN_HANDLER {
 	TSMS_SCAN_DIRECTION scanDirection;
 
 	uint16_t *swapBuffer;
-	uint16_t swapY;
-	uint16_t swapStep;
-	bool lazySwapLabels[100];
+	uint8_t *extraBuffer;
 	pSequencePriorityLock lock;
 
 	TSMS_INIT_SCREEN_FUNCTION init;
@@ -160,7 +159,7 @@ TSMS_RESULT TSMS_TOUCH_setCallback(TSMS_THP touch, TSMS_TOUCH_CALLBACK callback,
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t *swapBuffer, void* option);
+                               uint16_t height, uint16_t *swapBuffer, uint8_t *extraBuffer, void* option);
 
 TSMS_RESULT TSMS_SCREEN_reset(TSMS_SCHP screen);
 

@@ -112,9 +112,11 @@ TSMS_RESULT TSMS_ILI9341_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRE
 	if (direction == TSMS_DISPLAY_DIRECTION_VERTICAL) {
 		screen->width = screen->defaultWidth;
 		screen->height = screen->defaultHeight;
+		screen->xWidth = screen->width % 8 ? screen->width / 8 + 1 : screen->width / 8;
 	} else {
 		screen->width = screen->defaultHeight;
 		screen->height = screen->defaultWidth;
+		screen->xWidth = screen->width % 8 ? screen->width / 8 + 1 : screen->width / 8;
 	}
 	screen->writeCommand = 0x2C;
 	screen->setXCommand = 0x2A;

@@ -122,12 +122,14 @@ TSMS_RESULT TSMS_SSD1963_setDisplayDirection(TSMS_SCHP screen, TSMS_DISPLAY_DIRE
 	if (direction == TSMS_DISPLAY_DIRECTION_VERTICAL) {
 		screen->width = screen->defaultWidth;
 		screen->height = screen->defaultHeight;
+		screen->xWidth = screen->width % 8 == 0 ? screen->width / 8 : screen->width / 8 + 1;
 		screen->writeCommand = 0X2C;
 		screen->setXCommand = 0X2B;
 		screen->setYCommand = 0X2A;
 	} else {
 		screen->width = screen->defaultHeight;
 		screen->height = screen->defaultWidth;
+		screen->xWidth = screen->width % 8 == 0 ? screen->width / 8 : screen->width / 8 + 1;
 		screen->writeCommand = 0X2C;
 		screen->setXCommand = 0X2A;
 		screen->setYCommand = 0X2B;

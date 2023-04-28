@@ -43,8 +43,9 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint
 		TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
 		TSMS_SCREEN_writeData(screen, TSMS_UTIL_color565(color));
 	} else {
-		screen->lazySwapLabels[y / screen->swapStep] = true;
 		screen->swapBuffer[y * screen->width + x] = TSMS_UTIL_color565(color);
+		uint8_t *p = screen->extraBuffer + y * screen->xWidth + x / 8;
+		*p |= 1 << (x % 8);
 	}
 	return TSMS_SUCCESS;
 }
@@ -149,7 +150,7 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data) {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, uint16_t *swapBuffer, void *option) {
+                               uint16_t height, uint16_t *swapBuffer, uint8_t * extraBuffer, void *option) {
 	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
 	if (screen == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
@@ -164,10 +165,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->defaultWidth = width;
 	screen->defaultHeight = height;
 	screen->swapBuffer = swapBuffer;
-	screen->swapY = 0;
-	screen->swapStep = 160;
-	for (TSMS_POS i = 0; i < 100; i++)
-		screen->lazySwapLabels[i] = true;
+	screen->extraBuffer = extraBuffer;
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
 	TSMS_delay(50);
 	uint16_t id;
@@ -367,24 +365,17 @@ TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 		TSMS_SEQUENCE_PRIORITY_LOCK_preLock(screen->lock, 1);
 		return TSMS_ERROR;
 	}
-	uint16_t preSwapY = screen->swapY;
-	while (!screen->lazySwapLabels[screen->swapY / screen->swapStep]) {
-		screen->swapY += screen->swapStep;
-		if (screen->swapY >= screen->height)
-			screen->swapY = 0;
-		if (screen->swapY == preSwapY) {
-			TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
-			return TSMS_SUCCESS;
+	for (TSMS_POS i = 0; i < screen->xWidth; i ++)
+		for (TSMS_POS j = 0; j < screen->height; j++) {
+			uint8_t* p = screen->extraBuffer + j * screen->xWidth + i;
+			if (*p) {
+				TSMS_SCREEN_setCursor(screen, i * 8, j);
+				TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
+				for (TSMS_POS k = 0; k < 8;k++)
+					TSMS_SCREEN_writeData(screen, screen->swapBuffer[j * screen->width + i * 8 + k]);
+				*p = 0;
+			}
 		}
-	}
-	screen->lazySwapLabels[screen->swapY / screen->swapStep] = false;
-	TSMS_SCREEN_setCursor(screen, 0, screen->swapY);
-	TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
-	for (uint32_t i = 0; i < screen->swapStep * screen->width; i++)
-		TSMS_SCREEN_writeData(screen, screen->swapBuffer[screen->swapY * screen->width + i]); // one row by one row
-	screen->swapY += screen->swapStep;
-	if (screen->swapY >= screen->height)
-		screen->swapY = 0;
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	TSMS_SEQUENCE_PRIORITY_LOCK_postLock(screen->lock, 1);
 	return TSMS_SUCCESS;
