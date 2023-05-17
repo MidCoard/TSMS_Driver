@@ -26,7 +26,7 @@ struct TSMS_SEQUENCE_PRIORITY_LOCK_HANDLER {
 	pSequenceLock sequenceLock;
 	pLock lock;
 	pLock priorityLock;
-	TSMS_INT_STP stack;
+	TSMS_ISTP stack;
 };
 
 pLock TSMS_LOCK_create();

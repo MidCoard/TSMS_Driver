@@ -50,6 +50,8 @@ pString TSMS_STRING_createWithBytes(const uint8_t * bytes);
 
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
+TSMS_RESULT TSMS_STRING_appendChar(pString str, char c);
+
 tString TSMS_STRING_temp(const char *cStr);
 
 pString TSMS_STRING_empty();
@@ -57,5 +59,7 @@ pString TSMS_STRING_empty();
 long TSMS_STRING_hash(pString str);
 
 pString TSMS_STRING_createWithInt(int i);
+
+TSMS_RESULT TSMS_STRING_set(pString str, char * data);
 
 #endif //TSMS_STRING_H

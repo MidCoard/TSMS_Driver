@@ -73,6 +73,12 @@ void TSMS_UTIL_swapUnsignedShort(uint16_t* a, uint16_t* b) {
 	*b = t;
 }
 
+void TSMS_UTIL_swapFloat(float * a, float * b) {
+	float t = *a;
+	*a = *b;
+	*b = t;
+}
+
 TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float ratio) {
 	TSMS_COLOR color;
 	color.red = (uint8_t) (color1.red * (1 - ratio) + color2.red * ratio);

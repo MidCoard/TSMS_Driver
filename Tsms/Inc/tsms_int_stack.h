@@ -2,29 +2,29 @@
 #define TSMS_INT_STACK_H
 
 typedef struct TSMS_INT_STACK *TSMS_INT_STACK_POINTER;
-typedef TSMS_INT_STACK_POINTER TSMS_INT_STP;
+typedef TSMS_INT_STACK_POINTER TSMS_ISTP;
 
 #include "tsms_int_link_list.h"
 
 struct TSMS_INT_STACK {
-	TSMS_INT_LKLP list;
+	TSMS_ILKLP list;
 };
 
-TSMS_INT_STP TSMS_INT_STACK_create();
+TSMS_ISTP TSMS_INT_STACK_create();
 
-TSMS_RESULT TSMS_INT_STACK_push(TSMS_INT_STP stack, int element);
+TSMS_RESULT TSMS_INT_STACK_push(TSMS_ISTP stack, int element);
 
-int TSMS_INT_STACK_pop(TSMS_INT_STP stack);
+int TSMS_INT_STACK_pop(TSMS_ISTP stack);
 
-int TSMS_INT_STACK_peek(TSMS_INT_STP stack);
+int TSMS_INT_STACK_peek(TSMS_ISTP stack);
 
-TSMS_RESULT TSMS_INT_STACK_clear(TSMS_INT_STP stack);
+TSMS_RESULT TSMS_INT_STACK_clear(TSMS_ISTP stack);
 
-TSMS_RESULT TSMS_INT_STACK_release(TSMS_INT_STP stack);
+TSMS_RESULT TSMS_INT_STACK_release(TSMS_ISTP stack);
 
-TSMS_SIZE TSMS_INT_STACK_size(TSMS_INT_STP stack);
+TSMS_SIZE TSMS_INT_STACK_size(TSMS_ISTP stack);
 
-bool TSMS_INT_STACK_empty(TSMS_INT_STP stack);
+bool TSMS_INT_STACK_empty(TSMS_ISTP stack);
 
 
 #endif //TSMS_INT_STACK_H

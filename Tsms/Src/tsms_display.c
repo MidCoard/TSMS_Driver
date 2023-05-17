@@ -360,6 +360,8 @@ TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
 TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
+	if (screen->swapBuffer == TSMS_NULL)
+		return TSMS_SUCCESS;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(screen->lock, TSMS_NULL, 1);
 	if (lock == TSMS_NULL) {
 		TSMS_SEQUENCE_PRIORITY_LOCK_preLock(screen->lock, 1);
@@ -396,8 +398,6 @@ TSMS_RESULT TSMS_SCREEN_drawPoint(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS
 TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SCREEN_REQUEST_MODE screenMode,
                                         TSMS_TOUCH_REQUEST_MODE touchMode) {
 	if (display == TSMS_NULL)
-		return TSMS_ERROR;
-	if (display->screen->swapBuffer == TSMS_NULL)
 		return TSMS_ERROR;
 	if (screenMode == TSMS_SCREEN_REQUEST_MODE_IT) {
 		if (!timer->option.enableCallbackInterrupt)

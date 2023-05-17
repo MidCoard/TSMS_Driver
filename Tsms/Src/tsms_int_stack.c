@@ -1,8 +1,8 @@
 #include "tsms_int_stack.h"
 #include "tsms_int_link_list.h"
 
-TSMS_INT_STP TSMS_INT_STACK_create() {
-	TSMS_INT_STP stack = (TSMS_INT_STP) malloc(sizeof(struct TSMS_INT_STACK));
+TSMS_ISTP TSMS_INT_STACK_create() {
+	TSMS_ISTP stack = (TSMS_ISTP) malloc(sizeof(struct TSMS_INT_STACK));
 	if (stack == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for int stack");
 		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
@@ -16,13 +16,13 @@ TSMS_INT_STP TSMS_INT_STACK_create() {
 	return stack;
 }
 
-TSMS_RESULT TSMS_INT_STACK_push(TSMS_INT_STP stack, int element) {
+TSMS_RESULT TSMS_INT_STACK_push(TSMS_ISTP stack, int element) {
 	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	return TSMS_INT_LINK_LIST_add(stack->list, element);
 }
 
-int TSMS_INT_STACK_pop(TSMS_INT_STP stack) {
+int TSMS_INT_STACK_pop(TSMS_ISTP stack) {
 	int element = TSMS_INT_STACK_peek(stack);
 	if (element == -1)
 		return -1;
@@ -30,7 +30,7 @@ int TSMS_INT_STACK_pop(TSMS_INT_STP stack) {
 	return element;
 }
 
-int TSMS_INT_STACK_peek(TSMS_INT_STP stack) {
+int TSMS_INT_STACK_peek(TSMS_ISTP stack) {
 	if (stack == TSMS_NULL)
 		return -1;
 	if (stack->list->length == 0)
@@ -38,13 +38,13 @@ int TSMS_INT_STACK_peek(TSMS_INT_STP stack) {
 	return stack->list->tail->element;
 }
 
-TSMS_RESULT TSMS_INT_STACK_clear(TSMS_INT_STP stack) {
+TSMS_RESULT TSMS_INT_STACK_clear(TSMS_ISTP stack) {
 	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	return TSMS_INT_LINK_LIST_clear(stack->list);
 }
 
-TSMS_RESULT TSMS_INT_STACK_release(TSMS_INT_STP stack) {
+TSMS_RESULT TSMS_INT_STACK_release(TSMS_ISTP stack) {
 	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
 	TSMS_RESULT result = TSMS_INT_LINK_LIST_release(stack->list);
@@ -52,10 +52,10 @@ TSMS_RESULT TSMS_INT_STACK_release(TSMS_INT_STP stack) {
 	return result;
 }
 
-TSMS_SIZE TSMS_INT_STACK_size(TSMS_INT_STP stack) {
+TSMS_SIZE TSMS_INT_STACK_size(TSMS_ISTP stack) {
 	return stack->list->length;
 }
 
-bool TSMS_INT_STACK_empty(TSMS_INT_STP stack) {
+bool TSMS_INT_STACK_empty(TSMS_ISTP stack) {
 	return TSMS_INT_STACK_size(stack) == 0;
 }

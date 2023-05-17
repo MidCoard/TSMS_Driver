@@ -281,6 +281,24 @@ TSMS_RESULT TSMS_STRING_append(pString str1, pString str2) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_STRING_appendChar(pString str, char c) {
+	if (str == TSMS_NULL)
+		return TSMS_ERROR;
+	if (str->staticString)
+		return TSMS_ERROR;
+	char* tmp = realloc(str->cStr, str->length + 2);
+	if (tmp == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+		return TSMS_ERROR;
+	}
+	str->cStr = tmp;
+	str->cStr[str->length] = c;
+	str->cStr[str->length + 1] = '\0';
+	str->length++;
+	return TSMS_SUCCESS;
+}
+
 tString TSMS_STRING_temp(const char* str) {
 	tString tStr = {str, strlen(str), false};
 	return tStr;
@@ -312,4 +330,22 @@ pString TSMS_STRING_createWithInt(int i) {
 	str->staticString = false;
 	strcpy(str->cStr, _stringIntConvertBuffer);
 	return str;
+}
+
+TSMS_RESULT TSMS_STRING_set(pString str, char * data) {
+	if (str == TSMS_NULL)
+		return TSMS_ERROR;
+	if (str->staticString)
+		return TSMS_ERROR;
+	TSMS_SIZE len = strlen(data);
+	char* tmp = realloc(str->cStr, len + 1);
+	if (tmp == TSMS_NULL) {
+		tString temp = TSMS_STRING_temp("malloc failed for cStr");
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+		return TSMS_ERROR;
+	}
+	str->cStr = tmp;
+	strcpy(str->cStr, data);
+	str->length = len;
+	return TSMS_SUCCESS;
 }

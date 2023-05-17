@@ -44,8 +44,11 @@ typedef enum {
 #include "stdlib.h"
 #include "stdarg.h"
 #include "stdbool.h"
-#include "malloc.h"
 #include "tsms_err.h"
 #include "tsms_delay.h"
+
+#ifdef TSMS_STM32
+#include "malloc.h"
+#endif
 
 #endif //TSMS_DEF_H
