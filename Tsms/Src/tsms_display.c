@@ -38,18 +38,17 @@ TSMS_INLINE void __tsms_internal_screen_auto_request_both(void *d, pTimer pTimer
 TSMS_INLINE TSMS_RESULT __tsms_internal_screen_draw_point(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_COLOR color) {
 	if (x >= screen->width || y >= screen->height)
 		return TSMS_ERROR;
-	if (screen->swapBuffer[0] == TSMS_NULL) {
+	if (screen->swapBuffer == TSMS_NULL) {
 		TSMS_SCREEN_setCursor(screen, x, y);
 		TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
 		TSMS_SCREEN_writeData(screen, TSMS_UTIL_color565(color));
 	} else {
 		uint16_t color565 = TSMS_UTIL_color565(color);
-		screen->swapBuffer[screen->swapIndex][y * screen->width + x] = color565;
-		bool flag = color565 != screen->swapBuffer[screen->swapIndex ^ 1][y * screen->width + x];
 		uint8_t *p = screen->extraBuffer + y * screen->xWidth + x / 8;
-		if (flag)
-			*p |= 1 << (x % 8);
-		else *p &= ~(1 << (x % 8));
+		if(!*p)
+			if (screen->swapBuffer[y * screen->width + x] != color565)
+				*p |= 1 << (x % 8);
+		screen->swapBuffer[y * screen->width + x] = color565;
 	}
 	return TSMS_SUCCESS;
 }
@@ -154,7 +153,7 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data) {
 
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
-                               uint16_t height, const uint16_t *swapBuffer, uint8_t * extraBuffer, uint16_t *swapBuffer2, void *option) {
+                               uint16_t height, uint16_t *swapBuffer, uint8_t * extraBuffer, void *option) {
 	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
 	if (screen == TSMS_NULL) {
 		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
@@ -168,9 +167,7 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->type = type;
 	screen->defaultWidth = width;
 	screen->defaultHeight = height;
-	screen->swapBuffer[0] = swapBuffer;
-	screen->swapBuffer[1] = swapBuffer2;
-	screen->swapIndex = 0;
+	screen->swapBuffer = swapBuffer;
 	screen->extraBuffer = extraBuffer;
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
 	TSMS_delay(50);
@@ -366,7 +363,7 @@ TSMS_RESULT TSMS_SCREEN_setCursor(TSMS_SCHP screen, uint16_t x, uint16_t y) {
 TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 	if (screen == TSMS_NULL)
 		return TSMS_ERROR;
-	if (screen->swapBuffer[0] == TSMS_NULL)
+	if (screen->swapBuffer == TSMS_NULL)
 		return TSMS_SUCCESS;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_tryLock(screen->lock, TSMS_NULL, 1);
 	if (lock == TSMS_NULL) {
@@ -378,13 +375,12 @@ TSMS_RESULT TSMS_SCREEN_swap(TSMS_SCHP screen) {
 			uint8_t* p = screen->extraBuffer + j * screen->xWidth + i;
 			if (*p) {
 				TSMS_SCREEN_setCursor(screen, i * 8, j);
-				TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
+					TSMS_SCREEN_writeCommand(screen, screen->writeCommand);
 				for (TSMS_POS k = 0; k < 8;k++)
-					TSMS_SCREEN_writeData(screen, screen->swapBuffer[screen->swapIndex][j * screen->width + i * 8 + k]);
+					TSMS_SCREEN_writeData(screen, screen->swapBuffer[j * screen->width + i * 8 + k]);
 				*p = 0;
 			}
 		}
-	screen->swapIndex ^= 1;
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	TSMS_SEQUENCE_PRIORITY_LOCK_postLock(screen->lock, 1);
 	return TSMS_SUCCESS;
