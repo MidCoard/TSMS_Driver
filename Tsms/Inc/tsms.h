@@ -62,14 +62,11 @@
 #ifdef HAL_UART_MODULE_ENABLED
 #define TSMS_STM32_UART
 #endif
+#include "malloc.h"
 
 #endif
 
 #include "tsms_def.h"
-
-#ifdef TSMS_STM32
-#include "malloc.h"
-#endif
 
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency);
 

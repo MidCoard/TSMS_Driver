@@ -373,13 +373,18 @@ pString TSMS_STRING_clone(pString str) {
 pString TSMS_STRING_trim(pString str) {
 	if (str == TSMS_NULL)
 		return TSMS_NULL;
-	TSMS_POS start = 0;
-	TSMS_POS end = str->length - 1;
-	while (str->cStr[start] == ' ' || str->cStr[start] == '\t' || str->cStr[start] == '\n')
-		start++;
-	while (str->cStr[end] == ' ' || str->cStr[end] == '\t' || str->cStr[end] == '\n')
-		end--;
-	if (start > end)
-		return TSMS_STRING_create();
-	return TSMS_STRING_subString(str, start, end);
+	if (str->length == 0)
+		return TSMS_STRING_empty();
+	TSMS_POS i;
+	for (i = 0; i < str->length; i++)
+		if (str->cStr[i] != ' ' && str->cStr[i] != '\t' && str->cStr[i] != '\n')
+			break;
+	if (str->length == i)
+		return TSMS_STRING_empty();
+	TSMS_POS j;
+	for (j = str->length - 1; j >= 0; j--)
+		if (str->cStr[j] != ' ' && str->cStr[j] != '\t' && str->cStr[j] != '\n')
+			break;
+	j++;
+	return TSMS_STRING_subString(str, i, j);
 }
