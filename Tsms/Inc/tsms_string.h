@@ -52,6 +52,8 @@ TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
 TSMS_RESULT TSMS_STRING_appendChar(pString str, char c);
 
+TSMS_RESULT TSMS_STRING_clear(pString str);
+
 tString TSMS_STRING_temp(const char *cStr);
 
 pString TSMS_STRING_empty();
@@ -61,5 +63,9 @@ long TSMS_STRING_hash(pString str);
 pString TSMS_STRING_createWithInt(int i);
 
 TSMS_RESULT TSMS_STRING_set(pString str, char * data);
+
+pString TSMS_STRING_clone(pString str);
+
+pString TSMS_STRING_trim(pString str);
 
 #endif //TSMS_STRING_H

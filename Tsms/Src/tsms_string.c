@@ -291,6 +291,20 @@ TSMS_RESULT TSMS_STRING_appendChar(pString str, char c) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_STRING_clear(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_ERROR;
+	if (str->staticString)
+		return TSMS_ERROR;
+	char* temp = TSMS_realloc(str->cStr, sizeof (char));
+	if (temp == TSMS_NULL)
+		return TSMS_ERROR;
+	str->cStr = temp;
+	str->cStr[0] = '\0';
+	str->length = 0;
+	return TSMS_SUCCESS;
+}
+
 tString TSMS_STRING_temp(const char* str) {
 	tString tStr = {str, strlen(str), false};
 	return tStr;
@@ -336,4 +350,36 @@ TSMS_RESULT TSMS_STRING_set(pString str, char * data) {
 	strcpy(str->cStr, data);
 	str->length = len;
 	return TSMS_SUCCESS;
+}
+
+pString TSMS_STRING_clone(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	pString newStr = TSMS_STRING_create();
+	if (newStr == TSMS_NULL)
+		return TSMS_NULL;
+	char* tmp = TSMS_realloc(newStr->cStr, str->length + 1);
+	if (tmp == TSMS_NULL) {
+		TSMS_STRING_release(newStr);
+		return TSMS_NULL;
+	}
+	newStr->cStr = tmp;
+	strcpy(newStr->cStr, str->cStr);
+	newStr->length = str->length;
+	newStr->staticString = false;
+	return newStr;
+}
+
+pString TSMS_STRING_trim(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	TSMS_POS start = 0;
+	TSMS_POS end = str->length - 1;
+	while (str->cStr[start] == ' ' || str->cStr[start] == '\t' || str->cStr[start] == '\n')
+		start++;
+	while (str->cStr[end] == ' ' || str->cStr[end] == '\t' || str->cStr[end] == '\n')
+		end--;
+	if (start > end)
+		return TSMS_STRING_create();
+	return TSMS_STRING_subString(str, start, end);
 }
