@@ -23,15 +23,21 @@ TSMS_INLINE void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 }
 
 TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler) {
-	TSMS_PHP printer = malloc(sizeof(struct TSMS_PRINTER_HANDLER));
+	TSMS_PHP printer = TSMS_malloc(sizeof(struct TSMS_PRINTER_HANDLER));
+	if (printer == TSMS_NULL)
+		return TSMS_NULL;
 	printer->handler = handler;
 	printer->hasData = false;
 	printer->str = TSMS_CHAR_LIST_create(1024);
 	printer->callback = TSMS_NULL;
 	printer->strBuffer = TSMS_STRING_create();
 	printer->customBuffer = TSMS_NULL;
-	printer->stringBuffer = malloc(1024 * sizeof(char));
+	printer->stringBuffer = TSMS_malloc(1024 * sizeof(char));
 	TSMS_IT_addPrinter(printer, __tsms_internal_callback, TSMS_NULL);
+	if (printer->str == TSMS_NULL || printer->strBuffer == TSMS_NULL || printer->stringBuffer == TSMS_NULL) {
+		TSMS_PRINTER_release(printer);
+		return TSMS_NULL;
+	}
 	HAL_UART_Receive_IT(printer->handler,  &printer->buffer, 1);
 	return printer;
 }
@@ -150,6 +156,7 @@ TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
 	TSMS_STRING_release(printer->strBuffer);
 	TSMS_STRING_release(printer->customBuffer);
 	TSMS_CHAR_LIST_release(printer->str);
+	TSMS_IT_removePrinter(printer);
 	free(printer->stringBuffer);
 	free(printer);
 	return TSMS_SUCCESS;

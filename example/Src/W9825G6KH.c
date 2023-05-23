@@ -13,7 +13,7 @@ static TSMS_RESULT W9825G6KH_writeCommand(struct W9825G6KH_Handler *handler, uin
 #ifdef TSMS_STM32_SDRAM
 
 struct W9825G6KH_Handler * W9825G6KH_initHardware(SDRAM_HandleTypeDef * sdram, uint32_t* address) {
-	struct W9825G6KH_Handler * handler = malloc(sizeof(struct W9825G6KH_Handler));
+	struct W9825G6KH_Handler * handler = TSMS_malloc(sizeof(struct W9825G6KH_Handler));
 	handler->sdram = sdram;
 	handler->address = address;
 	if (W9825G6KH_writeCommand(handler, FMC_SDRAM_CMD_CLK_ENABLE, 1, 0) != TSMS_SUCCESS) {

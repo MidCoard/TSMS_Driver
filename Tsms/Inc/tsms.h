@@ -67,6 +67,10 @@
 
 #include "tsms_def.h"
 
+#ifdef TSMS_STM32
+#include "malloc.h"
+#endif
+
 TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency);
 
 TSMS_RESULT TSMS_SPI_init(TSMS_CLOCK_FREQUENCY frequency);
@@ -82,6 +86,10 @@ TSMS_RESULT TSMS_FONT_init();
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timerFrequency);
 
 TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency);
+
+void * TSMS_malloc(size_t size);
+
+void * TSMS_realloc(void * ptr, size_t size);
 
 #ifdef TSMS_GUI_STYLE
 

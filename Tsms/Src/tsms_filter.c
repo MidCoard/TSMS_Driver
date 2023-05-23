@@ -47,7 +47,9 @@ TSMS_INLINE void __tsms_internal_update_mode_filter(pWindowFilter filter, float 
 		}
 	}
 	if (!flag) {
-		struct _modeInfo * modeInfo = (struct _modeInfo *)malloc(sizeof(struct _modeInfo));
+		struct _modeInfo * modeInfo = (struct _modeInfo *) TSMS_malloc(sizeof(struct _modeInfo));
+		if (modeInfo == TSMS_NULL)
+			return;
 		modeInfo->value = newValue;
 		modeInfo->count = 1;
 		TSMS_LIST_add(modeFilter->modeList, modeInfo);
@@ -74,31 +76,13 @@ TSMS_INLINE void __tsms_internal_update_mode_filter(pWindowFilter filter, float 
 }
 
 pMedianFilter TSMS_FILTER_createMedianFilter(uint16_t windowSize) {
-    pMedianFilter filter = (pMedianFilter)malloc(sizeof(tMedianFilter));
-    if (filter == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for median filter");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+    pMedianFilter filter = (pMedianFilter) TSMS_malloc(sizeof(tMedianFilter));
+    if (filter == TSMS_NULL)
         return TSMS_NULL;
-    }
-    filter->window = (float *)malloc(sizeof(float) * windowSize);
-    if (filter->window == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for median filter window");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
-        TSMS_FILTER_releaseMedianFilter(filter);
-        return TSMS_NULL;
-    }
-    filter->mask = (bool *)malloc(sizeof(bool) * windowSize);
-    if (filter->mask == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for median filter mask");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
-	    TSMS_FILTER_releaseMedianFilter(filter);
-        return TSMS_NULL;
-    }
-
+    filter->window = (float *)TSMS_malloc(sizeof(float) * windowSize);
+    filter->mask = (bool *)TSMS_malloc(sizeof(bool) * windowSize);
 	filter->medianList = TSMS_FLOAT_LINK_LIST_create();
-	if (filter->medianList == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for median filter median list");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	if (filter->medianList == TSMS_NULL || filter->window == TSMS_NULL || filter->mask == TSMS_NULL) {
 		TSMS_FILTER_releaseMedianFilter(filter);
 		return TSMS_NULL;
 	}
@@ -115,23 +99,12 @@ pMedianFilter TSMS_FILTER_createMedianFilter(uint16_t windowSize) {
 }
 
 pMeanFilter TSMS_FILTER_createMeanFilter(uint16_t windowSize) {
-    pMeanFilter filter = (pMeanFilter)malloc(sizeof(tMeanFilter));
-    if (filter == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for mean filter");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+    pMeanFilter filter = (pMeanFilter)TSMS_malloc(sizeof(tMeanFilter));
+    if (filter == TSMS_NULL)
         return TSMS_NULL;
-    }
-    filter->window = (float *)malloc(sizeof(float) * windowSize);
-    if (filter->window == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for mean filter window");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
-        TSMS_FILTER_releaseMeanFilter(filter);
-        return TSMS_NULL;
-    }
-    filter->mask = (bool *)malloc(sizeof(bool) * windowSize);
-    if (filter->mask == TSMS_NULL) {
-        tString temp = TSMS_STRING_temp("malloc failed for mean filter mask");
-        TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+    filter->window = (float *)TSMS_malloc(sizeof(float) * windowSize);
+    filter->mask = (bool *)TSMS_malloc(sizeof(bool) * windowSize);
+    if (filter->mask == TSMS_NULL || filter->window == TSMS_NULL) {
 	    TSMS_FILTER_releaseMeanFilter(filter);
         return TSMS_NULL;
     }
@@ -149,30 +122,13 @@ pMeanFilter TSMS_FILTER_createMeanFilter(uint16_t windowSize) {
 }
 
 pModeFilter TSMS_FILTER_createModeFilter(uint16_t windowSize) {
-	pModeFilter filter = (pModeFilter)malloc(sizeof(tModeFilter));
-	if (filter == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for mode filter");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	pModeFilter filter = (pModeFilter)TSMS_malloc(sizeof(tModeFilter));
+	if (filter == TSMS_NULL)
 		return TSMS_NULL;
-	}
-	filter->window = (float *)malloc(sizeof(float) * windowSize);
-	if (filter->window == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for mode filter window");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
-		TSMS_FILTER_releaseModeFilter(filter);
-		return TSMS_NULL;
-	}
-	filter->mask = (bool *)malloc(sizeof(bool) * windowSize);
-	if (filter->mask == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for mode filter mask");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
-		TSMS_FILTER_releaseModeFilter(filter);
-		return TSMS_NULL;
-	}
+	filter->window = (float *)TSMS_malloc(sizeof(float) * windowSize);
+	filter->mask = (bool *)TSMS_malloc(sizeof(bool) * windowSize);
 	filter->modeList = TSMS_LIST_create(windowSize);
-	if (filter->modeList == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for mode filter mode list");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	if (filter->modeList == TSMS_NULL || filter->window == TSMS_NULL || filter->mask == TSMS_NULL) {
 		TSMS_FILTER_releaseModeFilter(filter);
 		return TSMS_NULL;
 	}

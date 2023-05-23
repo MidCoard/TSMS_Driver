@@ -1,14 +1,12 @@
 #include "tsms_link_list.h"
 #include "tsms_int_link_list.h"
 #include "tsms_float_link_list.h"
+#include "tsms.h"
 
 TSMS_LKLP TSMS_LINK_LIST_create() {
-	TSMS_LKLP list = (TSMS_LKLP) malloc(sizeof(struct TSMS_LINK_LIST));
-	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for link list");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_LKLP list = (TSMS_LKLP) TSMS_malloc(sizeof(struct TSMS_LINK_LIST));
+	if (list == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	list->head = TSMS_NULL;
 	list->tail = TSMS_NULL;
 	list->length = 0;
@@ -101,12 +99,9 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 		return TSMS_ERROR;
 	if (index < 0 || index > list->length)
 		return TSMS_ERROR;
-	TSMS_LKNP node = (TSMS_LKNP) malloc(sizeof(struct TSMS_LINK_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for link node");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_LKNP node = (TSMS_LKNP) TSMS_malloc(sizeof(struct TSMS_LINK_NODE));
+	if (node == TSMS_NULL)
 		return TSMS_ERROR;
-	}
 	node->element = element;
 	if (index == 0) {
 		node->prev = TSMS_NULL;
@@ -145,12 +140,9 @@ TSMS_RESULT TSMS_LINK_LIST_insert(TSMS_LKLP list, void *element, TSMS_POS index)
 }
 
 TSMS_ILKLP TSMS_INT_LINK_LIST_create() {
-	TSMS_ILKLP list = (TSMS_ILKLP) malloc(sizeof(struct TSMS_INT_LINK_LIST));
-	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for int link list");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_ILKLP list = (TSMS_ILKLP) TSMS_malloc(sizeof(struct TSMS_INT_LINK_LIST));
+	if (list == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	list->head = TSMS_NULL;
 	list->tail = TSMS_NULL;
 	list->length = 0;
@@ -225,12 +217,9 @@ TSMS_RESULT TSMS_INT_LINK_LIST_insert(TSMS_ILKLP list, int element, TSMS_POS ind
 		return TSMS_ERROR;
 	if (index < 0 || index > list->length)
 		return TSMS_ERROR;
-	TSMS_ILKNP node = (TSMS_ILKNP) malloc(sizeof(struct TSMS_INT_LINK_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for int link node");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_ILKNP node = (TSMS_ILKNP) TSMS_malloc(sizeof(struct TSMS_INT_LINK_NODE));
+	if (node == TSMS_NULL)
 		return TSMS_ERROR;
-	}
 	node->element = element;
 	if (index == 0) {
 		node->prev = TSMS_NULL;
@@ -288,12 +277,9 @@ TSMS_RESULT TSMS_INT_LINK_LIST_deleteNode(TSMS_ILKLP list, TSMS_ILKNP node) {
 
 
 TSMS_FLKLP TSMS_FLOAT_LINK_LIST_create() {
-	TSMS_FLKLP list = (TSMS_FLKLP) malloc(sizeof(struct TSMS_FLOAT_LINK_LIST));
-	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for float link list");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_FLKLP list = (TSMS_FLKLP) TSMS_malloc(sizeof(struct TSMS_FLOAT_LINK_LIST));
+	if (list == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	list->head = TSMS_NULL;
 	list->tail = TSMS_NULL;
 	list->length = 0;
@@ -368,12 +354,9 @@ TSMS_RESULT TSMS_FLOAT_LINK_LIST_insert(TSMS_FLKLP list, float element, TSMS_POS
 		return TSMS_ERROR;
 	if (index < 0 || index > list->length)
 		return TSMS_ERROR;
-	TSMS_FLKNP node = (TSMS_FLKNP) malloc(sizeof(struct TSMS_FLOAT_LINK_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for float link node");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_FLKNP node = (TSMS_FLKNP) TSMS_malloc(sizeof(struct TSMS_FLOAT_LINK_NODE));
+	if (node == TSMS_NULL)
 		return TSMS_ERROR;
-	}
 	node->element = element;
 	if (index == 0) {
 		node->prev = TSMS_NULL;

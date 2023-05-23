@@ -1,4 +1,5 @@
 #include "tsms.h"
+#include "tsms_printer.h"
 
 TSMS_RESULT TSMS_init(TSMS_CLOCK_FREQUENCY frequency, TSMS_CLOCK_FREQUENCY timerFrequency) {
 	TSMS_RESULT result = TSMS_SUCCESS;
@@ -20,4 +21,24 @@ void TSMS_delay(uint32_t ms) {
 #ifdef TSMS_STM32
 	HAL_Delay(ms);
 #endif
+}
+
+void * TSMS_malloc(size_t size) {
+	void * result = malloc(size);
+	if (result == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_NULL);
+		print("Malloc failed at %d,%d,%d\n", __builtin_return_address(0), __builtin_return_address(1), __builtin_return_address(2));
+		return TSMS_NULL;
+	}
+	return result;
+}
+
+void * TSMS_realloc(void * ptr, size_t size) {
+	void * result = realloc(ptr, size);
+	if (result == TSMS_NULL) {
+		TSMS_ERR_report(TSMS_ERROR_TYPE_REALLOC_FAILED, TSMS_NULL);
+		print("Realloc failed at %d,%d,%d\n", __builtin_return_address(0), __builtin_return_address(1), __builtin_return_address(2));
+		return TSMS_NULL;
+	}
+	return result;
 }

@@ -46,7 +46,7 @@ struct SN74HC595_Handler *SN74HC595_initHardware(GPIO_TypeDef *srclr, uint16_t s
                                                  GPIO_TypeDef *srclk, uint16_t srclkPin,
                                                  GPIO_TypeDef *rclk, uint16_t rclkPin,
                                                  GPIO_TypeDef *data, uint16_t dataPin) {
-	struct SN74HC595_Handler *handler = malloc(sizeof(struct SN74HC595_Handler));
+	struct SN74HC595_Handler *handler = TSMS_malloc(sizeof(struct SN74HC595_Handler));
 	handler->handler = TSMS_DRIVER_createCustomHandler(
 			TSMS_CUSTOM_createSpecialHandler(__internal_delay, TSMS_NULL_GHP, TSMS_NULL_GHP, 4,
 			                                 TSMS_GPIO_createHandler(srclr, srclrPin),

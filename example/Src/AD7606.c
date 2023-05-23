@@ -21,7 +21,7 @@ AD7606_initSerialHardware(GPIO_TypeDef *byteSelect, uint16_t byteSelectPin, GPIO
                           uint16_t sclkPin, GPIO_TypeDef *busy, uint16_t busyPin, GPIO_TypeDef *firstData,
                           uint16_t firstDataPin, GPIO_TypeDef *doutA, uint16_t doutAPin, GPIO_TypeDef *doutB,
                           uint16_t doutBPin, float referenceVoltage) {
-	struct AD7606_Handler *handler = malloc(sizeof(struct AD7606_Handler));
+	struct AD7606_Handler *handler = TSMS_malloc(sizeof(struct AD7606_Handler));
 	handler->parallel = TSMS_NULL;
 	handler->handler = TSMS_DRIVER_createSPIHandler(
 			TSMS_SPI_createSoftwareHandler(TSMS_GPIO_createHandler(cs, csPin), TSMS_GPIO_createHandler(sclk, sclkPin),

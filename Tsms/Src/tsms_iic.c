@@ -69,12 +69,9 @@ TSMS_RESULT TSMS_IIC_writeBit(TSMS_IHP handler, uint8_t bit) {
 }
 
 TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address, TSMS_TRANSFER_TYPE type) {
-	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
-	if (iic == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_IHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_IHP iic = TSMS_malloc(sizeof(struct TSMS_IIC_HANDLER));
+	if (iic == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	iic->sda = sda;
 	iic->scl = scl;
 	__tsms_internal_iic_sda_high(iic);
@@ -90,11 +87,9 @@ TSMS_IHP TSMS_IIC_createSoftwareIIC(TSMS_GHP sda, TSMS_GHP scl, uint8_t address,
 #ifdef TSMS_STM32_IIC
 
 TSMS_IHP TSMS_IIC_createHardwareIIC(I2C_HandleTypeDef *handler, uint8_t address, TSMS_TRANSFER_TYPE type) {
-	TSMS_IHP iic = malloc(sizeof(struct TSMS_IIC_HANDLER));
-	if (iic == TSMS_NULL) {
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, TSMS_STRING_static("malloc failed for TSMS_IHP"));
+	TSMS_IHP iic = TSMS_malloc(sizeof(struct TSMS_IIC_HANDLER));
+	if (iic == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	iic->hardwareHandler = handler;
 	iic->isHardware = true;
 	iic->release = __tsms_internal_iic_release0;

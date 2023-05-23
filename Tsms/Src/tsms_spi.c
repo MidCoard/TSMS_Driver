@@ -106,12 +106,9 @@ TSMS_INLINE void __tsms_internal_spi_release1(TSMS_SHP spi) {
 
 TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din, TSMS_GHP dout, TSMS_SPI_MODE mode,
                                         TSMS_GPIO_STATUS csValid, TSMS_TRANSFER_TYPE type) {
-	TSMS_SHP spi = malloc(sizeof(struct TSMS_SPI_HANDLER));
-	if (spi == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_SHP spi = TSMS_malloc(sizeof(struct TSMS_SPI_HANDLER));
+	if (spi == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	spi->cs = cs;
 	spi->sclk = sclk;
 	spi->dout = dout;
@@ -132,7 +129,9 @@ TSMS_SHP TSMS_SPI_createSoftwareHandler(TSMS_GHP cs, TSMS_GHP sclk, TSMS_GHP din
 #ifdef TSMS_STM32_SPI
 
 TSMS_SHP TSMS_SPI_createHardwareHandler(SPI_HandleTypeDef * spi) {
-	TSMS_SHP handler = malloc(sizeof (struct TSMS_SPI_HANDLER));
+	TSMS_SHP handler = TSMS_malloc(sizeof (struct TSMS_SPI_HANDLER));
+	if (handler == TSMS_NULL)
+		return TSMS_NULL;
 	handler->hardwareHandler = spi;
 	handler->isHardware = true;
 	handler->release = __tsms_internal_spi_release0;

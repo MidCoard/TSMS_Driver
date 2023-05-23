@@ -1,7 +1,10 @@
 #include "tsms_lock.h"
+#include "tsms.h"
 
 pLock TSMS_LOCK_create() {
-	pLock lock = (pLock)malloc(sizeof(tLock));
+	pLock lock = (pLock)TSMS_malloc(sizeof(tLock));
+	if (lock == TSMS_NULL)
+		return TSMS_NULL;
 	lock->locked = false;
 	return lock;
 }
@@ -40,9 +43,15 @@ TSMS_RESULT TSMS_LOCK_release(pLock lock) {
 
 
 pSequenceLock TSMS_SEQUENCE_LOCK_create() {
-	pSequenceLock lock = (pSequenceLock)malloc(sizeof(tSequenceLock));
+	pSequenceLock lock = (pSequenceLock) TSMS_malloc(sizeof(tSequenceLock));
+	if (lock == TSMS_NULL)
+		return TSMS_NULL;
 	lock->lock = TSMS_LOCK_create();
 	lock->stack = TSMS_STACK_create();
+	if (lock->lock == TSMS_NULL || lock->stack == TSMS_NULL) {
+		TSMS_SEQUENCE_LOCK_release(lock);
+		return TSMS_NULL;
+	}
 	return lock;
 }
 
@@ -112,11 +121,15 @@ TSMS_RESULT TSMS_SEQUENCE_LOCK_release(pSequenceLock lock) {
 
 
 pSequencePriorityLock TSMS_SEQUENCE_PRIORITY_LOCK_create() {
-	pSequencePriorityLock lock = (pSequencePriorityLock)malloc(sizeof(tSequencePriorityLock));
+	pSequencePriorityLock lock = (pSequencePriorityLock) TSMS_malloc(sizeof(tSequencePriorityLock));
 	lock->lock = TSMS_LOCK_create();
 	lock->priorityLock = TSMS_LOCK_create();
 	lock->sequenceLock = TSMS_SEQUENCE_LOCK_create();
 	lock->stack = TSMS_INT_STACK_create();
+	if (lock->lock == TSMS_NULL || lock->priorityLock == TSMS_NULL || lock->sequenceLock == TSMS_NULL || lock->stack == TSMS_NULL) {
+		TSMS_SEQUENCE_PRIORITY_LOCK_release(lock);
+		return TSMS_NULL;
+	}
 	return lock;
 }
 

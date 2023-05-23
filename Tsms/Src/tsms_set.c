@@ -1,5 +1,6 @@
 #include "tsms_set.h"
 #include "tsms_long_set.h"
+#include "tsms.h"
 
 const bool _setTrue = true;
 
@@ -14,12 +15,9 @@ long TSMS_SET_defaultCompare(void* key1, void* key2) {
 }
 
 TSMS_SP TSMS_SET_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare) {
-	TSMS_SP set = (TSMS_SP) malloc(sizeof(struct TSMS_SET));
-	if (set == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp(" malloc failed for set");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_SP set = (TSMS_SP) TSMS_malloc(sizeof(struct TSMS_SET));
+	if (set == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	set->map = TSMS_MAP_create(diffusion, hash, compare);
 	if (set->map == NULL) {
 		TSMS_SET_release(set);
@@ -72,12 +70,9 @@ void* TSMS_SET_next(TSMS_SIP iter) {
 const TSMS_LSI TSMS_EMPTY_LONG_SET_ITERATOR = {{TSMS_NULL, 0, TSMS_NULL}};
 
 TSMS_LSP TSMS_LONG_SET_create(TSMS_SIZE diffusion) {
-	TSMS_LSP set = (TSMS_LSP) malloc(sizeof(struct TSMS_LONG_SET));
-	if (set == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp(" malloc failed for set");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_LSP set = (TSMS_LSP) TSMS_malloc(sizeof(struct TSMS_LONG_SET));
+	if (set == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	set->map = TSMS_LONG_MAP_create(diffusion);
 	if (set->map == NULL) {
 		TSMS_LONG_SET_release(set);

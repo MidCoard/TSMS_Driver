@@ -147,6 +147,8 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data);
 
 TSMS_THP TSMS_TOUCH_createHandler(void* handler, TSMS_TOUCH_TYPE type, TSMS_GHP rst, void * option);
 
+TSMS_RESULT TSMS_TOUCH_release(TSMS_THP touch);
+
 TSMS_RESULT TSMS_TOUCH_reset(TSMS_THP touch);
 
 TSMS_RESULT TSMS_TOUCH_request(TSMS_THP touch, TSMS_TOUCH_REQUEST_MODE mode);
@@ -197,6 +199,8 @@ TSMS_RESULT TSMS_SCREEN_request(TSMS_SCHP screen, TSMS_SCREEN_REQUEST_MODE mode)
 
 TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float refreshRate);
 
+TSMS_RESULT TSMS_DISPLAY_release(TSMS_DPHP display);
+
 TSMS_RESULT TSMS_DISPLAY_setRequestMode(TSMS_DPHP display, pTimer timer, TSMS_SCREEN_REQUEST_MODE screenMode, TSMS_TOUCH_REQUEST_MODE touchMode);
 
 TSMS_RESULT TSMS_DISPLAY_reset(TSMS_DPHP display);
@@ -209,5 +213,6 @@ TSMS_RESULT TSMS_SCREEN_drawCharTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y
 
 TSMS_RESULT TSMS_SCREEN_drawStringTopLeft(TSMS_SCHP screen, uint16_t x, uint16_t y, TSMS_FONT_TYPE fontType, void *font, pString str, TSMS_COLOR color, TSMS_FONT_SIZE size, pLock preLock);
 
+TSMS_RESULT TSMS_SCREEN_release(TSMS_SCHP screen);
 
 #endif //TSMS_DISPLAY_H

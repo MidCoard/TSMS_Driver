@@ -39,7 +39,7 @@ static void AD7190_writeRegister(struct AD7190_Handler *handler, AD7190_REGISTER
 struct AD7190_Handler *
 AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, uint16_t mosiPin, GPIO_TypeDef *miso,
                     uint16_t misoPin, GPIO_TypeDef *cs, uint16_t csPin, float reference) {
-	struct AD7190_Handler *handler = malloc(sizeof(struct AD7190_Handler));
+	struct AD7190_Handler *handler = TSMS_malloc(sizeof(struct AD7190_Handler));
 	handler->handler = TSMS_DRIVER_createSPIHandler(TSMS_SPI_createSoftwareHandler(TSMS_GPIO_createHandler(cs, csPin),
 	                                                                               TSMS_GPIO_createHandler(sclk,
 	                                                                                                       sclkPin),

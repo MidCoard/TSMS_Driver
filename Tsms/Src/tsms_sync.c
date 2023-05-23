@@ -1,14 +1,18 @@
 #include "tsms_sync.h"
+#include "tsms.h"
 
 TSMS_SYNC_STP TSMS_SYNC_STACK_create(TSMS_STP stack) {
-	TSMS_SYNC_STP sync_stack = (TSMS_SYNC_STP)malloc(sizeof(struct TSMS_SYNC_STACK));
-	if (sync_stack == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for sync stack");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	if (stack == TSMS_NULL)
 		return TSMS_NULL;
-	}
+	TSMS_SYNC_STP sync_stack = (TSMS_SYNC_STP) TSMS_malloc(sizeof(struct TSMS_SYNC_STACK));
+	if (sync_stack == TSMS_NULL)
+		return TSMS_NULL;
 	sync_stack->stack = stack;
 	sync_stack->lock = TSMS_LOCK_create();
+	if (sync_stack->lock == TSMS_NULL) {
+		TSMS_SYNC_STACK_release(sync_stack);
+		return TSMS_NULL;
+	}
 	return sync_stack;
 }
 

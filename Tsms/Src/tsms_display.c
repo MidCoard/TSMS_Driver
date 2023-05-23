@@ -154,12 +154,9 @@ void TSMS_SCREEN_writeData(TSMS_SCHP screen, volatile uint16_t data) {
 TSMS_SCHP
 TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, TSMS_SCREEN_TYPE type, uint16_t width,
                                uint16_t height, uint16_t *swapBuffer, uint8_t * extraBuffer, void *option) {
-	TSMS_SCHP screen = malloc(sizeof(struct TSMS_SCREEN_HANDLER));
-	if (screen == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_SCHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_SCHP screen = TSMS_malloc(sizeof(struct TSMS_SCREEN_HANDLER));
+	if (screen == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	screen->reset = TSMS_NULL;
 	screen->command = command;
 	screen->data = data;
@@ -170,6 +167,10 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 	screen->swapBuffer = swapBuffer;
 	screen->extraBuffer = extraBuffer;
 	screen->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
+	if (screen->lock == TSMS_NULL) {
+		TSMS_SCREEN_release(screen);
+		return TSMS_NULL;
+	}
 	TSMS_delay(50);
 	uint16_t id;
 	if (screen->type == TSMS_SCREEN_TYPE_AUTO_DETECT || screen->type == TSMS_SCREEN_TYPE_ILI9341) {
@@ -238,10 +239,9 @@ TSMS_SCREEN_create16BitHandler(uint16_t *command, uint16_t *data, TSMS_GHP bg, T
 		TSMS_SCREEN_enableBackgroudLight(screen);
 		return screen;
 	}
-	tString temp = TSMS_STRING_temp("screen type not supported");
+	tString temp = TSMS_STRING_temp("Screen type is not supported.");
 	TSMS_ERR_report(TSMS_ERROR_TYPE_SCREEN_TYPE_NOT_SUPPORTED, &temp);
-	TSMS_SEQUENCE_PRIORITY_LOCK_release(screen->lock);
-	free(screen);
+	TSMS_SCREEN_release(screen);
 	return TSMS_NULL;
 }
 
@@ -249,28 +249,34 @@ TSMS_DPHP TSMS_DISPLAY_createHandler(TSMS_SCHP screen, TSMS_THP touch, float ref
 	// touch could be null
 	if (screen == TSMS_NULL)
 		return TSMS_NULL;
-	TSMS_DPHP display = malloc(sizeof(struct TSMS_DISPLAY_HANDLER));
-	if (display == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DPHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_DPHP display = TSMS_malloc(sizeof(struct TSMS_DISPLAY_HANDLER));
+	if (display == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	display->touch = touch;
-	if (display->touch != TSMS_NULL)
-		display->touch->display = display;
 	display->screen = screen;
 	display->refreshRate = refreshRate;
 	display->lock = TSMS_LOCK_create();
+	if (display->lock == TSMS_NULL) {
+		TSMS_DISPLAY_release(display);
+		return TSMS_NULL;
+	}
+	if (display->touch != TSMS_NULL)
+		display->touch->display = display;
 	return display;
 }
 
+TSMS_RESULT TSMS_DISPLAY_release(TSMS_DPHP display) {
+	if (display == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_LOCK_release(display->lock);
+	free(display);
+	return TSMS_SUCCESS;
+}
+
 TSMS_THP TSMS_TOUCH_createHandler(void *handler, TSMS_TOUCH_TYPE type, TSMS_GHP rst, void *option) {
-	TSMS_THP touch = malloc(sizeof(struct TSMS_TOUCH_HANDLER));
-	if (touch == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_THP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_THP touch = TSMS_malloc(sizeof(struct TSMS_TOUCH_HANDLER));
+	if (touch == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	touch->resetPin = rst;
 	touch->reset = __tsms_internal_touch_reset;
 	touch->type = type;
@@ -278,6 +284,10 @@ TSMS_THP TSMS_TOUCH_createHandler(void *handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 	touch->lock = TSMS_SEQUENCE_PRIORITY_LOCK_create();
 	touch->list = TSMS_LIST_create(10);
 	touch->callback = TSMS_NULL;
+	if (touch->lock == TSMS_NULL || touch->list == TSMS_NULL) {
+		TSMS_TOUCH_release(touch);
+		return TSMS_NULL;
+	}
 	TSMS_TOUCH_reset(touch);
 	volatile uint32_t id;
 	if (touch->type == TSMS_TOUCH_TYPE_AUTO_DETECT || touch->type == TSMS_TOUCH_TYPE_GT9147) {
@@ -294,12 +304,19 @@ TSMS_THP TSMS_TOUCH_createHandler(void *handler, TSMS_TOUCH_TYPE type, TSMS_GHP 
 		touch->init(touch, option);
 		return touch;
 	}
-	tString temp = TSMS_STRING_temp("touch type not supported");
+	tString temp = TSMS_STRING_temp("Touch type is not supported");
 	TSMS_ERR_report(TSMS_ERROR_TYPE_TOUCH_TYPE_NOT_SUPPORTED, &temp);
+	TSMS_TOUCH_release(touch);
+	return TSMS_NULL;
+}
+
+TSMS_RESULT TSMS_TOUCH_release(TSMS_THP touch) {
+	if (touch == TSMS_NULL)
+		return TSMS_ERROR;
 	TSMS_SEQUENCE_PRIORITY_LOCK_release(touch->lock);
 	TSMS_LIST_release(touch->list);
 	free(touch);
-	return TSMS_NULL;
+	return TSMS_SUCCESS;
 }
 
 TSMS_RESULT TSMS_TOUCH_reset(TSMS_THP touch) {
@@ -583,6 +600,8 @@ TSMS_LP TSMS_TOUCH_getTouchPointList(TSMS_THP touch) {
 	if (touch == TSMS_NULL)
 		return TSMS_NULL;
 	TSMS_LP list = TSMS_LIST_create(10);
+	if (list == TSMS_NULL)
+		return TSMS_NULL;
 	if (touch->list->length == 0)
 		return list;
 	pLock lock = TSMS_SEQUENCE_PRIORITY_LOCK_lock(touch->lock, TSMS_NULL, 0);
@@ -590,7 +609,9 @@ TSMS_LP TSMS_TOUCH_getTouchPointList(TSMS_THP touch) {
 		return list;
 	for (TSMS_POS i = 0; i < touch->list->length; i++) {
 		TSMS_TDP item = touch->list->list[i];
-		TSMS_TDP data = malloc(sizeof(struct TSMS_TOUCH_DATA));
+		TSMS_TDP data = TSMS_malloc(sizeof(struct TSMS_TOUCH_DATA));
+		if (data == TSMS_NULL)
+			continue;
 		data->id = item->id;
 		data->x = item->x;
 		data->y = item->y;
@@ -681,4 +702,12 @@ TSMS_RESULT  TSMS_SCREEN_drawStringTopLeft(TSMS_SCHP screen, uint16_t x, uint16_
 	TSMS_RESULT result = __tsms_internal_screen_draw_string(screen, x, screen->height - y, fontType, font, str, color, size);
 	TSMS_SEQUENCE_PRIORITY_LOCK_unlock(screen->lock, lock);
 	return result;
+}
+
+TSMS_RESULT TSMS_SCREEN_release(TSMS_SCHP screen) {
+	if (screen == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_SEQUENCE_PRIORITY_LOCK_release(screen->lock);
+	free(screen);
+	return TSMS_SUCCESS;
 }

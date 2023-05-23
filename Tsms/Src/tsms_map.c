@@ -1,5 +1,6 @@
 #include "tsms_map.h"
 #include "tsms_long_map.h"
+#include "tsms.h"
 
 const TSMS_ME TSMS_EMPTY_MAP_ENTRY = {TSMS_NULL, TSMS_NULL};
 
@@ -10,12 +11,9 @@ const TSMS_MI TSMS_EMPTY_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 const TSMS_LMI TSMS_EMPTY_LONG_MAP_ITERATOR = {TSMS_NULL, 0, TSMS_NULL};
 
 TSMS_INLINE TSMS_MNP __tsms_internal_create_node(void * key, void * value) {
-	TSMS_MNP node = malloc(sizeof (struct TSMS_MAP_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for map node");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_MNP node = TSMS_malloc(sizeof (struct TSMS_MAP_NODE));
+	if (node == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	node->key = key;
 	node->value = value;
 	node->next = TSMS_NULL;
@@ -23,12 +21,9 @@ TSMS_INLINE TSMS_MNP __tsms_internal_create_node(void * key, void * value) {
 }
 
 TSMS_INLINE TSMS_LMNP __tsms_internal_create_long_node(long key, void * value) {
-	TSMS_LMNP node = malloc(sizeof(struct TSMS_LONG_MAP_NODE));
-	if (node == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for long map node");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_LMNP node = TSMS_malloc(sizeof(struct TSMS_LONG_MAP_NODE));
+	if (node == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	node->key = key;
 	node->value = value;
 	node->next = TSMS_NULL;
@@ -42,16 +37,12 @@ TSMS_INLINE bool __tsms_internal_compare(TSMS_MP map, void * key1, void * key2) 
 }
 
 TSMS_MP TSMS_MAP_create(TSMS_SIZE diffusion, TSMS_HASH_FUNCTION hash, TSMS_COMPARE_FUNCTION compare) {
-	TSMS_MP map = malloc(sizeof(struct TSMS_MAP));
-	if (map == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for map");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_MP map = TSMS_malloc(sizeof(struct TSMS_MAP));
+	if (map == TSMS_NULL)
 		return TSMS_NULL;
-	}
-	map->base = malloc(sizeof( TSMS_MNP) * diffusion);
+	map->base = TSMS_malloc(sizeof( TSMS_MNP) * diffusion);
 	if (map->base == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for map base");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+		TSMS_MAP_release(map);
 		return TSMS_NULL;
 	}
 	for (TSMS_SIZE i = 0; i < diffusion; i++)
@@ -220,13 +211,14 @@ TSMS_RESULT TSMS_MAP_clear(TSMS_MP map) {
 
 
 TSMS_LMP TSMS_LONG_MAP_create(TSMS_SIZE diffusion) {
-	TSMS_LMP map = malloc(sizeof(struct TSMS_LONG_MAP));
-	if (map == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for map");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_LMP map = TSMS_malloc(sizeof(struct TSMS_LONG_MAP));
+	if (map == TSMS_NULL)
+		return TSMS_NULL;
+	map->base = TSMS_malloc(sizeof( TSMS_LMNP) * diffusion);
+	if (map->base == TSMS_NULL) {
+		TSMS_LONG_MAP_release(map);
 		return TSMS_NULL;
 	}
-	map->base = malloc(sizeof( TSMS_LMNP) * diffusion);
 	map->diffusion = diffusion;
 	map->size = 0;
 	return map;

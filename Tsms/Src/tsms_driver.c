@@ -15,12 +15,9 @@ TSMS_INLINE void __tsms_internal_remove(TSMS_RHP reg, uint32_t mask) {
 }
 
 TSMS_RHP TSMS_REG_Register(uint32_t address, uint8_t bits) {
-	TSMS_RHP reg = malloc(sizeof(struct TSMS_REGISTER_HANDLER));
-	if (reg == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_RHP reg = TSMS_malloc(sizeof(struct TSMS_REGISTER_HANDLER));
+	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	reg->address = address;
 	reg->bits = bits;
 	reg->value = 0;
@@ -32,7 +29,11 @@ TSMS_RHP TSMS_REG_8BitRegister(uint32_t address, TSMS_REGISTER_8BIT) {
 	TSMS_RHP reg = TSMS_REG_Register(address, 8);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->positions = malloc(sizeof(uint8_t) * 8);
+	reg->positions = TSMS_malloc(sizeof(uint8_t) * 8);
+	if (reg->positions == TSMS_NULL) {
+		TSMS_REG_release(reg);
+		return TSMS_NULL;
+	}
 
 	reg->positions[0] = bit0;
 	reg->positions[1] = bit1;
@@ -50,7 +51,11 @@ TSMS_RHP TSMS_REG_16BitRegister(uint32_t address, TSMS_REGISTER_16BIT) {
 	TSMS_RHP reg = TSMS_REG_Register(address, 16);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->positions = malloc(sizeof(uint8_t) * 16);
+	reg->positions = TSMS_malloc(sizeof(uint8_t) * 16);
+	if (reg->positions == TSMS_NULL) {
+		TSMS_REG_release(reg);
+		return TSMS_NULL;
+	}
 
 	reg->positions[0] = bit0;
 	reg->positions[1] = bit1;
@@ -76,7 +81,11 @@ TSMS_RHP TSMS_REG_24BitRegister(uint32_t address, TSMS_REGISTER_24BIT) {
 	TSMS_RHP reg = TSMS_REG_Register(address, 24);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->positions = malloc(sizeof(uint8_t) * 24);
+	reg->positions = TSMS_malloc(sizeof(uint8_t) * 24);
+	if (reg->positions == TSMS_NULL) {
+		TSMS_REG_release(reg);
+		return TSMS_NULL;
+	}
 
 	reg->positions[0] = bit0;
 	reg->positions[1] = bit1;
@@ -109,7 +118,11 @@ TSMS_RHP TSMS_REG_32BitRegister(uint32_t address, TSMS_REGISTER_32BIT) {
 	TSMS_RHP reg = TSMS_REG_Register(address, 32);
 	if (reg == TSMS_NULL)
 		return TSMS_NULL;
-	reg->positions = malloc(sizeof(uint8_t) * 32);
+	reg->positions = TSMS_malloc(sizeof(uint8_t) * 32);
+	if (reg->positions == TSMS_NULL) {
+		TSMS_REG_release(reg);
+		return TSMS_NULL;
+	}
 
 	reg->positions[0] = bit0;
 	reg->positions[1] = bit1;
@@ -171,12 +184,9 @@ TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
 		return TSMS_NULL;
 	}
-	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (handler == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_DHP handler = TSMS_malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	handler->type = TSMS_DRIVER_TYPE_SPI;
 	handler->spi = spi;
 	handler->regs = regs;
@@ -188,17 +198,11 @@ TSMS_DHP TSMS_DRIVER_createSPIHandler(TSMS_SHP spi, TSMS_RHLP regs) {
 }
 
 TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
-	if (iic == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("iic handler is null");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
+	if (iic == TSMS_NULL)
 		return TSMS_NULL;
-	}
-	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (handler == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_DHP handler = TSMS_malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	handler->type = TSMS_DRIVER_TYPE_IIC;
 	handler->iic = iic;
 	handler->regs = regs;
@@ -208,17 +212,11 @@ TSMS_DHP TSMS_DRIVER_createIICHandler(TSMS_IHP iic, TSMS_RHLP regs) {
 }
 
 TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs) {
-	if (custom == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("custom handler is null");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_INIT_FAILED, &temp);
+	if (custom == TSMS_NULL)
 		return TSMS_NULL;
-	}
-	TSMS_DHP handler = malloc(sizeof(struct TSMS_DRIVER_HANDLER));
-	if (handler == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_DHP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_DHP handler = TSMS_malloc(sizeof(struct TSMS_DRIVER_HANDLER));
+	if (handler == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	handler->type = TSMS_DRIVER_TYPE_CUSTOM;
 	handler->custom = custom;
 	handler->regs = regs;
@@ -226,14 +224,15 @@ TSMS_DHP TSMS_DRIVER_createCustomHandler(TSMS_CHP custom, TSMS_RHLP regs) {
 }
 
 TSMS_RHLP TSMS_REG_createList(int n, ...) {
-	TSMS_RHLP list = malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
-	if (list == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHLP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_RHLP list = TSMS_malloc(sizeof(struct TSMS_REGISTER_HANDLER_LIST));
+	if (list == TSMS_NULL)
+		return TSMS_NULL;
+	list->size = n;
+	list->regs = TSMS_malloc(sizeof(TSMS_RHP) * n);
+	if (list->regs == TSMS_NULL) {
+		TSMS_REG_releaseList(list);
 		return TSMS_NULL;
 	}
-	list->size = n;
-	list->regs = malloc(sizeof(TSMS_RHP) * n);
 	va_list l;
 	va_start(l, n);
 	uint8_t mx = 0;
@@ -246,13 +245,12 @@ TSMS_RHLP TSMS_REG_createList(int n, ...) {
 	}
 	va_end(l);
 	list->maxSize = mx + 1;
-	list->ids = malloc(sizeof(uint8_t) * list->maxSize);
-	list->sizes = malloc(sizeof(uint8_t) * list->maxSize);
-	list->types = malloc(sizeof(TSMS_REGISTER_DATA_TYPE) * list->maxSize);
-	list->starts = malloc(sizeof(uint8_t) * list->maxSize);
+	list->ids = TSMS_malloc(sizeof(uint8_t) * list->maxSize);
+	list->sizes = TSMS_malloc(sizeof(uint8_t) * list->maxSize);
+	list->types = TSMS_malloc(sizeof(TSMS_REGISTER_DATA_TYPE) * list->maxSize);
+	list->starts = TSMS_malloc(sizeof(uint8_t) * list->maxSize);
 	if (list->ids == TSMS_NULL || list->sizes == TSMS_NULL || list->types == TSMS_NULL || list->starts == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_RHLP");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+		TSMS_REG_releaseList(list);
 		return TSMS_NULL;
 	}
 	memset(list->ids, 0, sizeof(uint8_t) * list->maxSize);

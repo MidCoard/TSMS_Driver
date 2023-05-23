@@ -1,13 +1,11 @@
 #include "tsms_stack.h"
 #include "tsms_int_stack.h"
+#include "tsms.h"
 
 TSMS_STP TSMS_STACK_create() {
-	TSMS_STP stack = (TSMS_STP) malloc(sizeof(struct TSMS_STACK));
-	if (stack == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for stack");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_STP stack = (TSMS_STP) TSMS_malloc(sizeof(struct TSMS_STACK));
+	if (stack == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	stack->list = TSMS_LINK_LIST_create();
 	if (stack->list == TSMS_NULL) {
 		TSMS_STACK_release(stack);
@@ -47,9 +45,9 @@ TSMS_RESULT TSMS_STACK_clear(TSMS_STP stack) {
 TSMS_RESULT TSMS_STACK_release(TSMS_STP stack) {
 	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_RESULT result = TSMS_LINK_LIST_release(stack->list);
+	TSMS_LINK_LIST_release(stack->list);
 	free(stack);
-	return result;
+	return TSMS_SUCCESS;
 }
 
 TSMS_SIZE TSMS_STACK_size(TSMS_STP stack) {
@@ -61,12 +59,9 @@ bool TSMS_STACK_empty(TSMS_STP stack) {
 }
 
 TSMS_ISTP TSMS_INT_STACK_create() {
-	TSMS_ISTP stack = (TSMS_ISTP) malloc(sizeof(struct TSMS_INT_STACK));
-	if (stack == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for int stack");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_ISTP stack = (TSMS_ISTP) TSMS_malloc(sizeof(struct TSMS_INT_STACK));
+	if (stack == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	stack->list = TSMS_INT_LINK_LIST_create();
 	if (stack->list == TSMS_NULL) {
 		TSMS_INT_STACK_release(stack);
@@ -106,9 +101,9 @@ TSMS_RESULT TSMS_INT_STACK_clear(TSMS_ISTP stack) {
 TSMS_RESULT TSMS_INT_STACK_release(TSMS_ISTP stack) {
 	if (stack == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_RESULT result = TSMS_INT_LINK_LIST_release(stack->list);
+	TSMS_INT_LINK_LIST_release(stack->list);
 	free(stack);
-	return result;
+	return TSMS_SUCCESS;
 }
 
 TSMS_SIZE TSMS_INT_STACK_size(TSMS_ISTP stack) {

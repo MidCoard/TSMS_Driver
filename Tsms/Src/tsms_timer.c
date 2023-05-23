@@ -22,12 +22,9 @@ TSMS_RESULT TSMS_TIMER_init(TSMS_CLOCK_FREQUENCY frequency) {
 #ifdef TSMS_STM32_TIMER
 
 pTimer TSMS_TIMER_create(TIM_HandleTypeDef* tim, TSMS_TIMER_OPTION option) {
-	pTimer timer = (pTimer) malloc(sizeof(tTimer));
-	if (timer == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for pTimer");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	pTimer timer = (pTimer) TSMS_malloc(sizeof(tTimer));
+	if (timer == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	timer->timer = tim;
 	timer->option = option;
 	timer->periods = 0;

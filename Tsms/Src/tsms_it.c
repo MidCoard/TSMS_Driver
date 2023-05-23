@@ -62,7 +62,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef * htim) {
 TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_CALLBACK callback, void *handler) {
 	if (gpio == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_IGP igp = malloc(sizeof(struct TSMS_IT_GPIO));
+	TSMS_IGP igp = TSMS_malloc(sizeof(struct TSMS_IT_GPIO));
 	if (igp == TSMS_NULL)
 		return TSMS_ERROR;
 	igp->gpio = gpio;
@@ -75,7 +75,7 @@ TSMS_RESULT TSMS_IT_addGPIO(TSMS_GHP gpio, TSMS_IT_GPIO_CALLBACK callback, void 
 TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, void *handler) {
 	if (php == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_IPP ipp = malloc(sizeof(struct TSMS_IT_PRINTER));
+	TSMS_IPP ipp = TSMS_malloc(sizeof(struct TSMS_IT_PRINTER));
 	if (ipp == TSMS_NULL)
 		return TSMS_ERROR;
 	ipp->printer = php;
@@ -85,10 +85,22 @@ TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, 
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_IT_removePrinter(TSMS_PHP php) {
+	if (php == TSMS_NULL)
+		return TSMS_ERROR;
+	for (int i = 0; i < _itPrinterList->length;) {
+		TSMS_IPP ipp = _itPrinterList->list[i];
+		if (ipp->printer == php)
+			TSMS_LIST_remove(_itPrinterList, i);
+		else i++;
+	}
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_IT_addTimer(pTimer timer, TSMS_IT_TIMER_TYPE type, TSMS_IT_TIMER_CALLBACK callback, void *handler) {
 	if (timer == TSMS_NULL)
 		return TSMS_ERROR;
-	TSMS_ITP itp = malloc(sizeof(struct TSMS_IT_TIMER));
+	TSMS_ITP itp = TSMS_malloc(sizeof(struct TSMS_IT_TIMER));
 	if (itp == TSMS_NULL)
 		return TSMS_ERROR;
 	itp->timer = timer;

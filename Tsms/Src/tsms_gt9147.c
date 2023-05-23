@@ -152,7 +152,9 @@ TSMS_INLINE void __tsms_internal_touch_request(TSMS_THP touch, pLock preLock) {
 						}
 					}
 					if (!exist) {
-						data = malloc(sizeof(struct TSMS_TOUCH_DATA));
+						data = TSMS_malloc(sizeof(struct TSMS_TOUCH_DATA));
+						if (data == TSMS_NULL)
+							continue;
 						data->id = id;
 						data->x = x;
 						data->y = y;
@@ -237,12 +239,9 @@ uint32_t TSMS_GT9147_readId(TSMS_THP touch) {
 }
 
 TSMS_GT9147 TSMS_GT9147_createHandler(TSMS_IHP iic, TSMS_GHP interrupt) {
-	TSMS_GT9147 gt9147 = malloc(sizeof(struct TSMS_GT9147_HANDLER));
-	if (gt9147 == TSMS_NULL) {
-		tString temp = TSMS_STRING_temp("malloc failed for TSMS_GT9147");
-		TSMS_ERR_report(TSMS_ERROR_TYPE_MALLOC_FAILED, &temp);
+	TSMS_GT9147 gt9147 = TSMS_malloc(sizeof(struct TSMS_GT9147_HANDLER));
+	if (gt9147 == TSMS_NULL)
 		return TSMS_NULL;
-	}
 	gt9147->iic = iic;
 	TSMS_GPIO_setMode(interrupt, TSMS_GPIO_MODE_IT_RISING, TSMS_GPIO_PULL_UP);
 	gt9147->interrupt = interrupt;

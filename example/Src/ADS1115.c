@@ -24,7 +24,7 @@ static void ADS1115_writeRegister(struct ADS1115_Handler *handler, uint8_t reg, 
 
 struct ADS1115_Handler *
 ADS1115_initHardware(GPIO_TypeDef *sda, uint16_t sdaPin, GPIO_TypeDef *scl, uint16_t sclPin, uint8_t address) {
-	struct ADS1115_Handler *handler = (struct ADS1115_Handler *) malloc(sizeof(struct ADS1115_Handler));
+	struct ADS1115_Handler *handler = (struct ADS1115_Handler *) TSMS_malloc(sizeof(struct ADS1115_Handler));
 	handler->handler = TSMS_DRIVER_createIICHandler(TSMS_IIC_createSoftwareIIC(
 			TSMS_GPIO_createHandler(sda, sdaPin),
 			TSMS_GPIO_createHandler(scl, sclPin),

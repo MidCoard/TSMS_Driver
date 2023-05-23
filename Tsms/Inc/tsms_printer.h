@@ -31,6 +31,8 @@ TSMS_PHP TSMS_PRINTER_createUARTPrinter(UART_HandleTypeDef *handler);
 
 TSMS_RESULT TSMS_IT_addPrinter(TSMS_PHP php, TSMS_IT_PRINTER_CALLBACK callback, void *handler);
 
+TSMS_RESULT TSMS_IT_removePrinter(TSMS_PHP php);
+
 pString TSMS_PRINTER_get(TSMS_PHP printer);
 
 pString TSMS_PRINTER_getBlocking(TSMS_PHP printer);
@@ -60,6 +62,8 @@ TSMS_RESULT TSMS_printf(TSMS_PHP printer, const char * c, ...);
 TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer);
 
 TSMS_PHP TSMS_getDefaultPrinter();
+
+TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer);
 
 TSMS_RESULT print(const char * str, ...);
 
