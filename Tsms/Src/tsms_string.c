@@ -4,6 +4,7 @@
 #include "tsms_list.h"
 #include "tsms_map.h"
 #include "tsms.h"
+#include "tsms_util.h"
 
 pString TSMS_EMPTY_STRING;
 
@@ -41,6 +42,17 @@ TSMS_INLINE long __tsms_internal_compare(void * p1, void * p2) {
 
 bool TSMS_STRING_equals(pString str1, pString str2) {
 	return TSMS_STRING_compare(str1, str2) == 0;
+}
+
+bool TSMS_STRING_equalsIgnoreCase(pString str1, pString str2) {
+	if (str1 == TSMS_NULL || str2 == TSMS_NULL)
+		return false;
+	if (str1->length != str2->length)
+		return false;
+	for (TSMS_POS i = 0; i < str1->length; i++)
+		if (TSMS_UTIL_toLowerCase(str1->cStr[i]) != TSMS_UTIL_toLowerCase(str2->cStr[i]))
+			return false;
+	return true;
 }
 
 long TSMS_STRING_compare(pString str1, pString str2) {
@@ -162,7 +174,17 @@ TSMS_LP TSMS_STRING_split(pString str, char spilt) {
 	return ulp;
 }
 
-float TSMS_STRING_toFloat(pString str) {
+bool TSMS_STRING_isNumber(pString str) {
+	if (str == TSMS_NULL)
+		return false;
+	char *endptr;
+	strtod(str->cStr, &endptr);
+	if (endptr == str->cStr)
+		return false;
+	return true;
+}
+
+double TSMS_STRING_toDouble(pString str) {
 	if (str == TSMS_NULL)
 		return NAN;
 	return atof(str->cStr);
@@ -275,6 +297,25 @@ TSMS_RESULT TSMS_STRING_append(pString str1, pString str2) {
 	return TSMS_SUCCESS;
 }
 
+TSMS_RESULT TSMS_STRING_appendString(pString str1, const char * str2) {
+	if (str1 == TSMS_NULL || str2 == TSMS_NULL)
+		return TSMS_ERROR;
+	if (str1->staticString)
+		return TSMS_ERROR;
+	TSMS_POS len = 0;
+	for (TSMS_POS i = 0; str2[i] != '\0'; i++)
+		len++;
+	char* temp = TSMS_realloc(str1->cStr, str1->length + len + 1);
+	if (temp == TSMS_NULL)
+		return TSMS_ERROR;
+	str1->cStr = temp;
+	for (TSMS_POS i = 0; i < len; i++)
+		str1->cStr[str1->length + i] = str2[i];
+	str1->cStr[str1->length + len] = '\0';
+	str1->length += len;
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_STRING_appendChar(pString str, char c) {
 	if (str == TSMS_NULL)
 		return TSMS_ERROR;
@@ -289,6 +330,13 @@ TSMS_RESULT TSMS_STRING_appendChar(pString str, char c) {
 	str->cStr[str->length + 1] = '\0';
 	str->length++;
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_STRING_appendBool(pString str, bool b) {
+	if (b)
+		return TSMS_STRING_append(str, TSMS_STRING_static("true"));
+	else
+		return TSMS_STRING_append(str, TSMS_STRING_static("false"));
 }
 
 TSMS_RESULT TSMS_STRING_clear(pString str) {

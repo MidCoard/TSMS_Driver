@@ -18,6 +18,8 @@ extern pString TSMS_EMPTY_STRING;
 
 bool TSMS_STRING_equals(pString str1, pString str2);
 
+bool TSMS_STRING_equalsIgnoreCase(pString str1, pString str2);
+
 long TSMS_STRING_compare(pString str1, pString str2);
 
 bool TSMS_STRING_startsWith(pString str, pString prefix);
@@ -34,7 +36,9 @@ pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end);
 
 TSMS_LP TSMS_STRING_split(pString str, char spilt);
 
-float TSMS_STRING_toFloat(pString str);
+bool TSMS_STRING_isNumber(pString str);
+
+double TSMS_STRING_toDouble(pString str);
 
 int TSMS_STRING_toInt(pString str);
 
@@ -50,7 +54,11 @@ pString TSMS_STRING_createWithBytes(const uint8_t * bytes);
 
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
+TSMS_RESULT TSMS_STRING_appendString(pString str1, const char * str2);
+
 TSMS_RESULT TSMS_STRING_appendChar(pString str, char c);
+
+TSMS_RESULT TSMS_STRING_appendBool(pString str, bool b);
 
 TSMS_RESULT TSMS_STRING_clear(pString str);
 

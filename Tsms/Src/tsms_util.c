@@ -91,3 +91,13 @@ TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float r
 bool TSMS_UTIL_equalsColor(TSMS_COLOR color1, TSMS_COLOR color2) {
 	return color1.red == color2.red && color1.green == color2.green && color1.blue == color2.blue;
 }
+
+TSMS_PAIR TSMS_UTIL_pair(void *key, void *value) {
+	return (TSMS_PAIR ) {key, value };
+}
+
+char TSMS_UTIL_toLowerCase(char c) {
+	if (c >= 'A' && c <= 'Z')
+		return c + 32;
+	return c;
+}

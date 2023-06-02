@@ -3,12 +3,19 @@
 
 typedef struct TSMS_COLOR TSMS_COLOR;
 
+typedef struct TSMS_PAIR TSMS_PAIR;
+
 #include "tsms_def.h"
 
 struct TSMS_COLOR {
 	uint8_t red;
 	uint8_t green;
 	uint8_t blue;
+};
+
+struct TSMS_PAIR {
+	void *key;
+	void *value;
 };
 
 extern const TSMS_COLOR TSMS_COLOR_BLACK;
@@ -44,5 +51,9 @@ void TSMS_UTIL_swapFloat(float * a, float * b);
 TSMS_COLOR TSMS_UTIL_gradientColor(TSMS_COLOR color1, TSMS_COLOR color2, float ratio);
 
 bool TSMS_UTIL_equalsColor(TSMS_COLOR color1, TSMS_COLOR color2);
+
+TSMS_PAIR TSMS_UTIL_pair(void *key, void *value);
+
+char TSMS_UTIL_toLowerCase(char c);
 
 #endif //TSMS_UTIL_H
