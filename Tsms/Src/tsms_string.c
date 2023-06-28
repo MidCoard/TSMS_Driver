@@ -168,7 +168,8 @@ TSMS_LP TSMS_STRING_split(pString str, char spilt) {
 		if (str->cStr[i] == spilt) {
 			TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, i));
 			pos = i + 1;
-		}
+		} else if (str->cStr[i] == '\\')
+			i++;
 	if (pos < str->length)
 		TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, str->length));
 	return ulp;
@@ -435,4 +436,86 @@ pString TSMS_STRING_trim(pString str) {
 			break;
 	j++;
 	return TSMS_STRING_subString(str, i, j);
+}
+
+pString TSMS_STRING_escape(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	pString newStr = TSMS_STRING_create();
+	if (newStr == TSMS_NULL)
+		return TSMS_NULL;
+	for (TSMS_POS i = 0; i < str->length; i++) {
+		switch (str->cStr[i]) {
+			case '\n':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\n"));
+				break;
+			case '\t':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\t"));
+				break;
+			case '\r':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\r"));
+				break;
+			case '\b':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\b"));
+				break;
+			case '\f':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\f"));
+				break;
+			case '\\':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\\\"));
+				break;
+			case '\'':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\\'"));
+				break;
+			case '\"':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\\""));
+				break;
+			default:
+				TSMS_STRING_appendChar(newStr, str->cStr[i]);
+				break;
+		}
+	}
+	return newStr;
+}
+
+pString TSMS_STRING_unescape(pString str) {
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	pString newStr = TSMS_STRING_create();
+	if (newStr == TSMS_NULL)
+		return TSMS_NULL;
+	for (TSMS_POS i = 0; i < str->length; i++) {
+		if (str->cStr[i] == '\\') {
+			i++;
+			if (i >= str->length) {
+				TSMS_STRING_release(newStr);
+				return TSMS_NULL;
+			}
+			switch (str->cStr[i]) {
+				case 'n':
+					TSMS_STRING_appendChar(newStr, '\n');
+					break;
+				case 't':
+					TSMS_STRING_appendChar(newStr, '\t');
+					break;
+				case 'r':
+					TSMS_STRING_appendChar(newStr, '\r');
+					break;
+				case 'b':
+					TSMS_STRING_appendChar(newStr, '\b');
+					break;
+				case 'f':
+					TSMS_STRING_appendChar(newStr, '\f');
+					break;
+				case '\\':
+				case '\'':
+				case '\"':
+				default:
+					TSMS_STRING_appendChar(newStr, str->cStr[i]);
+					break;
+			}
+		} else
+			TSMS_STRING_appendChar(newStr, str->cStr[i]);
+	}
+	return newStr;
 }

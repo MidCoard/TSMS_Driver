@@ -9,7 +9,7 @@ typedef TSMS_INT_LIST_POINTER TSMS_ILP;
 struct TSMS_INT_LIST {
 	int *list;
 	TSMS_SIZE length;
-	TSMS_SIZE actualLength;
+	TSMS_SIZE capacity;
 	TSMS_SIZE initLength;
 };
 

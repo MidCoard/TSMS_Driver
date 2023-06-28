@@ -88,6 +88,8 @@ void * TSMS_malloc(size_t size);
 
 void * TSMS_realloc(void * ptr, size_t size);
 
+void * TSMS_clone(void * ptr, size_t size);
+
 #ifdef TSMS_GUI_STYLE
 
 TSMS_RESULT TSMS_GUI_STYLE_init();

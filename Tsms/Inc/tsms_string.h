@@ -76,4 +76,8 @@ pString TSMS_STRING_clone(pString str);
 
 pString TSMS_STRING_trim(pString str);
 
+pString TSMS_STRING_escape(pString str);
+
+pString TSMS_STRING_unescape(pString str);
+
 #endif //TSMS_STRING_H

@@ -9,7 +9,7 @@ typedef TSMS_FLOAT_LIST_POINTER TSMS_FLP;
 struct TSMS_FLOAT_LIST {
 	float *list;
 	TSMS_SIZE length;
-	TSMS_SIZE actualLength;
+	TSMS_SIZE capacity;
 	TSMS_SIZE initLength;
 };
 

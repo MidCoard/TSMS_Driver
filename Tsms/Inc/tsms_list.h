@@ -9,7 +9,7 @@ typedef TSMS_LIST_POINTER TSMS_LP;
 struct TSMS_LIST {
 	void **list;
 	TSMS_SIZE length;
-	TSMS_SIZE actualLength;
+	TSMS_SIZE capacity;
 	TSMS_SIZE initLength;
 };
 

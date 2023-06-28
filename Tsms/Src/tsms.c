@@ -42,3 +42,11 @@ void * TSMS_realloc(void * ptr, size_t size) {
 	}
 	return result;
 }
+
+void * TSMS_clone(void * ptr, size_t size) {
+	void * result = TSMS_malloc(size);
+	if (result == TSMS_NULL)
+		return TSMS_NULL;
+	memcpy(result, ptr, size);
+	return result;
+}

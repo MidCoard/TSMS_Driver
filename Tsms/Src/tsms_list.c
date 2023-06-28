@@ -16,7 +16,7 @@ TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 		TSMS_LIST_release(list);
 		return TSMS_NULL;
 	}
-	list->actualLength = initSize;
+	list->capacity = initSize;
 	list->length = 0;
 	list->initLength = initSize;
 	return list;
@@ -25,12 +25,12 @@ TSMS_LP TSMS_LIST_create(TSMS_SIZE initSize) {
 TSMS_RESULT TSMS_LIST_add(TSMS_LP list, void *element) {
 	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
 		return TSMS_ERROR;
-	if (list->actualLength <= list->length) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(void *));
+	if (list->capacity <= list->length) {
+		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(void *));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -44,12 +44,12 @@ TSMS_RESULT TSMS_LIST_remove(TSMS_LP list, TSMS_POS index) {
 	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void* tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(void *));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void* tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(void *));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
@@ -110,7 +110,7 @@ TSMS_CLP TSMS_CHAR_LIST_create(TSMS_SIZE initSize) {
 		TSMS_CHAR_LIST_release(list);
 		return TSMS_NULL;
 	}
-	list->actualLength = initSize;
+	list->capacity = initSize;
 	list->length = 0;
 	list->initLength = initSize;
 	return list;
@@ -119,12 +119,12 @@ TSMS_CLP TSMS_CHAR_LIST_create(TSMS_SIZE initSize) {
 TSMS_RESULT TSMS_CHAR_LIST_add(TSMS_CLP list, char element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	if (list->actualLength <= list->length) {
-		void* tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(char));
+	if (list->capacity <= list->length) {
+		void* tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(char));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -138,12 +138,12 @@ TSMS_RESULT TSMS_CHAR_LIST_remove(TSMS_CLP list, TSMS_POS index) {
 	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void* tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(char));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void* tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(char));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
@@ -186,7 +186,7 @@ TSMS_ILP TSMS_INT_LIST_create(TSMS_SIZE initSize) {
 		TSMS_INT_LIST_release(list);
 		return TSMS_NULL;
 	}
-	list->actualLength = initSize;
+	list->capacity = initSize;
 	list->length = 0;
 	list->initLength = initSize;
 	return list;
@@ -195,12 +195,12 @@ TSMS_ILP TSMS_INT_LIST_create(TSMS_SIZE initSize) {
 TSMS_RESULT TSMS_INT_LIST_add(TSMS_ILP list, int element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	if (list->actualLength <= list->length) {
-		void* tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(int));
+	if (list->capacity <= list->length) {
+		void* tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(int));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -214,12 +214,12 @@ TSMS_RESULT TSMS_INT_LIST_remove(TSMS_ILP list, TSMS_POS index) {
 	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void* tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(int));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void* tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(int));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
@@ -271,7 +271,7 @@ TSMS_LLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
 		TSMS_LONG_LIST_release(list);
 		return TSMS_NULL;
 	}
-	list->actualLength = initSize;
+	list->capacity = initSize;
 	list->length = 0;
 	list->initLength = initSize;
 	return list;
@@ -280,12 +280,12 @@ TSMS_LLP TSMS_LONG_LIST_create(TSMS_SIZE initSize) {
 TSMS_RESULT TSMS_LONG_LIST_add(TSMS_LLP list, long element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	if (list->actualLength <= list->length) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(long));
+	if (list->capacity <= list->length) {
+		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(long));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -299,12 +299,12 @@ TSMS_RESULT TSMS_LONG_LIST_remove(TSMS_LLP list, TSMS_POS index) {
 	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(long));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void * tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(long));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
@@ -342,12 +342,12 @@ TSMS_RESULT TSMS_LONG_LIST_insert(TSMS_LLP list, long element, TSMS_POS index) {
 		return TSMS_ERROR;
 	if (index > list->length || index < 0)
 		return TSMS_FAIL;
-	if (list->actualLength <= list->length) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(long));
+	if (list->capacity <= list->length) {
+		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(long));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	for (TSMS_POS i = list->length; i > index; i--)
 		list->list[i] = list->list[i - 1];
@@ -362,12 +362,12 @@ TSMS_RESULT TSMS_LONG_LIST_truncate(TSMS_LLP list, TSMS_POS index) {
 	if (index > list->length || index < 0)
 		return TSMS_FAIL;
 	list->length = index;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(long));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void * tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(long));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
@@ -382,7 +382,7 @@ TSMS_FLP TSMS_FLOAT_LIST_create(TSMS_SIZE initSize) {
 		TSMS_FLOAT_LIST_release(list);
 		return TSMS_NULL;
 	}
-	list->actualLength = initSize;
+	list->capacity = initSize;
 	list->length = 0;
 	list->initLength = initSize;
 	return list;
@@ -391,12 +391,12 @@ TSMS_FLP TSMS_FLOAT_LIST_create(TSMS_SIZE initSize) {
 TSMS_RESULT TSMS_FLOAT_LIST_add(TSMS_FLP list, float element) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
-	if (list->actualLength <= list->length) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength * 2 * sizeof(float));
+	if (list->capacity <= list->length) {
+		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(float));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength *= 2;
+		list->capacity *= 2;
 	}
 	list->list[list->length++] = element;
 	return TSMS_SUCCESS;
@@ -434,12 +434,12 @@ TSMS_RESULT TSMS_FLOAT_LIST_remove(TSMS_FLP list, TSMS_POS index) {
 	for (TSMS_POS i = index; i < list->length - 1; i++)
 		list->list[i] = list->list[i + 1];
 	list->length--;
-	if (list->initLength != list->actualLength && list->length < list->actualLength / 2) {
-		void * tmp = TSMS_realloc(list->list, list->actualLength / 2 * sizeof(float));
+	if (list->initLength != list->capacity && list->length < list->capacity / 2) {
+		void * tmp = TSMS_realloc(list->list, list->capacity / 2 * sizeof(float));
 		if (tmp == TSMS_NULL)
 			return TSMS_ERROR;
 		list->list = tmp;
-		list->actualLength /= 2;
+		list->capacity /= 2;
 	}
 	return TSMS_SUCCESS;
 }
