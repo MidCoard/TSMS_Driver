@@ -51,8 +51,33 @@ TSMS_INLINE TSMS_RESULT __tsms_internal_packet_write_string(pPacket packet, pStr
 	return __tsms_internal_packet_write_bytes(packet, str->cStr, str->length);
 }
 
-TSMS_INLINE TSMS_RESULT __tsms_internal_packet_write_object(pPacket packet, void *data, TSMS_SIZE size) {
-	return __tsms_internal_packet_write_bytes(packet, data, size);
+TSMS_INLINE void* __tsms_internal_packet_read(uint8_t* data, TSMS_POS position, TSMS_SIZE size, TSMS_SIZE typeSize) {
+	if (position + typeSize > size)
+		return TSMS_NULL;
+	return data + position;
+}
+
+TSMS_INLINE uint8_t __tsms_internal_packet_read_byte(uint8_t* data, TSMS_POS position, TSMS_SIZE size) {
+	return *((uint8_t *) __tsms_internal_packet_read(data, position, size, sizeof (uint8_t)));
+}
+
+TSMS_INLINE uint8_t * __tsms_internal_packet_read_bytes(uint8_t* data, TSMS_POS position, TSMS_SIZE size, TSMS_SIZE length) {
+	return (uint8_t *) __tsms_internal_packet_read(data, position, size, length);
+}
+
+TSMS_INLINE uint32_t __tsms_internal_packet_read_int(uint8_t* data, TSMS_POS position, TSMS_SIZE size) {
+	return *((uint32_t *) __tsms_internal_packet_read(data, position, size, sizeof(uint32_t)));
+}
+
+TSMS_INLINE uint64_t __tsms_internal_packet_read_long(uint8_t* data, TSMS_POS position, TSMS_SIZE size) {
+	return *((uint64_t *) __tsms_internal_packet_read(data, position, size, sizeof (uint64_t)));
+}
+
+TSMS_INLINE pString __tsms_internal_packet_read_string(uint8_t* data, TSMS_POS position, TSMS_SIZE size) {
+	uint32_t length = __tsms_internal_packet_read_int(data, position, size);
+	if (length == 0)
+		return TSMS_STRING_create();
+	return TSMS_STRING_createWithFixSize(__tsms_internal_packet_read_bytes(data, position + sizeof (uint32_t), size, length), length);
 }
 
 TSMS_INLINE TSMS_RESULT __tsms_internal_packet_resize(pPacket packet) {
@@ -221,7 +246,67 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 		packet->size = size;
 		packet->capacity = size;
 	} else {
-
+		TSMS_POS staticPos = 0;
+		TSMS_POS position = 0;
+		bool first = true;
+		long checksum = 0;
+		for (TSMS_POS i = 0; i < builder->typesLength; i++) {
+			TSMS_TYPE type = builder->types[i];
+			if (type == TSMS_TYPE_CHECKSUM) {
+				if (first) {
+					first = false;
+					checksum = __tsms_internal_packet_read_long(data, position, size);
+				} else if (checksum != __tsms_internal_packet_read_long(data, position, size)) {
+						TSMS_PACKET_free(packet);
+						return TSMS_NULL;
+				}
+				long temp = 0;
+				memcpy(data + position, &temp, 8);
+				position += 8;
+			} else if (type == TSMS_TYPE_RESERVED) {
+				if (0 != __tsms_internal_packet_read_byte(data, position, size)) {
+					TSMS_PACKET_free(packet);
+					return TSMS_NULL;
+				}
+				position += 1;
+			} else if (type == TSMS_TYPE_STATIC) {
+				pString str = __tsms_internal_packet_read_string(data, position, size);
+				if (!TSMS_STRING_equals(str, builder->statics->list[staticPos++])) {
+					TSMS_PACKET_free(packet);
+					TSMS_STRING_release(str);
+					return TSMS_NULL;
+				}
+				position += (4 + str->length);
+				TSMS_STRING_release(str);
+			} else if (type == TSMS_TYPE_STRING) {
+				pString str = __tsms_internal_packet_read_string(data, position, size);
+				if (str == TSMS_NULL) {
+					TSMS_PACKET_free(packet);
+					TSMS_STRING_release(str);
+					return TSMS_NULL;
+				}
+				position += (4 + str->length);
+				TSMS_STRING_release(str);
+			} else {
+				__tsms_internal_packet_read(data, position, size, _packetTypeSize[type]);
+				position += _packetTypeSize[type];
+			}
+		}
+		if (!first) {
+			long temp = builder->checksum(data, size);
+			if (temp != checksum) {
+				TSMS_PACKET_free(packet);
+				return TSMS_NULL;
+			}
+		}
+		packet->data = TSMS_malloc(size);
+		if (packet->data == TSMS_NULL) {
+			TSMS_PACKET_free(packet);
+			return TSMS_NULL;
+		}
+		memcpy(packet->data, data, size);
+		packet->size = size;
+		packet->capacity = size;
 	}
 	return packet;
 }
