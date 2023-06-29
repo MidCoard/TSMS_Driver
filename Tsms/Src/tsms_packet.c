@@ -174,8 +174,13 @@ TSMS_RESULT TSMS_PACKET_BUILDER_clear(pPacketBuilder builder) {
 		TSMS_LME next = TSMS_LONG_MAP_next(&it);
 		TSMS_LP list = next.value;
 		if (next.key == TSMS_TYPE_STRING)
+			for (TSMS_SIZE i = 0; i < list->length; i++) {
+				TSMS_STRING_release(*(pString *) list->list[i]);
+				free(list->list[i]);
+			}
+		else if (list->length != 0)
 			for (TSMS_SIZE i = 0; i < list->length; i++)
-				TSMS_STRING_release(list->list[i]);
+				free(list->list[i]);
 		TSMS_LIST_release(list);
 	}
 	TSMS_LONG_MAP_clear(builder->data);
@@ -187,8 +192,9 @@ TSMS_RESULT TSMS_PACKET_BUILDER_release(pPacketBuilder builder) {
 		return TSMS_ERROR;
 	TSMS_PACKET_BUILDER_clear(builder);
 	TSMS_LONG_MAP_release(builder->data);
-	for (TSMS_SIZE i = 0; i < builder->statics->length; i++)
-		TSMS_STRING_release(builder->statics->list[i]);
+	if (builder->statics != TSMS_NULL)
+		for (TSMS_SIZE i = 0; i < builder->statics->length; i++)
+			TSMS_STRING_release(builder->statics->list[i]);
 	TSMS_LIST_release(builder->statics);
 	free(builder->types);
 	free(builder);
@@ -227,6 +233,10 @@ TSMS_RESULT TSMS_PACKET_BUILDER_writeString(pPacketBuilder builder, pString data
 	return TSMS_PACKET_BUILDER_writePointer(builder, TSMS_TYPE_STRING, TSMS_STRING_clone(data));
 }
 
+TSMS_RESULT TSMS_PACKET_BUILDER_writeChar(pPacketBuilder builder, char data) {
+	return TSMS_PACKET_BUILDER_write(builder, TSMS_TYPE_CHAR, &data, sizeof(char));
+}
+
 pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_SIZE size) {
 	if (builder == TSMS_NULL)
 		return TSMS_NULL;
@@ -239,7 +249,7 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 	if (builder->types == TSMS_NULL) {
 		packet->data = TSMS_malloc(size);
 		if (packet->data == TSMS_NULL) {
-			TSMS_PACKET_free(packet);
+			TSMS_PACKET_release(packet);
 			return TSMS_NULL;
 		}
 		memcpy(packet->data, data, size);
@@ -257,7 +267,7 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 					first = false;
 					checksum = __tsms_internal_packet_read_long(data, position, size);
 				} else if (checksum != __tsms_internal_packet_read_long(data, position, size)) {
-						TSMS_PACKET_free(packet);
+					TSMS_PACKET_release(packet);
 						return TSMS_NULL;
 				}
 				long temp = 0;
@@ -265,14 +275,14 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 				position += 8;
 			} else if (type == TSMS_TYPE_RESERVED) {
 				if (0 != __tsms_internal_packet_read_byte(data, position, size)) {
-					TSMS_PACKET_free(packet);
+					TSMS_PACKET_release(packet);
 					return TSMS_NULL;
 				}
 				position += 1;
 			} else if (type == TSMS_TYPE_STATIC) {
 				pString str = __tsms_internal_packet_read_string(data, position, size);
 				if (!TSMS_STRING_equals(str, builder->statics->list[staticPos++])) {
-					TSMS_PACKET_free(packet);
+					TSMS_PACKET_release(packet);
 					TSMS_STRING_release(str);
 					return TSMS_NULL;
 				}
@@ -281,7 +291,7 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 			} else if (type == TSMS_TYPE_STRING) {
 				pString str = __tsms_internal_packet_read_string(data, position, size);
 				if (str == TSMS_NULL) {
-					TSMS_PACKET_free(packet);
+					TSMS_PACKET_release(packet);
 					TSMS_STRING_release(str);
 					return TSMS_NULL;
 				}
@@ -295,13 +305,13 @@ pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_
 		if (!first) {
 			long temp = builder->checksum(data, size);
 			if (temp != checksum) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				return TSMS_NULL;
 			}
 		}
 		packet->data = TSMS_malloc(size);
 		if (packet->data == TSMS_NULL) {
-			TSMS_PACKET_free(packet);
+			TSMS_PACKET_release(packet);
 			return TSMS_NULL;
 		}
 		memcpy(packet->data, data, size);
@@ -319,7 +329,7 @@ pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder) {
 		return TSMS_NULL;
 	packet->data = TSMS_malloc(0);
 	if (packet->data == TSMS_NULL) {
-		TSMS_PACKET_free(packet);
+		TSMS_PACKET_release(packet);
 		return TSMS_NULL;
 	}
 	packet->size = 0;
@@ -334,32 +344,32 @@ pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder) {
 		TSMS_POS position = positions[type];
 		if (type == TSMS_TYPE_STRING) {
 			if (list == TSMS_NULL || position >= list->length) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
-			TSMS_RESULT result = __tsms_internal_packet_write_string(packet, list->list[position]);
+			TSMS_RESULT result = __tsms_internal_packet_write_string(packet, *(pString*)(list->list[position]));
 			if (result != TSMS_SUCCESS) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
 		} else if (type == TSMS_TYPE_STATIC) {
 			if (position >= builder->statics->length) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
 			TSMS_RESULT result = __tsms_internal_packet_write_string(packet, builder->statics->list[position]);
 			if (result != TSMS_SUCCESS) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
 		} else if (type == TSMS_TYPE_RESERVED) {
 			TSMS_RESULT result = __tsms_internal_packet_write_byte(packet, 0);
 			if (result != TSMS_SUCCESS) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
@@ -367,19 +377,19 @@ pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder) {
 			TSMS_INT_LIST_add(checksumMark, packet->size);
 			TSMS_RESULT result = __tsms_internal_packet_write_long(packet, 0);
 			if (result != TSMS_SUCCESS) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
 		} else {
 			if (list == TSMS_NULL || position >= list->length) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
 			TSMS_RESULT result = __tsms_internal_packet_write(packet, list->list[position], _packetTypeSize[type]);
 			if (result != TSMS_SUCCESS) {
-				TSMS_PACKET_free(packet);
+				TSMS_PACKET_release(packet);
 				TSMS_INT_LIST_release(checksumMark);
 				return TSMS_NULL;
 			}
@@ -393,7 +403,7 @@ pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder) {
 	}
 	TSMS_RESULT result = __tsms_internal_packet_resize(packet);
 	if (result != TSMS_SUCCESS) {
-		TSMS_PACKET_free(packet);
+		TSMS_PACKET_release(packet);
 		TSMS_INT_LIST_release(checksumMark);
 		return TSMS_NULL;
 	}
@@ -402,7 +412,7 @@ pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder) {
 	return packet;
 }
 
-TSMS_RESULT TSMS_PACKET_free(pPacket packet) {
+TSMS_RESULT TSMS_PACKET_release(pPacket packet) {
 	if (packet == TSMS_NULL)
 		return TSMS_ERROR;
 	free(packet->data);
@@ -440,4 +450,11 @@ pString TSMS_PACKET_readString(pPacket packet) {
 	if (data == TSMS_NULL)
 		return TSMS_NULL;
 	return TSMS_STRING_createWithFixSize(data, size);
+}
+
+char TSMS_PACKET_readChar(pPacket packet) {
+	void * data = TSMS_PACKET_read(packet, sizeof(char));
+	if (data == TSMS_NULL)
+		return 0;
+	return *((char*)data);
 }

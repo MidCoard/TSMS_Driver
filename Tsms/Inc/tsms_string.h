@@ -30,6 +30,8 @@ pString TSMS_STRING_createWithString(const char *cStr);
 
 pString TSMS_STRING_static(const char *cStr);
 
+TSMS_RESULT TSMS_STRING_releaseStatic();
+
 TSMS_RESULT TSMS_STRING_release(pString str);
 
 pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end);

@@ -126,6 +126,18 @@ pString TSMS_STRING_static(const char *cStr) {
 	return str;
 }
 
+TSMS_RESULT TSMS_STRING_releaseStatic() {
+	TSMS_MI it = TSMS_MAP_iterator(_stringStaticMap);
+	while (TSMS_MAP_hasNext(&it)) {
+		TSMS_ME entry = TSMS_MAP_next(&it);
+		TSMS_STRING_release(entry.value);
+	}
+	TSMS_MAP_release(_stringStaticMap);
+	_stringStaticMap = TSMS_NULL;
+	TSMS_EMPTY_STRING = TSMS_NULL;
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_STRING_release(pString str) {
 	if (str == TSMS_NULL)
 		return TSMS_ERROR;
