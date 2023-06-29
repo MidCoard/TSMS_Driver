@@ -6,7 +6,9 @@ static TSMS_PHP _printerDefaultPrinter = TSMS_NULL;
 
 TSMS_INLINE void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 	if (php->buffer != 0) {
-		if (php->buffer == '\n') {
+		if (php->buffer == '\\' || php->buffer != '\n')
+			TSMS_CHAR_LIST_add(php->str, php->buffer);
+		else {
 			if (php->customBuffer != TSMS_NULL)
 				TSMS_STRING_getString(php->str, php->customBuffer);
 			else
@@ -17,7 +19,7 @@ TSMS_INLINE void __tsms_internal_callback(void * handler, TSMS_PHP php) {
 				php->callback(php->callbackData, php);
 			else
 				php->hasData = true;
-		} else TSMS_CHAR_LIST_add(php->str, php->buffer);
+		}
 	}
 	HAL_UART_Receive_IT(php->handler,  &php->buffer, 1);
 }
@@ -62,15 +64,25 @@ pString TSMS_PRINTER_getBlocking(TSMS_PHP printer) {
 }
 
 pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer) {
-	if (printer == TSMS_NULL)
+	if (printer == TSMS_NULL || customBuffer == TSMS_NULL)
 		return TSMS_NULL;
 	printer->customBuffer = customBuffer;
-	return TSMS_PRINTER_getBlocking(printer);
+	TSMS_PRINTER_getBlocking(printer);
+	return customBuffer;
+}
+
+TSMS_RESULT TSMS_PRINTER_printBytes(TSMS_PHP printer, uint8_t * bytes, TSMS_SIZE length) {
+#if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
+	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, bytes, length, 1000);
+	return status == HAL_OK ? TSMS_SUCCESS : TSMS_ERROR;
+#else
+	return TSMS_FAIL;
+#endif
 }
 
 TSMS_RESULT TSMS_print(TSMS_PHP printer, char * str) {
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
-	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str),1000);
+	HAL_StatusTypeDef status = HAL_UART_Transmit(printer->handler, str, strlen(str), 1000);
 	return status == HAL_OK ? TSMS_SUCCESS : TSMS_ERROR;
 #else
 	return TSMS_FAIL;
@@ -160,4 +172,89 @@ TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer) {
 	free(printer->stringBuffer);
 	free(printer);
 	return TSMS_SUCCESS;
+}
+
+TSMS_RESULT TSMS_PRINTER_sendPacket(TSMS_PHP printer, pPacket packet) {
+	if (printer == TSMS_NULL || packet == TSMS_NULL)
+		return TSMS_ERROR;
+	TSMS_CLP list = TSMS_CHAR_LIST_create(packet->size);
+	for (TSMS_SIZE i = 0; i < packet->size; i++) {
+		uint8_t c = packet->data[i];
+		if (c == '\\' || c == '\n')
+			TSMS_CHAR_LIST_add(list, '\\');
+		TSMS_CHAR_LIST_add(list, c);
+	}
+	TSMS_CHAR_LIST_add(list, '\n');
+	pString temp = TSMS_STRING_create();
+	TSMS_STRING_getString(list, temp);
+	TSMS_CHAR_LIST_release(list);
+	TSMS_PRINTER_printBytes(printer, (uint8_t *)temp->cStr, temp->length);
+	TSMS_STRING_release(temp);
+	return TSMS_SUCCESS;
+}
+
+pPacket TSMS_PRINTER_getPacket(TSMS_PHP printer, pPacketBuilder builder) {
+	if (printer == TSMS_NULL || builder == TSMS_NULL)
+		return TSMS_NULL;
+	pString str = TSMS_PRINTER_get(printer);
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	TSMS_CLP list = TSMS_CHAR_LIST_create(str->length);
+	for (TSMS_SIZE i = 0; i < str->length; i++) {
+		uint8_t c = str->cStr[i];
+		if (c == '\\')
+			i++;
+		else
+			TSMS_CHAR_LIST_add(list, c);
+	}
+	pString temp = TSMS_STRING_create();
+	TSMS_STRING_getString(list, temp);
+	TSMS_CHAR_LIST_release(list);
+	pPacket packet = TSMS_PACKET_BUILDER_resolve(builder, temp->cStr, temp->length);
+	TSMS_STRING_release(temp);
+	return packet;
+}
+
+pPacket TSMS_PRINTER_getBlockingPacket(TSMS_PHP printer, pPacketBuilder builder) {
+	if (printer == TSMS_NULL || builder == TSMS_NULL)
+		return TSMS_NULL;
+	pString str = TSMS_PRINTER_getBlocking(printer);
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	TSMS_CLP list = TSMS_CHAR_LIST_create(str->length);
+	for (TSMS_SIZE i = 0; i < str->length; i++) {
+		uint8_t c = str->cStr[i];
+		if (c == '\\')
+			i++;
+		else
+			TSMS_CHAR_LIST_add(list, c);
+	}
+	pString temp = TSMS_STRING_create();
+	TSMS_STRING_getString(list, temp);
+	TSMS_CHAR_LIST_release(list);
+	pPacket packet = TSMS_PACKET_BUILDER_resolve(builder, temp->cStr, temp->length);
+	TSMS_STRING_release(temp);
+	return packet;
+}
+
+pPacket TSMS_PRINTER_getBlockingCustomPacket(TSMS_PHP printer, pPacketBuilder builder, pString custom) {
+	if (printer == TSMS_NULL || builder == TSMS_NULL)
+		return TSMS_NULL;
+	pString str = TSMS_PRINTER_getBlockingCustom(printer, custom);
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	TSMS_CLP list = TSMS_CHAR_LIST_create(str->length);
+	for (TSMS_SIZE i = 0; i < str->length; i++) {
+		uint8_t c = str->cStr[i];
+		if (c == '\\')
+			i++;
+		else
+			TSMS_CHAR_LIST_add(list, c);
+	}
+	pString temp = TSMS_STRING_create();
+	TSMS_STRING_getString(list, temp);
+	TSMS_CHAR_LIST_release(list);
+	pPacket packet = TSMS_PACKET_BUILDER_resolve(builder, temp->cStr, temp->length);
+	TSMS_STRING_release(temp);
+	return packet;
 }

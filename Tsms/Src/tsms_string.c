@@ -275,8 +275,26 @@ pString TSMS_STRING_createWithBytes(const uint8_t * bytes) {
 		return TSMS_NULL;
 	}
 	str->cStr = temp;
-	for (int i = 0; i < str->length; i++)
-		str->cStr[i] = bytes[i];
+	memcpy(str->cStr, bytes, str->length);
+	str->cStr[str->length] = '\0';
+	str->staticString = false;
+	return str;
+}
+
+pString TSMS_STRING_createWithFixSize(const uint8_t * bytes, TSMS_SIZE size) {
+	pString str = TSMS_STRING_create();
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	if (bytes == TSMS_NULL)
+		return str;
+	str->length = size;
+	char * temp = TSMS_realloc(str->cStr, sizeof (char) * (str->length + 1));
+	if (temp == TSMS_NULL) {
+		TSMS_STRING_release(str);
+		return TSMS_NULL;
+	}
+	str->cStr = temp;
+	memcpy(str->cStr, bytes, str->length);
 	str->cStr[str->length] = '\0';
 	str->staticString = false;
 	return str;

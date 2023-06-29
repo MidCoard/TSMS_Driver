@@ -24,24 +24,41 @@ struct TSMS_PACKET_BUILDER {
 
 struct TSMS_PACKET {
 	TSMS_SIZE size;
+	TSMS_SIZE capacity;
 	uint8_t *data;
 	TSMS_POS offset;
 };
 
-pPacketBuilder TSMS_PACKET_create(pString protocol, TSMS_CHECKSUM_FUNCTION checksum);
+pPacketBuilder TSMS_PACKET_BUILDER_create(pString protocol, TSMS_CHECKSUM_FUNCTION checksum);
 
-pPacketBuilder TSMS_PACKET_createEmpty();
+pPacketBuilder TSMS_PACKET_BUILDER_createEmpty();
 
-TSMS_RESULT TSMS_PACKET_clear(pPacketBuilder builder);
+TSMS_RESULT TSMS_PACKET_BUILDER_clear(pPacketBuilder builder);
 
-TSMS_RESULT TSMS_PACKET_release(pPacketBuilder builder);
+TSMS_RESULT TSMS_PACKET_BUILDER_release(pPacketBuilder builder);
 
-TSMS_RESULT TSMS_PACKET_write(pPacketBuilder builder, TSMS_TYPE type, void* data, TSMS_SIZE size);
+TSMS_RESULT TSMS_PACKET_BUILDER_write(pPacketBuilder builder, TSMS_TYPE type, void* data, TSMS_SIZE size);
 
-TSMS_RESULT TSMS_PACKET_writeInt(pPacketBuilder builder, uint32_t data);
+TSMS_RESULT TSMS_PACKET_BUILDER_writeInt(pPacketBuilder builder, uint32_t data);
 
-pPacket TSMS_PACKET_resolve(pPacketBuilder builder, uint8_t* data, TSMS_SIZE size);
+TSMS_RESULT TSMS_PACKET_BUILDER_writeFloat(pPacketBuilder builder, float data);
 
-pPacket TSMS_PACKET_build(pPacketBuilder builder);
+TSMS_RESULT TSMS_PACKET_BUILDER_writePointer(pPacketBuilder builder, TSMS_TYPE type, void* data);
+
+TSMS_RESULT TSMS_PACKET_BUILDER_writeString(pPacketBuilder builder, pString data);
+
+pPacket TSMS_PACKET_BUILDER_resolve(pPacketBuilder builder, uint8_t* data, TSMS_SIZE size);
+
+pPacket TSMS_PACKET_BUILDER_build(pPacketBuilder builder);
+
+void * TSMS_PACKET_read(pPacket packet, TSMS_SIZE size);
+
+uint32_t TSMS_PACKET_readInt(pPacket packet);
+
+uint64_t TSMS_PACKET_readLong(pPacket packet);
+
+pString TSMS_PACKET_readString(pPacket packet);
+
+TSMS_RESULT TSMS_PACKET_free(pPacket packet);
 
 #endif //TSMS_PACKET_H

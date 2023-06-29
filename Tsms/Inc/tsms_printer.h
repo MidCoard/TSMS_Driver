@@ -8,6 +8,7 @@ typedef void(*TSMS_IT_PRINTER_CALLBACK)(void *, TSMS_PHP);
 typedef void (*TSMS_PRINTER_CALLBACK)(void *handler, TSMS_PHP printer);
 
 #include "tsms.h"
+#include "comm/tsms_packet.h"
 
 struct TSMS_PRINTER_HANDLER {
 #if defined(TSMS_STM32) && defined(HAL_UART_MODULE_ENABLED)
@@ -41,6 +42,8 @@ pString TSMS_PRINTER_getBlockingCustom(TSMS_PHP printer, pString customBuffer);
 
 TSMS_RESULT TSMS_PRINTER_setCallback(TSMS_PHP printer, TSMS_PRINTER_CALLBACK callback, void *data);
 
+TSMS_RESULT TSMS_PRINTER_printBytes(TSMS_PHP printer, uint8_t * bytes, TSMS_SIZE length);
+
 TSMS_RESULT TSMS_print(TSMS_PHP printer, char * str);
 
 TSMS_RESULT TSMS_println(TSMS_PHP printer, char * str);
@@ -64,6 +67,14 @@ TSMS_RESULT TSMS_setDefaultPrinter(TSMS_PHP printer);
 TSMS_PHP TSMS_getDefaultPrinter();
 
 TSMS_RESULT TSMS_PRINTER_release(TSMS_PHP printer);
+
+TSMS_RESULT TSMS_PRINTER_sendPacket(TSMS_PHP printer, pPacket packet);
+
+pPacket TSMS_PRINTER_getPacket(TSMS_PHP printer, pPacketBuilder builder);
+
+pPacket TSMS_PRINTER_getBlockingPacket(TSMS_PHP printer, pPacketBuilder builder);
+
+pPacket TSMS_PRINTER_getBlockingCustomPacket(TSMS_PHP printer, pPacketBuilder builder, pString custom);
 
 TSMS_RESULT print(const char * str, ...);
 

@@ -52,6 +52,8 @@ pString TSMS_STRING_createWithChar(char c);
 
 pString TSMS_STRING_createWithBytes(const uint8_t * bytes);
 
+pString TSMS_STRING_createWithFixSize(const uint8_t * bytes, TSMS_SIZE size);
+
 TSMS_RESULT TSMS_STRING_append(pString str1, pString str2);
 
 TSMS_RESULT TSMS_STRING_appendString(pString str1, const char * str2);
