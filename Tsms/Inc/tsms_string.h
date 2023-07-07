@@ -1,14 +1,14 @@
 #ifndef TSMS_STRING_H
 #define TSMS_STRING_H
 
-typedef struct TSMS_STRING_HANDLER tString;
+typedef struct TSMS_STRING tString;
 typedef tString *pString;
 
 #include "tsms_def.h"
 #include "tsms_char_list.h"
 #include "tsms_list.h"
 
-struct TSMS_STRING_HANDLER {
+struct TSMS_STRING {
 	char *cStr;
 	TSMS_SIZE length;
 	bool staticString;
@@ -36,7 +36,9 @@ TSMS_RESULT TSMS_STRING_release(pString str);
 
 pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end);
 
-TSMS_LP TSMS_STRING_split(pString str, char spilt);
+TSMS_LP TSMS_STRING_split(pString str, char split);
+
+TSMS_LP TSMS_STRING_splitByString(pString str, pString split);
 
 bool TSMS_STRING_isNumber(pString str);
 

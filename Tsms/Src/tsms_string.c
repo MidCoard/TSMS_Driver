@@ -169,20 +169,41 @@ pString TSMS_STRING_subString(pString str, TSMS_POS start, TSMS_POS end) {
 	return sub;
 }
 
-TSMS_LP TSMS_STRING_split(pString str, char spilt) {
+TSMS_LP TSMS_STRING_split(pString str, char split) {
 	if (str == TSMS_NULL)
 		return TSMS_EMPTY_LIST;
 	TSMS_LP ulp = TSMS_LIST_create(10);
 	if (ulp == TSMS_NULL)
 		return TSMS_EMPTY_LIST;
-	int pos = 0;
-	for (int i = 0; i < str->length; i++)
-		if (str->cStr[i] == spilt) {
+	TSMS_POS pos = 0;
+	for (TSMS_POS i = 0; i < str->length; i++)
+		if (str->cStr[i] == split) {
 			TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, i));
 			pos = i + 1;
 		} else if (str->cStr[i] == '\\')
 			i++;
-	if (pos < str->length)
+	if (pos <= str->length)
+		TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, str->length));
+	return ulp;
+}
+
+TSMS_LP TSMS_STRING_splitByString(pString str, pString split) {
+	if (str == TSMS_NULL || split == TSMS_NULL)
+		return TSMS_EMPTY_LIST;
+	TSMS_LP ulp = TSMS_LIST_create(10);
+	if (ulp == TSMS_NULL)
+		return TSMS_EMPTY_LIST;
+	TSMS_POS pos = 0;
+	for (TSMS_POS i = 0; i < str->length - split->length + 1; i++) {
+		pString sub = TSMS_STRING_subString(str, i, i + split->length);
+		if (TSMS_STRING_equals(sub, split)) {
+			TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, i));
+			pos = i + split->length;
+			i += split->length - 1;
+		}
+		TSMS_STRING_release(sub);
+	}
+	if (pos <= str->length)
 		TSMS_LIST_add(ulp, TSMS_STRING_subString(str, pos, str->length));
 	return ulp;
 }
