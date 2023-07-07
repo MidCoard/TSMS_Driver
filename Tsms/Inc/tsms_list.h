@@ -29,4 +29,6 @@ TSMS_RESULT TSMS_LIST_clear(TSMS_LP list);
 
 bool TSMS_LIST_contains(TSMS_LP list, void *element);
 
+TSMS_RESULT TSMS_LIST_insert(TSMS_LP list, TSMS_POS index, void *element);
+
 #endif //TSMS_LIST_H

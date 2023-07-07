@@ -82,6 +82,25 @@ bool TSMS_LIST_contains(TSMS_LP list, void *element) {
 	return false;
 }
 
+TSMS_RESULT TSMS_LIST_insert(TSMS_LP list, TSMS_POS index, void *element) {
+	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
+		return TSMS_ERROR;
+	if (index >= list->length || index < 0)
+		return TSMS_FAIL;
+	if (list->capacity <= list->length) {
+		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(void *));
+		if (tmp == TSMS_NULL)
+			return TSMS_ERROR;
+		list->list = tmp;
+		list->capacity *= 2;
+	}
+	for (TSMS_POS i = list->length; i > index; i--)
+		list->list[i] = list->list[i - 1];
+	list->list[index] = element;
+	list->length++;
+	return TSMS_SUCCESS;
+}
+
 TSMS_RESULT TSMS_LIST_release(TSMS_LP list) {
 	if (list == TSMS_NULL)
 		return TSMS_ERROR;
