@@ -85,7 +85,7 @@ bool TSMS_LIST_contains(TSMS_LP list, void *element) {
 TSMS_RESULT TSMS_LIST_insert(TSMS_LP list, TSMS_POS index, void *element) {
 	if (list == TSMS_NULL || list == TSMS_EMPTY_LIST)
 		return TSMS_ERROR;
-	if (index >= list->length || index < 0)
+	if (index > list->length || index < 0)
 		return TSMS_FAIL;
 	if (list->capacity <= list->length) {
 		void * tmp = TSMS_realloc(list->list, list->capacity * 2 * sizeof(void *));
