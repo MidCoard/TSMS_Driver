@@ -16,6 +16,8 @@ TSMS_RESULT TSMS_IT_init(TSMS_CLOCK_FREQUENCY frequency) {
 #ifdef TSMS_STM32
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	if (_itGpioList == TSMS_NULL)
+		return;
 	for (int i = 0; i < _itGpioList->length; i++) {
 		TSMS_IGP gpio = _itGpioList->list[i];
 		if (gpio->gpio->pin == GPIO_Pin)
@@ -28,6 +30,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 #ifdef TSMS_STM32_UART
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (_itPrinterList == TSMS_NULL)
+		return;
 	for (int i = 0; i < _itPrinterList->length; i++) {
 		TSMS_IPP printer = _itPrinterList->list[i];
 		if (printer->printer->handler == huart)
