@@ -22,13 +22,12 @@ struct W25Q256_Handler {
 #ifdef TSMS_STM32_FLASH
 	QSPI_HandleTypeDef * qspi;
 #endif
-	uint32_t *address;
 	bool qspiMode;
 	uint16_t id;
 };
 
 #ifdef TSMS_STM32_FLASH
-struct W25Q256_Handler * W25Q256_initHardware(QSPI_HandleTypeDef * qspi, uint32_t * address);
+struct W25Q256_Handler * W25Q256_initHardware(QSPI_HandleTypeDef * qspi);
 #endif
 
 TSMS_RESULT W25Q256_read(struct W25Q256_Handler * handler, uint32_t address, uint8_t * data, uint32_t length);

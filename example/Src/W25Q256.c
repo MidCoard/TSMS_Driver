@@ -95,10 +95,9 @@ static TSMS_RESULT W25Q256_waitBusy(struct W25Q256_Handler * handler) {
 #endif
 }
 #ifdef TSMS_STM32_FLASH
-struct W25Q256_Handler * W25Q256_initHardware(QSPI_HandleTypeDef * qspi, uint32_t * address) {
+struct W25Q256_Handler * W25Q256_initHardware(QSPI_HandleTypeDef * qspi) {
 	struct W25Q256_Handler * handler = TSMS_malloc(sizeof(struct W25Q256_Handler));
 	handler->qspi = qspi;
-	handler->address = address;
 	handler->qspiMode = false;
 	uint8_t status2  = W25Q256_readRegister(handler, W25Q256_REGISTER_STATUS_2);
 	if (!(status2 & 0x02)) {

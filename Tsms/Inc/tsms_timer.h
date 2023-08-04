@@ -12,6 +12,7 @@ typedef void(*TSMS_IT_TIMER_CALLBACK)(void *, pTimer);
 typedef void(*TSMS_TIMER_CALLBACK)(void *, pTimer);
 
 #include "tsms.h"
+#include "tsms_def.h"
 
 typedef struct {
 	bool enablePeriodInterrupt;

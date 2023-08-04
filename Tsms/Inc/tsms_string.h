@@ -86,4 +86,6 @@ pString TSMS_STRING_escape(pString str);
 
 pString TSMS_STRING_unescape(pString str);
 
+pString TSMS_STRING_format(pString str, ...);
+
 #endif //TSMS_STRING_H

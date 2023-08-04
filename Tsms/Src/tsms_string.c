@@ -570,3 +570,15 @@ pString TSMS_STRING_unescape(pString str) {
 	}
 	return newStr;
 }
+
+static char _stringFormatBuffer[1024];
+
+pString TSMS_STRING_format(pString str, ...) {
+	if (str == TSMS_NULL)
+		return TSMS_NULL;
+	va_list args;
+	va_start(args, str);
+	vsprintf(_stringFormatBuffer, str->cStr, args);
+	va_end(args);
+	return TSMS_STRING_createWithString(_stringFormatBuffer);
+}
