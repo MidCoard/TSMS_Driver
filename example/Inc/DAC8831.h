@@ -17,8 +17,7 @@ void DAC8831_setAnalogOutputLater(struct DAC8831_Handler *handler, float out);
 
 #ifdef TSMS_STM32_GPIO
 struct DAC8831_Handler *
-DAC8831_initHardware(GPIO_TypeDef *sdi, uint16_t sdiPin, GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *cs,
-                     uint16_t csPin, GPIO_TypeDef *ldac, uint16_t ldacPin, float reference);
+DAC8831_initHardware(TSMS_GHP sdi,TSMS_GHP sclk, TSMS_GHP cs, TSMS_GHP ldac, float reference);
 #endif
 
 #endif //TSMS_DAC8831_H

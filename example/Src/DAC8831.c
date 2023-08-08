@@ -23,19 +23,18 @@ void DAC8831_update(struct DAC8831_Handler *handler) {
 }
 
 struct DAC8831_Handler *
-DAC8831_initHardware(GPIO_TypeDef *sdi, uint16_t sdiPin, GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *cs,
-                     uint16_t csPin, GPIO_TypeDef *ldac, uint16_t ldacPin, float reference) {
+DAC8831_initHardware(TSMS_GHP sdi,TSMS_GHP sclk, TSMS_GHP cs, TSMS_GHP ldac, float reference) {
 	struct DAC8831_Handler *handler = TSMS_malloc(sizeof(struct DAC8831_Handler));
 	handler->handler = TSMS_DRIVER_createSPIHandler(TSMS_SPI_createSoftwareHandler(
-			TSMS_GPIO_createHandler(cs, csPin),
-			TSMS_GPIO_createHandler(sclk, sclkPin),
+			cs,
+			sclk,
 			TSMS_NULL_GHP,
-			TSMS_GPIO_createHandler(sdi, sdiPin),
+			sdi,
 			TSMS_SPI_MODE_0,
 			TSMS_GPIO_STATUS_LOW,
 			TSMS_TRANSFER_TYPE_MSB
 	), TSMS_REG_createList(0));
-	handler->ldac = TSMS_GPIO_createHandler(ldac, ldacPin);
+	handler->ldac = ldac;
 	handler->reference = reference;
 	TSMS_GPIO_write(handler->ldac, TSMS_GPIO_STATUS_LOW);
 	return handler;

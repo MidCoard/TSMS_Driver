@@ -42,17 +42,14 @@ static void __internal_delay(TSMS_DELAY_TIME time) {
 	}
 }
 
-struct SN74HC595_Handler *SN74HC595_initHardware(GPIO_TypeDef *srclr, uint16_t srclrPin,
-                                                 GPIO_TypeDef *srclk, uint16_t srclkPin,
-                                                 GPIO_TypeDef *rclk, uint16_t rclkPin,
-                                                 GPIO_TypeDef *data, uint16_t dataPin) {
+struct SN74HC595_Handler *SN74HC595_initHardware(TSMS_GHP srclr,
+                                                 TSMS_GHP srclk,
+                                                 TSMS_GHP rclk,
+                                                 TSMS_GHP data) {
 	struct SN74HC595_Handler *handler = TSMS_malloc(sizeof(struct SN74HC595_Handler));
 	handler->handler = TSMS_DRIVER_createCustomHandler(
 			TSMS_CUSTOM_createSpecialHandler(__internal_delay, TSMS_NULL_GHP, TSMS_NULL_GHP, 4,
-			                                 TSMS_GPIO_createHandler(srclr, srclrPin),
-			                                 TSMS_GPIO_createHandler(srclk, srclkPin),
-			                                 TSMS_GPIO_createHandler(rclk, rclkPin),
-			                                 TSMS_GPIO_createHandler(data, dataPin)),
+			                                 srclr, srclk, rclk, data),
 			TSMS_REG_createList(2, TSMS_REG_8BitRegister(SN74HC595_REG_STORAGE, SN74HC595_Q0, SN74HC595_Q1, SN74HC595_Q2, SN74HC595_Q3,
 			                                             SN74HC595_Q4, SN74HC595_Q5, SN74HC595_Q6, SN74HC595_Q7),
 			                    TSMS_REG_8BitRegister(SN74HC595_REG_SHIFT, SN74HC595_SQ0, SN74HC595_SQ1, SN74HC595_SQ2, SN74HC595_SQ3,

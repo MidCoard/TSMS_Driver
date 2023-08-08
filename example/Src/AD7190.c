@@ -37,16 +37,13 @@ static void AD7190_writeRegister(struct AD7190_Handler *handler, AD7190_REGISTER
 }
 
 struct AD7190_Handler *
-AD7190_initSoftware(GPIO_TypeDef *sclk, uint16_t sclkPin, GPIO_TypeDef *mosi, uint16_t mosiPin, GPIO_TypeDef *miso,
-                    uint16_t misoPin, GPIO_TypeDef *cs, uint16_t csPin, float reference) {
+AD7190_initSoftware(TSMS_GHP sclk, TSMS_GHP mosi, TSMS_GHP miso,
+                   TSMS_GHP cs, float reference) {
 	struct AD7190_Handler *handler = TSMS_malloc(sizeof(struct AD7190_Handler));
-	handler->handler = TSMS_DRIVER_createSPIHandler(TSMS_SPI_createSoftwareHandler(TSMS_GPIO_createHandler(cs, csPin),
-	                                                                               TSMS_GPIO_createHandler(sclk,
-	                                                                                                       sclkPin),
-	                                                                               TSMS_GPIO_createHandler(miso,
-	                                                                                                       misoPin),
-	                                                                               TSMS_GPIO_createHandler(mosi,
-	                                                                                                       mosiPin),
+	handler->handler = TSMS_DRIVER_createSPIHandler(TSMS_SPI_createSoftwareHandler(cs,
+	                                                                               sclk,
+	                                                                               miso,
+	                                                                               mosi,
 	                                                                               TSMS_SPI_MODE_3, false,
 	                                                                               TSMS_TRANSFER_TYPE_MSB),
 	                                                TSMS_REG_createList(9,
@@ -361,7 +358,7 @@ bool AD7190_setReference(struct AD7190_Handler *handler, AD7190_REFERENCE refere
 	AD7190_writeRegister(handler, AD7190_REG_CONF, TSMS_REG_getRegisterByList(handler->handler->regs, AD7190_REG_CONF));
 
 	AD7190_enableReferenceDetected(handler);
-	HAL_Delay(100);
+	TSMS_delay(100);
 	AD7190_readRegister(handler, AD7190_REG_STATUS);
 	bool ret = false;
 	if (AD7190_isReferenceDetected(handler))
@@ -487,7 +484,7 @@ static uint32_t AD7190_RESET_DATA[5] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void AD7190_reset(struct AD7190_Handler *handler) {
 	handler->handler->spiWrite(handler->handler->spi, AD7190_RESET_DATA, 8, 5);
-	HAL_Delay(1);
+	TSMS_delay(1);
 }
 
 AD7190_GPIO_STATUS AD7190_readGPIO(struct AD7190_Handler *handler, AD7190_GPIO gpio) {
