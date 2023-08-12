@@ -23,6 +23,7 @@ This library contains following examples:
 - AD7190 24-bit ADC
 - W9825G6KH 4M-4Bank-16Bit SDRAM
 - W25Q256 32M-Byte SPI Flash
+- AD9834 75MHz DDS
 
 ## Usage
 
