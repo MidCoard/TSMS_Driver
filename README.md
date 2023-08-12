@@ -16,13 +16,13 @@ This library contains following parts:
 
 This library contains following examples:
 
-- SN74HC595 8-bit shift register
+- SN74HC595 8-bit Shift Register
 - AD7606 16-bit ADC
 - DAC8831 16-bit DAC
 - ADS1115 16-bit ADC
 - AD7190 24-bit ADC
-- W9825G6KH 4M-4Bank-16Bit SDRAM
-- W25Q256 32M-Byte SPI Flash
+- W9825G6KH 4M-4Bank-16bit SDRAM
+- W25Q256 32M-8bit QSPI Flash
 - AD9834 75MHz DDS
 
 ## Usage
