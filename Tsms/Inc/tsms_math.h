@@ -7,6 +7,8 @@
 #define TSMS_min min
 #define TSMS_max max
 
+#define PI 3.14159265358979323846f
+
 TSMS_LSIZE min(TSMS_LSIZE a, TSMS_LSIZE b);
 
 TSMS_LSIZE max(TSMS_LSIZE a, TSMS_LSIZE b);
