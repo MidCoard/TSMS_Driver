@@ -521,6 +521,15 @@ pString TSMS_STRING_escape(pString str) {
 			case '\"':
 				TSMS_STRING_append(newStr, TSMS_STRING_static("\\\""));
 				break;
+			case '\v':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\v"));
+				break;
+			case '\0':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\0"));
+				break;
+			case '\a':
+				TSMS_STRING_append(newStr, TSMS_STRING_static("\\a"));
+				break;
 			default:
 				TSMS_STRING_appendChar(newStr, str->cStr[i]);
 				break;
@@ -557,6 +566,15 @@ pString TSMS_STRING_unescape(pString str) {
 					break;
 				case 'f':
 					TSMS_STRING_appendChar(newStr, '\f');
+					break;
+				case 'v':
+					TSMS_STRING_appendChar(newStr, '\v');
+					break;
+				case '0':
+					TSMS_STRING_appendChar(newStr, '\0');
+					break;
+				case 'a':
+					TSMS_STRING_appendChar(newStr, '\a');
 					break;
 				case '\\':
 				case '\'':
